@@ -1,0 +1,6 @@
+framework module Pods_The_Cookout {
+  umbrella header "Pods-The-Cookout-umbrella.h"
+
+  export *
+  module * { export * }
+}

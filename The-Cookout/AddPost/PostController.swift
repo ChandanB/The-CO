@@ -161,7 +161,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        let userPostRef = Database.database().reference().child("imagePosts ").child(uid)
+        let userPostRef = Database.database().reference().child("imagePosts").child(uid)
         let ref = userPostRef.childByAutoId()
         
         let values = ["imageUrl": imageUrl, "caption": caption, "imageWidth": postImage.size.width, "imageHeight": postImage.size.height, "creationDate": Date().timeIntervalSince1970] as [String : Any]

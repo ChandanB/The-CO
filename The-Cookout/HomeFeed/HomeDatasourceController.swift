@@ -12,7 +12,6 @@ import Kingfisher
 
 class HomeDatasourceController: DatasourceController {
     
-    var user: User?
     var userFeed: [User?] = []
     var postFeed: [Post?] = []
     
@@ -23,16 +22,20 @@ class HomeDatasourceController: DatasourceController {
         super.viewDidLoad()
         
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
+        self.datasource = self.homeDatasource
         
         fetchUser()
         fetchUserFeed()
         fetchPostFeed()
         
+        setupNavigationBarItems()
+        setupRefresherControl()
+    }
+    
+    func setupRefresherControl() {
         refresher = UIRefreshControl()
         refresher.addTarget(self, action: #selector(HomeDatasourceController.populate), for: UIControlEvents.valueChanged)
         collectionView?.addSubview(refresher)
-        
-        setupNavigationBarItems()
     }
     
     func setupNavigationBarItems() {
@@ -163,23 +166,18 @@ class HomeDatasourceController: DatasourceController {
         collectionViewLayout.invalidateLayout()
     }
     
+    var user: User?
     fileprivate func fetchUser() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
+        let ref = Database.database().reference().child("users").child(uid)
         
-        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.observeSingleEvent(of: .value) { (snapshot) in
             print(snapshot.value ?? "")
-            
             guard let dictionary = snapshot.value as? [String: Any] else { return }
-            
             self.user = User(dictionary: dictionary as [String : AnyObject])
-            
             self.setupLeftNavItem(self.user!)
             self.collectionView?.reloadData()
-            
-        }) { (err) in
-            print("Failed to fetch user:", err)
         }
     }
-    
     
 }

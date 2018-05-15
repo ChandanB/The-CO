@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 import LBTAComponents
 
 class UserProfilePhotoCell: UICollectionViewCell {
@@ -17,8 +18,8 @@ class UserProfilePhotoCell: UICollectionViewCell {
         }
     }
     
-    let photoImageView: UIImageView = {
-        let iv = UIImageView()
+    let photoImageView: CachedImageView = {
+        let iv = CachedImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         return iv
@@ -36,9 +37,8 @@ class UserProfilePhotoCell: UICollectionViewCell {
     }
     
     fileprivate func setupProfileImage() {
-        guard let url = post?.profileImageUrl else { return }
+        guard let url = post?.imageUrl else { return }
         self.photoImageView.loadImage(urlString: url)
-        
         DispatchQueue.main.async {
             self.photoImageView.loadImage(urlString: url)
         }

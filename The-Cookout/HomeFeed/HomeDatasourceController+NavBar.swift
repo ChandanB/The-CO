@@ -16,130 +16,51 @@ extension HomeDatasourceController {
         guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
+        let ref = Database.database().reference().child("users").child(uid).child("recommended")
         
-        
-        let ref = Database.database().reference().child("users").child(uid)
-        
-        // Gets UserId and fetch if user added
-        ref.child("recommended").observe(.childAdded, with: { (snapshot) in
+        ref.observe(.childAdded) { (snapshot) in
             let userId = snapshot.key
             self.fetchUsers(userId)
-        }, withCancel: nil)
-        
-        ref.child("recommended").observe(.childRemoved, with: { (snapshot) in
-            let userId = snapshot.key
-            self.deleteUsers(userId)
-        }, withCancel: nil)
-        
-    }
-    
-    func refreshUserFeed() {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            return
         }
-        
-        let ref = Database.database().reference()
-        let myRef = Database.database().reference().child("users").child(uid)
-        
-        myRef.child("recommended").observe(.childAdded, with: { (snapshot) in
-            let userId = snapshot.key
-            let usersReference = ref.child("users").child(userId)
-            
-            // Add users to array
-            usersReference.queryOrderedByKey().observeSingleEvent(of: .value) { (snapshot) in
-                
-                let userDictionary = snapshot.value as? [String: AnyObject]
-                let user = User(dictionary: userDictionary!)
-                self.homeDatasource.users.insert(user, at: 0)
-                
-                DispatchQueue.main.async {
-                 //   self.datasource = self.homeDatasource
-                    self.refresher.endRefreshing()
-                    self.collectionView?.reloadData()
-                }
-            }
-            
-        }, withCancel: nil)
     }
     
     func fetchPostFeed() {
         guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
+        let baseRef = Database.database().reference().child("users").child(uid)
+        let ref = baseRef.child("following").child("posts")
         
-        let ref = Database.database().reference().child("users").child(uid)
-        let postsRef = ref.child("following").child("posts")
-        
-        // Gets PostId and fetch if child added
-        postsRef.observe(.childAdded, with: { (snapshot) in
+        ref.observe(.childAdded) { (snapshot) in
             let postId = snapshot.key
             self.fetchPosts(postId)
-        }, withCancel: nil)
-        
-        postsRef.observe(.childRemoved, with: { (snapshot) in
-            let postId = snapshot.key
-            self.deletePosts(postId)
-        }, withCancel: nil)
+        }
     }
     
     fileprivate func fetchUsers(_ userId: String) {
-        let ref = Database.database().reference()
-        let usersReference = ref.child("users").child(userId)
+        let ref = Database.database().reference().child("users").child(userId)
         
-        usersReference.observeSingleEvent(of: .value, with: { (snapshot) in
-            if let userDictionary = snapshot.value as? [String: AnyObject] {
-                self.homeDatasource.users.append(User(dictionary: userDictionary))
+        ref.observeSingleEvent(of: .value) { (snapshot) in
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                self.homeDatasource.users.append(User(dictionary: dictionary))
             }
-            
             DispatchQueue.main.async {
-                self.datasource = self.homeDatasource
                 self.collectionView?.reloadData()
             }
-        }, withCancel: nil)
+        }
     }
     
     fileprivate func fetchPosts(_ postId: String) {
-        let ref = Database.database().reference()
-        let postsReference = ref.child("posts").child(postId)
+        let ref = Database.database().reference().child("posts").child(postId)
         // Add posts to array
-        postsReference.observeSingleEvent(of: .value, with: { (snapshot) in
-            if let postDictionary = snapshot.value as? [String: AnyObject] {
-                self.homeDatasource.posts.append(Post(dictionary: postDictionary))
+        ref.observeSingleEvent(of: .value) { (snapshot) in
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                self.homeDatasource.posts.append(Post(dictionary: dictionary))
             }
-            
             DispatchQueue.main.async {
-                self.datasource = self.homeDatasource
                 self.collectionView?.reloadData()
             }
-        }, withCancel: nil)
-    }
-    
-    fileprivate func deletePosts(_ postId: String) {
-        let ref = Database.database().reference()
-        let postsReference = ref.child("posts").child(postId)
-        
-        // Remove posts from array
-        postsReference.observeSingleEvent(of: .value, with: { (snapshot) in
-            if let postDictionary = snapshot.value as? [String: AnyObject] {
-                let post = Post(dictionary: postDictionary)
-           //     self.homeDatasource.posts.remove(at: post)
-                self.datasource = self.homeDatasource
-            }
-        }, withCancel: nil)
-    }
-    
-    fileprivate func deleteUsers(_ userId: String) {
-        let ref = Database.database().reference()
-        let usersReference = ref.child("users").child(userId)
-        
-        // Remove users from array
-        usersReference.observeSingleEvent(of: .value, with: { (snapshot) in
-            if let userDictionary = snapshot.value as? [String: AnyObject] {
-                let user = User(dictionary: userDictionary)
-           //     self.homeDatasource.users.remove(at: user)
-                self.datasource = self.homeDatasource
-            }
-        }, withCancel: nil)
+        }
     }
     
     func fetchImage(with imageUrl: String, completion: @escaping (UIImage?) -> Void) {

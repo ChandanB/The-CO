@@ -113,12 +113,12 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		1F2BAA3920A80B9900350CEC /* Extensions */ = {
+		1F2BAA3920A80B9900350CEC /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				1F2BAA3C20A80BC800350CEC /* Extensions.swift */,
 			);
-			path = Extensions;
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		1F4FD35420A8840D00AB73C1 /* Service */ = {
@@ -200,7 +200,7 @@
 				1F2BAA2520A7C52C00350CEC /* Model */,
 				1F2BAA2620A7C53200350CEC /* View */,
 				1F4FD35420A8840D00AB73C1 /* Service */,
-				1F2BAA3920A80B9900350CEC /* Extensions */,
+				1F2BAA3920A80B9900350CEC /* Utils */,
 				1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */,
 				1FAB5B4920A7B10F003F9943 /* Assets.xcassets */,
 				1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */,

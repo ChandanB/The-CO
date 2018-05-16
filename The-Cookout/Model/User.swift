@@ -6,10 +6,10 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import UIKit
+import LBTAComponents
 
 struct User {
-    let id: String
+    let uid: String
     let name: String
     let email: String
     let bio: String
@@ -17,8 +17,8 @@ struct User {
     let profileImage: UIImage
     let profileImageUrl: String
     
-    init(dictionary: [String: AnyObject]) {
-        self.id = dictionary["id"] as? String ?? ""
+    init(uid: String, dictionary: [String: AnyObject]) {
+        self.uid = uid
         self.bio = dictionary["bio"] as? String ?? ""
         self.name = dictionary["name"] as? String ?? ""
         self.email = dictionary["email"] as? String ?? ""

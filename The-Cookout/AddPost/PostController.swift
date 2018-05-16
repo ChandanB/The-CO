@@ -222,7 +222,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
             guard let dictionary = snapshot.value as? [String: Any] else { return }
-            self.user = User(dictionary: dictionary as [String : AnyObject])
+            self.user = User(uid: uid, dictionary: dictionary as [String : AnyObject])
             
             self.collectionView?.reloadData()
         }

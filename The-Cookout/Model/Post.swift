@@ -6,34 +6,27 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import UIKit
+import LBTAComponents
 
 struct Post {
-    let fromId: String
+    
+    let user: User
     let timestamp: NSNumber
     let caption: String
-    let profileImageUrl: String
     let imageUrl: String
     let videoUrl: String
     let imageWidth: NSNumber
     let imageHeight: NSNumber
-    let likes: String
-    let dislikes: String
-    let username: String
-    let name: String
+    let votes: NSNumber
     
-    init(dictionary: [String: AnyObject]) {
+    init(user: User, dictionary: [String: AnyObject]) {
+        self.user = user
+        self.votes = dictionary["votes"] as? NSNumber ?? 0
         self.caption = dictionary["caption"] as? String ?? ""
-        self.name = dictionary["name"] as? String ?? ""
-        self.likes = dictionary["likes"] as? String ?? ""
-        self.fromId = dictionary["fromId"] as? String ?? ""
-        self.username = dictionary["username"] as? String ?? ""
         self.imageUrl = dictionary["imageUrl"] as? String ?? ""
         self.videoUrl = dictionary["videoUrl"] as? String ?? ""
-        self.dislikes = dictionary["dislikes"] as? String ?? ""
         self.timestamp = dictionary["timestamp"] as? NSNumber ?? 0
         self.imageWidth = dictionary["imageWidth"] as? NSNumber ?? 0
         self.imageHeight = dictionary["imageHeight"] as? NSNumber ?? 0
-        self.profileImageUrl = dictionary["profileImageUrl"] as? String ?? ""
     }
 }

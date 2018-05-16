@@ -6,7 +6,7 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import UIKit
+import LBTAComponents
 import Firebase
 
 class Message: NSObject {

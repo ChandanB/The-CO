@@ -14,17 +14,24 @@ class PostCell: DatasourceCell {
         didSet {
             guard let post = datasourceItem as? Post else { return }
             
-            let url = URL(string: post.profileImageUrl)
+            let url = URL(string: post.user.profileImageUrl)
             profileImageView.kf.setImage(with: url)
             
             let imageUrl = URL(string: post.imageUrl)
             photoImageView.kf.setImage(with: imageUrl)
             
-            let nameAttributedText = NSMutableAttributedString(string: (post.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
+            let nameAttributedText = NSMutableAttributedString(string: (post.user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
             
-            let usernameString = "  \(post.username)\n"
+            let usernameString = "  \(post.user.username)"
+            
+            let date = NSDate(timeIntervalSince1970: TimeInterval(truncating: post.timestamp))
+            let time = " \(date)"
             
             nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
+            
+             nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
+            
+            nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
             
             usernameLabel.attributedText = nameAttributedText
             
@@ -140,8 +147,7 @@ class PostCell: DatasourceCell {
         addSubview(buttonStackView)
         addSubview(photoImageView)
         
-        
-        buttonStackView.anchor(nil, left: messageTextView.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 20, leftConstant: 4, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 20)
+        buttonStackView.anchor(nil, left: profileImageView.rightAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 26, leftConstant: 4, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 26)
         
          photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
@@ -152,13 +158,13 @@ class PostCell: DatasourceCell {
         addSubview(dislikeButton)
         addSubview(loveButton)
         
-        replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
-        likeButton.anchor(likeButtonContainerView.topAnchor, left: likeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        likeButton.anchor(likeButtonContainerView.topAnchor, left: likeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
-        dislikeButton.anchor(dislikeButtonContainerView.topAnchor, left: dislikeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        dislikeButton.anchor(dislikeButtonContainerView.topAnchor, left: dislikeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
-        loveButton.anchor(loveButtonContainerView.topAnchor, left: loveButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        loveButton.anchor(loveButtonContainerView.topAnchor, left: loveButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
     }
     
 }

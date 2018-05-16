@@ -26,28 +26,35 @@ extension HomeController {
     
     func fetchPostFeed() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("posts").child(uid)
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            self.fetchPostsWithUser(user)
+        }
+    }
+    
+    fileprivate func fetchPostsWithUser(_ user: User) {
+        let ref = Database.database().reference().child("posts").child(user.uid)
         
         ref.observeSingleEvent(of: .value) { (snapshot) in
-            print(snapshot.value ?? "")
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
             
             dictionaries.forEach({ (key, value) in
                 guard let dictionary = value as? [String: Any] else { return }
-                let post = Post(dictionary: dictionary as [String : AnyObject])
+                
+                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 self.homeDatasource.posts.append(post)
             })
-            
             self.collectionView?.reloadData()
         }
     }
+    
     
     fileprivate func fetchUsers(_ userId: String) {
         let ref = Database.database().reference().child("users").child(userId)
         
         ref.observeSingleEvent(of: .value) { (snapshot) in
             if let dictionary = snapshot.value as? [String: AnyObject] {
-                self.homeDatasource.users.append(User(dictionary: dictionary))
+                let user = User(uid: userId, dictionary: dictionary)
+                self.homeDatasource.users.append(user)
             }
             DispatchQueue.main.async {
                 self.collectionView?.reloadData()

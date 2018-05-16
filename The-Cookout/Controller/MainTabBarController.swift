@@ -14,30 +14,9 @@ import Firebase
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    var user: User?
-    
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        
-        let index = viewControllers?.index(of: viewController)
-        if index == 2 {
-            
-            let layout = UICollectionViewFlowLayout()
-            let postController = PostController(collectionViewLayout: layout)
-            postController.user = self.user
-            let navController = UINavigationController(rootViewController: postController)
-    
-            present(navController, animated: false, completion: nil)
-            
-            return false
-        }
-        
-        return true
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.delegate = self
         
         if Auth.auth().currentUser == nil {
             //show if not logged in
@@ -48,6 +27,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
             }
             return
         }
+        
+        self.delegate = self
         setupViewControllers()
     }
     
@@ -57,7 +38,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         let homeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "home_unselected"), selectedImage: #imageLiteral(resourceName: "home_selected"), rootViewController: HomeController())
         
         //search
-        let searchNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "search_unselected"), selectedImage: #imageLiteral(resourceName: "search_selected"))
+        let searchNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "search_unselected"), selectedImage: #imageLiteral(resourceName: "search_selected"), rootViewController: UserSearchController())
         
         let plusNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "plus_unselected"), selectedImage: #imageLiteral(resourceName: "plus_unselected"))
         
@@ -82,6 +63,22 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         for item in items {
             item.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
         }
+    }
+    
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        
+        let index = viewControllers?.index(of: viewController)
+        if index == 2 {
+            
+            let layout = UICollectionViewFlowLayout()
+            let postController = PostController(collectionViewLayout: layout)
+            let navController = UINavigationController(rootViewController: postController)
+            
+            present(navController, animated: false, completion: nil)
+            
+            return false
+        }
+        return true
     }
     
     fileprivate func templateNavController(unselectedImage: UIImage, selectedImage: UIImage, rootViewController: UIViewController = UIViewController()) -> UINavigationController {

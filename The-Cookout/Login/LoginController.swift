@@ -89,12 +89,7 @@ class LoginController: UIViewController {
             guard let uid = Auth.auth().currentUser?.uid else { return }
           Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 print(snapshot.value ?? "")
-                
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                
-                let loggedInUser = User(dictionary: dictionary as [String : AnyObject])
-                
-                mainTabBarController.user = loggedInUser
+                                
                 mainTabBarController.setupViewControllers()
                 self.dismiss(animated: true, completion: nil)
                 

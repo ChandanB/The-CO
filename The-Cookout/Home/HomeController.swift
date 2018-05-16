@@ -97,7 +97,7 @@ class HomeController: DatasourceController {
             return 0
         }
         
-        return 1
+        return 5
     }
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -115,10 +115,10 @@ class HomeController: DatasourceController {
             if post.imageWidth.intValue > 0 {
                 var height: CGFloat = 50 + 8 + 8 + estimatedHeight
                 height += view.frame.width
-                return CGSize(width: view.frame.width, height: height + 40)
+                return CGSize(width: view.frame.width, height: height + 72)
             }
             
-            return CGSize(width: view.frame.width, height: estimatedHeight + 94)
+            return CGSize(width: view.frame.width, height: estimatedHeight + 126)
         }
         
         return CGSize(width: view.frame.width, height: 200)
@@ -159,12 +159,8 @@ class HomeController: DatasourceController {
     var user: User?
     fileprivate func fetchUser() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("users").child(uid)
-        
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            print(snapshot.value ?? "")
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            self.user = User(dictionary: dictionary as [String : AnyObject])
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            self.user = user
             self.setupLeftNavItem(self.user!)
             self.collectionView?.reloadData()
         }

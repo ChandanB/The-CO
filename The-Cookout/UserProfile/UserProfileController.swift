@@ -34,11 +34,12 @@ class UserProfileController: DatasourceController {
         
         ref.queryOrdered(byChild: "creationDate").observe(.childAdded) { (snapshot) in
             guard let dictionary = snapshot.value as? [String: Any] else { return }
+            guard let user = self.user else { return }
             
-            let post = Post(dictionary: dictionary as [String : AnyObject])
+            let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
             
             if post.imageUrl != "" {
-                self.userProfileDatasource.posts.append(post)
+                self.userProfileDatasource.posts.insert(post, at: 0)
                 self.collectionView?.reloadData()
             }
         }
@@ -47,12 +48,7 @@ class UserProfileController: DatasourceController {
     var user: User?
     fileprivate func fetchUser() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("users").child(uid)
-        
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            print(snapshot.value ?? "")
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            let user = User(dictionary: dictionary as [String : AnyObject])
+        Database.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
             self.collectionView?.reloadData()
         }

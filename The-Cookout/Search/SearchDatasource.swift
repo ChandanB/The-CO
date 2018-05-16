@@ -1,17 +1,18 @@
 //
-//  HomeDatasource.swift
+//  SearchDatasource.swift
 //  The-Cookout
 //
-//  Created by Chandan Brown on 5/12/18.
+//  Created by Chandan Brown on 5/16/18.
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
 import LBTAComponents
 
-class HomeDataSource: Datasource {
+class SearchDataSource: Datasource {
     
     var users = [User]()
-    var posts = [Post]()
+    var filteredUsers = [User]()
+    var topUsers = [User]()
     
     override func headerClasses() -> [DatasourceCell.Type]? {
         return [UserHeader.self]
@@ -22,25 +23,25 @@ class HomeDataSource: Datasource {
     }
     
     override func cellClasses() -> [DatasourceCell.Type] {
-        return [UserCell.self, PostCell.self]
+        return [UserCell.self, UserSearchCell.self]
     }
     
     override func item(_ indexPath: IndexPath) -> Any? {
         
-        if indexPath.section == 1 {
-            return posts[indexPath.item]
+        if indexPath.section == 0 {
+            return topUsers[indexPath.item]
         }
         
-        return users[indexPath.item]
+        return filteredUsers[indexPath.item]
     }
     
     override func numberOfItems(_ section: Int) -> Int {
         
-        if section == 1 {
-            return posts.count
+        if section == 0 {
+            return topUsers.count
         }
         
-        return users.count
+        return filteredUsers.count
     }
     
     override func numberOfSections() -> Int {

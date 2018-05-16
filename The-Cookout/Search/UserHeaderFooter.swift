@@ -14,7 +14,7 @@ class UserHeader: DatasourceCell {
     
     let textlabel: UILabel = {
        let label = UILabel()
-       label.text = "Who you should follow"
+       label.text = "TOP USERS"
        label.font = UIFont.boldSystemFont(ofSize: 16)
        return label
     }()
@@ -36,7 +36,7 @@ class UserFooter: DatasourceCell {
     
     let textlabel: UILabel = {
     let label = UILabel()
-    label.text = "SHOW ME MORE"
+    label.text = "SHOW MORE"
     label.textColor = twitterBlue
     label.font = UIFont.systemFont(ofSize: 15)
     return label
@@ -56,6 +56,6 @@ class UserFooter: DatasourceCell {
         
         whiteBackgroundView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 14, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
-        textlabel.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 14, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        textlabel.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
 }

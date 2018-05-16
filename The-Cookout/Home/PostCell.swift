@@ -22,18 +22,15 @@ class PostCell: DatasourceCell {
             
             let nameAttributedText = NSMutableAttributedString(string: (post.user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
             
-            let usernameString = "  \(post.user.username)"
-            
-            let date = NSDate(timeIntervalSince1970: TimeInterval(truncating: post.timestamp))
-            let time = " \(date)"
+            let usernameString = "  @\(post.user.username)"
             
             nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
             
-             nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
+            nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
             
-            nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
+//            nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
             
-            usernameLabel.attributedText = nameAttributedText
+            nameLabel.attributedText = nameAttributedText
             
             let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
             
@@ -41,7 +38,7 @@ class PostCell: DatasourceCell {
             paragraphStyle.lineSpacing = 4
             let range = NSMakeRange(0, attributedText.string.count)
             attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
-
+            
             messageTextView.attributedText = attributedText
             
         }
@@ -103,7 +100,7 @@ class PostCell: DatasourceCell {
         return button
     }()
     
-    var usernameLabel: UILabel = {
+    var nameLabel: UILabel = {
         let label = UILabel()
         return label
     }()
@@ -118,12 +115,12 @@ class PostCell: DatasourceCell {
         addSubview(profileImageView)
         addSubview(messageTextView)
         addSubview(optionsButton)
-        addSubview(usernameLabel)
+        addSubview(nameLabel)
         
         
         optionsButton.anchor(self.topAnchor, left: nil, bottom: nil, right: self.rightAnchor, topConstant: 12, leftConstant: 0, bottomConstant: 4, rightConstant: 8, widthConstant: 44, heightConstant: 0)
         
-        usernameLabel.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        nameLabel.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         profileImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
         
@@ -149,7 +146,7 @@ class PostCell: DatasourceCell {
         
         buttonStackView.anchor(nil, left: profileImageView.rightAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 26, leftConstant: 4, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 26)
         
-         photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         photoImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1).isActive = true
         

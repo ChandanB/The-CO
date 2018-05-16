@@ -12,18 +12,6 @@ import Kingfisher
 
 extension HomeController {
     
-    func fetchUserFeed() {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            return
-        }
-        let ref = Database.database().reference().child("users").child(uid).child("recommended")
-        
-        ref.observe(.childAdded) { (snapshot) in
-            let userId = snapshot.key
-            self.fetchUsers(userId)
-        }
-    }
-    
     func fetchPostFeed() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
@@ -44,21 +32,6 @@ extension HomeController {
                 self.homeDatasource.posts.append(post)
             })
             self.collectionView?.reloadData()
-        }
-    }
-    
-    
-    fileprivate func fetchUsers(_ userId: String) {
-        let ref = Database.database().reference().child("users").child(userId)
-        
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                let user = User(uid: userId, dictionary: dictionary)
-                self.homeDatasource.users.append(user)
-            }
-            DispatchQueue.main.async {
-                self.collectionView?.reloadData()
-            }
         }
     }
 }

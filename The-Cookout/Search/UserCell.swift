@@ -16,7 +16,7 @@ class UserCell: DatasourceCell {
             guard let user = datasourceItem as? User else { return }
             let url = URL(string: user.profileImageUrl)
             nameLabel.text = user.name
-            usernameLabel.text = user.username
+            usernameLabel.text = " @\(user.username)"
             bioTextView.text = user.bio
             profileImageView.kf.setImage(with: url)
         }

@@ -11,6 +11,14 @@ import Firebase
 
 let imageCache = NSCache<AnyObject, AnyObject>()
 
+extension String
+{
+    func trim() -> String
+    {
+        return self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+    }
+}
+
 extension Formatter {
     static let iso8601: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
@@ -51,7 +59,7 @@ extension UIImage {
 }
 
 extension UIViewController {
-    func hideKeyboardWhenTappedAround() {
+    func hideKeyboardWhenTapped() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)

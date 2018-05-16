@@ -21,7 +21,6 @@ class HomeController: DatasourceController {
         self.datasource = self.homeDatasource
         
         fetchUser()
-        fetchUserFeed()
         fetchPostFeed()
         
         setupNavigationBarItems()
@@ -57,7 +56,7 @@ class HomeController: DatasourceController {
         let profileButton = UIButton(type: .system)
         let url = user.profileImageUrl
         let fetchImage = FetchImage()
-       
+        
         fetchImage.fetch(with: url) { (image) in
             profileButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
         }
@@ -92,36 +91,21 @@ class HomeController: DatasourceController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        
-        if section == 0 {
-            return 0
-        }
-        
         return 5
     }
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if indexPath.section == 0 {
-            if let user = self.datasource?.item(indexPath) as? User {
-                let estimatedHeight = estimatedHeightForText(user.bio)
-                return CGSize(width: view.frame.width, height: estimatedHeight + 66)
-            }
-        } else if indexPath.section == 1 {
-            
-            guard let post = self.datasource?.item(indexPath) as? Post else { return .zero }
-            let estimatedHeight = estimatedHeightForText(post.caption)
-            
-            if post.imageWidth.intValue > 0 {
-                var height: CGFloat = 50 + 8 + 8 + estimatedHeight
-                height += view.frame.width
-                return CGSize(width: view.frame.width, height: height + 72)
-            }
-            
-            return CGSize(width: view.frame.width, height: estimatedHeight + 126)
+        guard let post = self.datasource?.item(indexPath) as? Post else { return .zero }
+        let estimatedHeight = estimatedHeightForText(post.caption)
+        
+        if post.imageWidth.intValue > 0 {
+            var height: CGFloat = 50 + 8 + 8 + estimatedHeight
+            height += view.frame.width
+            return CGSize(width: view.frame.width, height: height + 72)
         }
         
-        return CGSize(width: view.frame.width, height: 200)
+        return CGSize(width: view.frame.width, height: estimatedHeight + 126)
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
@@ -132,24 +116,6 @@ class HomeController: DatasourceController {
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
         return estimatedFrame.height
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
-        if section == 1 {
-            return .zero
-        }
-        
-        return CGSize(width: view.frame.width, height: 50)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        
-        if section == 1 {
-            return .zero
-        }
-        
-        return CGSize(width: view.frame.width, height: 64)
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {

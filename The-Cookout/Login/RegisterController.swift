@@ -180,7 +180,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         view.addSubview(alreadyHaveAccountButton)
         alreadyHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
         
-        self.hideKeyboardWhenTappedAround()
+        self.hideKeyboardWhenTapped()
         view.backgroundColor = .white
         
         view.addSubview(plusPhotoButton)

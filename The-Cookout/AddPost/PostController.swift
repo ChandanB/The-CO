@@ -42,7 +42,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hideKeyboardWhenTappedAround()
+        self.hideKeyboardWhenTapped()
         
         self.postHeader?.delegate = self
         
@@ -113,9 +113,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
     }
     
-    @objc func sharePost() {
-        self.dismissKeyboard()
-        
+    @objc func sharePost() {        
         if selectedImage != nil {
             shareImagePost()
         } else {
@@ -166,9 +164,15 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let userPostRef = Database.database().reference().child("posts").child(uid)
         let ref = userPostRef.childByAutoId()
         
+        var trimmedCaption = caption.trim()
+        
+        if trimmedCaption == "What's on your mind?" {
+            trimmedCaption = ""
+        }
+        
         let values =
             ["imageUrl": imageUrl,
-             "caption": caption,
+             "caption": trimmedCaption,
              "imageWidth": postImage.size.width,
              "imageHeight": postImage.size.height,
              "creationDate": Date().timeIntervalSince1970,
@@ -196,7 +200,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let userPostRef = Database.database().reference().child("posts").child(uid)
         let ref = userPostRef.childByAutoId()
         
-        let values = ["caption": caption,
+        let values = ["caption": caption.trim(),
                       "creationDate": Date().timeIntervalSince1970,
                       "profileImageUrl": user.profileImageUrl,
                       "name": user.name,
@@ -211,6 +215,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             print("Successfully saved post to DB")
             self.dismiss(animated: true, completion: nil)
         }
+        
     }
     
     @objc func handleCancel() {

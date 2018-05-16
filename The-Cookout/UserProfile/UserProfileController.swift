@@ -13,12 +13,13 @@ import LBTAComponents
 class UserProfileController: DatasourceController {
    
     let userProfileDatasource = UserProfileDataSource()
+
+    var userId: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView?.backgroundColor = .white
-        navigationItem.title = "User Profile"
         
         self.datasource = self.userProfileDatasource
         
@@ -47,7 +48,7 @@ class UserProfileController: DatasourceController {
     
     var user: User?
     fileprivate func fetchUser() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let uid = userId ?? Auth.auth().currentUser?.uid ?? ""
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
             self.collectionView?.reloadData()
@@ -79,17 +80,11 @@ class UserProfileController: DatasourceController {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 200)
     }
-
-}
-
-extension UserProfileController {
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        hideNavigationBar()
-    }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        showNavigationBar()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
     }
+
 }

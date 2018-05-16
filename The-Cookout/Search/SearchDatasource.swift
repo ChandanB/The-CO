@@ -13,6 +13,7 @@ class SearchDataSource: Datasource {
     var users = [User]()
     var filteredUsers = [User]()
     var topUsers = [User]()
+    var vc: UserSearchController?
     
     override func headerClasses() -> [DatasourceCell.Type]? {
         return [UserHeader.self]

@@ -26,11 +26,10 @@ class UserProfileController: DatasourceController {
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
         
         fetchUser()
-        fetchOrderedPosts()
     }
     
     fileprivate func fetchOrderedPosts() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let uid = self.user?.uid else {return}
         let ref = Database.database().reference().child("posts").child(uid)
         
         ref.queryOrdered(byChild: "creationDate").observe(.childAdded) { (snapshot) in
@@ -51,7 +50,9 @@ class UserProfileController: DatasourceController {
         let uid = userId ?? Auth.auth().currentUser?.uid ?? ""
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
+            self.navigationItem.title = self.user?.name
             self.collectionView?.reloadData()
+            self.fetchOrderedPosts()
         }
     }
     
@@ -81,10 +82,4 @@ class UserProfileController: DatasourceController {
         return CGSize(width: view.frame.width, height: 200)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        UINavigationBar.appearance().shadowImage = UIImage()
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-    }
-
 }

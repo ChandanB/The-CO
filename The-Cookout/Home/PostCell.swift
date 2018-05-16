@@ -28,7 +28,18 @@ class PostCell: DatasourceCell {
             
             nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
             
-//            nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
+            let date = NSDate(timeIntervalSince1970: TimeInterval(truncating: post.timestamp))
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let dateString = formatter.string(from: date as Date)
+            let yourDate = formatter.date(from: dateString)
+            formatter.dateFormat = "dd-MMM-yyyy"
+            let timeString = formatter.string(from: yourDate!)
+            
+            let time = " \(timeString)"
+            
+            nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
             
             nameLabel.attributedText = nameAttributedText
             
@@ -102,6 +113,8 @@ class PostCell: DatasourceCell {
     
     var nameLabel: UILabel = {
         let label = UILabel()
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 2
         return label
     }()
     

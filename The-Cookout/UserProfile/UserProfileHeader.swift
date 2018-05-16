@@ -8,15 +8,111 @@
 
 import Kingfisher
 import LBTAComponents
+import Firebase
 
 class UserProfileHeader: DatasourceCell {
     
     var user: User? {
         didSet {
             setupProfileImage()
-            nameLabel.text = user?.username
+            nameLabel.text = user?.name
+            
+            setupEditFollowButton()
         }
     }
+    
+    fileprivate func setupEditFollowButton() {
+        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        
+        guard let userId = user?.uid else { return }
+        
+        if currentLoggedInUserId == userId {
+            //edit profile
+            
+        } else {
+            // check if following
+            Database.database().reference().child("following").child(currentLoggedInUserId).child(userId).observeSingleEvent(of: .value) { (snapshot) in
+                
+                if let isFollowing = snapshot.value as? Int, isFollowing == 1 {
+                    
+                    UIView.performWithoutAnimation {
+                        self.editProfileFollowButton.setTitle("Unfollow", for: .normal)
+                        self.editProfileFollowButton.layoutIfNeeded()
+                    }
+                    
+                } else {
+                    self.setupFollowStyle()
+                }
+            }
+        }
+    }
+    
+    @objc func handleEditProfileOrFollow() {
+        print("Execute edit profile / follow / unfollow logic...")
+        
+        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        
+        guard let userId = user?.uid else { return }
+        
+        if editProfileFollowButton.titleLabel?.text == "Unfollow" {
+            
+            //unfollow
+            guard let user = self.user else { return }
+            
+            let alertController = UIAlertController(title: "Unfollow \(user.name)?", message: "Are you sure you want to unfollow \(user.name)?", preferredStyle: .actionSheet)
+            
+            alertController.addAction(UIAlertAction(title: "Unfollow", style: .destructive, handler: { (_) in
+                
+                do {
+                    Database.database().reference().child("following").child(currentLoggedInUserId).child(userId).removeValue(completionBlock: { (err, ref) in
+                        if let err = err {
+                            print("Failed to unfollow user:", err)
+                            return
+                        }
+                        
+                        print("Successfully unfollowed user:", self.user?.username ?? "")
+                        
+                        self.setupFollowStyle()
+                    })
+                }
+            }))
+            
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            UIApplication.shared.keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
+
+        } else {
+            
+            //follow
+            let ref = Database.database().reference().child("following").child(currentLoggedInUserId)
+            
+            let values = [userId: 1]
+            ref.updateChildValues(values) { (err, ref) in
+                if let err = err {
+                    print("Failed to follow user:", err)
+                    return
+                }
+                
+                print("Successfully followed user: ", self.user?.username ?? "")
+                UIView.performWithoutAnimation {
+                    self.editProfileFollowButton.setTitle("Unfollow", for: .normal)
+                    self.editProfileFollowButton.layoutIfNeeded()
+                }
+                self.editProfileFollowButton.backgroundColor = .white
+                self.editProfileFollowButton.setTitleColor(.black, for: .normal)
+            }
+        }
+    }
+    
+    fileprivate func setupFollowStyle() {
+        UIView.performWithoutAnimation {
+            self.editProfileFollowButton.setTitle("Follow", for: .normal)
+            self.editProfileFollowButton.layoutIfNeeded()
+        }
+        self.editProfileFollowButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
+        self.editProfileFollowButton.setTitleColor(.white, for: .normal)
+        self.editProfileFollowButton.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
+    }
+    
     
     fileprivate func setupProfileImage() {
         guard let url = user?.profileImageUrl else { return }
@@ -67,7 +163,7 @@ class UserProfileHeader: DatasourceCell {
     
     let postsLabel: UILabel = {
         let label = UILabel()
-        let fontStyle = UIFont.boldSystemFont(ofSize: 14)
+        let fontStyle = UIFont.boldSystemFont(ofSize: 12)
         let attributedText = NSMutableAttributedString(string: "11\n", attributes: [NSAttributedStringKey.font: fontStyle])
         attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
         label.attributedText = attributedText
@@ -78,7 +174,7 @@ class UserProfileHeader: DatasourceCell {
     
     let followersLabel: UILabel = {
         let label = UILabel()
-        let fontStyle = UIFont.boldSystemFont(ofSize: 14)
+        let fontStyle = UIFont.boldSystemFont(ofSize: 12)
         let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font: fontStyle])
         attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
         label.attributedText = attributedText
@@ -89,7 +185,7 @@ class UserProfileHeader: DatasourceCell {
     
     let followingLabel: UILabel = {
         let label = UILabel()
-        let fontStyle = UIFont.boldSystemFont(ofSize: 14)
+        let fontStyle = UIFont.boldSystemFont(ofSize: 12)
         let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font: fontStyle])
         attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
         label.attributedText = attributedText
@@ -98,15 +194,16 @@ class UserProfileHeader: DatasourceCell {
         return label
     }()
     
-    let editProfileButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setTitle("Edit Profile", for: .normal)
-        btn.setTitleColor(.black, for: .normal)
-        btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        btn.layer.borderColor = UIColor.darkGray.cgColor
-        btn.layer.cornerRadius = 3
-        btn.layer.borderWidth = 1
-        return btn
+    lazy var editProfileFollowButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Edit Profile", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 3
+        button.addTarget(self, action: #selector(handleEditProfileOrFollow), for: .touchUpInside)
+        return button
     }()
     
     override func setupViews() {
@@ -121,14 +218,12 @@ class UserProfileHeader: DatasourceCell {
         setupBottomToolBar()
         
         addSubview(nameLabel)
-        
         nameLabel.anchor(profileImageView.bottomAnchor, left: leftAnchor, bottom: listButton.topAnchor, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         
         setupUserStatsView()
         
-        addSubview(editProfileButton)
-        
-        editProfileButton.anchor(postsLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 2, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 34)
+        addSubview(editProfileFollowButton)
+        editProfileFollowButton.anchor(postsLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 2, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 34)
     }
     
     fileprivate func setupBottomToolBar() {

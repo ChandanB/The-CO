@@ -19,6 +19,9 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         sb.autocapitalizationType = .none
         return sb
     }()
+    
+    let placeholderWidth: CGFloat = 200.0
+    var offset = UIOffset()
 
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -35,8 +38,20 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
+        super.viewWillAppear(animated)
         searchBar.isHidden = false
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        searchBar.isHidden = true
+        searchBar.resignFirstResponder()
+        
+        let user = self.searchDatasource.filteredUsers[indexPath.item]
+        
+        let userProfileController = UserProfileController()
+        userProfileController.userId = user.uid
+        navigationController?.pushViewController(userProfileController, animated: true)
     }
     
     let searchDatasource = SearchDataSource()
@@ -49,11 +64,30 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         navBar.addSubview(searchBar)
         searchBar.anchor(navBar.topAnchor, left: navBar.leftAnchor, bottom: navBar.bottomAnchor, right: navBar.rightAnchor, topConstant: 0, leftConstant: 8, bottomConstant: 0, rightConstant: 8, widthConstant: 0, heightConstant: 0)
         
+        offset = UIOffset(horizontal: (searchBar.frame.width + placeholderWidth) / 2, vertical: 0)
+        searchBar.setPositionAdjustment(offset, for: .search)
+        
         self.datasource = self.searchDatasource
         self.searchBar.delegate = self
+        collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .onDrag
+        
         fetchUsers()
         fetchTopUsers()
+    }
+    
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        let noOffset = UIOffset(horizontal: 0, vertical: 0)
+        searchBar.setPositionAdjustment(noOffset, for: .search)
+        
+        return true
+    }
+    
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setPositionAdjustment(offset, for: .search)
+        
+        return true
     }
     
     fileprivate func fetchUsers() {
@@ -64,6 +98,12 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
                 else { return }
             
             dictionaries.forEach({ (key, value) in
+                
+                if key == Auth.auth().currentUser?.uid {
+                    print("Found myself, omit from list")
+                    return
+                }
+                
                 guard let dictionary = value as? [String: AnyObject] else { return }
                 let user = User(uid: key, dictionary: dictionary)
                 self.searchDatasource.users.append(user)
@@ -96,25 +136,13 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         }
     }
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        searchBar.isHidden = true
-        searchBar.resignFirstResponder()
-        let user = self.searchDatasource.filteredUsers[indexPath.item]
-        let userProfileController = UserProfileController()
-        userProfileController.userId = user.uid
-        userProfileController.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        userProfileController.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.pushViewController(userProfileController, animated: true)
-    }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
         if section == 1 {
             return .zero
         }
         
-        return CGSize(width: view.frame.width, height: 50)
+        return CGSize(width: view.frame.width, height: 33)
     }
     
     
@@ -126,8 +154,6 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         
         return CGSize(width: view.frame.width, height: 40)
     }
-    
-    
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -154,4 +180,5 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         collectionViewLayout.invalidateLayout()
     }
+    
 }

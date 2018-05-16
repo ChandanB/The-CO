@@ -13,6 +13,9 @@ import Kingfisher
 class HomeController: DatasourceController {
     
     let homeDatasource = HomeDataSource()
+    var menuIsVisible = false
+    var leadingC: NSLayoutConstraint!
+    var trailingC: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()

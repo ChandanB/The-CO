@@ -16,11 +16,13 @@ class UserSearchCell: DatasourceCell {
             let url = URL(string: user.profileImageUrl)
             profileImageView.kf.setImage(with: url)
             
-            let nameAttributedText = NSMutableAttributedString(string: (user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
+            let nameAttributedText = NSMutableAttributedString(string: (user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 12)])
             
-            let usernameString = "  @\(user.username)"
+            let usernameString = "@\(user.username)"
             
-            nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
+            nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 5)]))
+            
+            nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 12), .foregroundColor: UIColor.gray]))
             
             nameLabel.attributedText = nameAttributedText
             
@@ -37,8 +39,8 @@ class UserSearchCell: DatasourceCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor(r: 130, g: 130, b: 130)
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 2
         return label
     }()
     
@@ -46,8 +48,8 @@ class UserSearchCell: DatasourceCell {
         super.setupViews()
         backgroundColor = .white
         
-        separatorLineView.isHidden = false
-        separatorLineView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
+//        separatorLineView.isHidden = false
+//        separatorLineView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         addSubview(profileImageView)
         addSubview(nameLabel)
@@ -55,7 +57,7 @@ class UserSearchCell: DatasourceCell {
         profileImageView.anchor(nil, left: leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 8, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
         profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
-        nameLabel.anchor(topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 8, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        nameLabel.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: -8, leftConstant: 8, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
     }
     

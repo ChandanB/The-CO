@@ -6,15 +6,24 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import Firebase
+import Kingfisher
 import LBTAComponents
 
-class UserProfileHeader: UICollectionViewCell {
+class UserProfileHeader: DatasourceCell {
     
     var user: User? {
         didSet {
             setupProfileImage()
-            nameLabel.text = user?.name
+            nameLabel.text = user?.username
+        }
+    }
+    
+    fileprivate func setupProfileImage() {
+        guard let url = user?.profileImageUrl else { return }
+        self.profileImageView.loadImage(urlString: url)
+        
+        DispatchQueue.main.async {
+            self.profileImageView.loadImage(urlString: url)
         }
     }
     
@@ -52,7 +61,6 @@ class UserProfileHeader: UICollectionViewCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Name"
         label.font = UIFont.boldSystemFont(ofSize: 14)
         return label
     }()
@@ -101,8 +109,11 @@ class UserProfileHeader: UICollectionViewCell {
         return btn
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override func setupViews() {
+        super.setupViews()
+        
+        separatorLineView.isHidden = false
+        separatorLineView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         addSubview(profileImageView)
         profileImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 80, heightConstant: 80)
@@ -120,15 +131,6 @@ class UserProfileHeader: UICollectionViewCell {
         editProfileButton.anchor(postsLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 2, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 34)
     }
     
-    fileprivate func setupProfileImage() {
-        guard let url = user?.profileImageUrl else { return }
-        self.profileImageView.loadImage(urlString: url)
-        
-        DispatchQueue.main.async {
-            self.profileImageView.loadImage(urlString: url)
-        }
-    }
-    
     fileprivate func setupBottomToolBar() {
         
         let topDividerView = UIView()
@@ -144,10 +146,6 @@ class UserProfileHeader: UICollectionViewCell {
         addSubview(topDividerView)
         addSubview(bottomDividerView)
         
-        topDividerView.anchor(stackView.topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0.5)
-        
-        bottomDividerView.anchor(stackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0.5)
-        
         stackView.anchor(nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
     }
     
@@ -159,10 +157,5 @@ class UserProfileHeader: UICollectionViewCell {
     
         stackView.anchor(topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 50)
     }
-    
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
 }

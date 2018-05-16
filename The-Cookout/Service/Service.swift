@@ -9,7 +9,5 @@
 import Firebase
 
 struct Service {
-    
     static let sharedInstance = Service()
-    
 }

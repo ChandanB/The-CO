@@ -9,8 +9,8 @@
 import Firebase
 import LBTAComponents
 
-class RegisterController: UIViewController {
-        
+class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
     lazy var plusPhotoButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -21,30 +21,24 @@ class RegisterController: UIViewController {
     @objc func handlePlusPhoto() {
         let picker = UIImagePickerController()
         picker.allowsEditing = true
-        picker.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+        picker.delegate = self
         present(picker, animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        var selectedImageFromPicker: UIImage?
-        
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
-            selectedImageFromPicker = editedImage
+            plusPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
         } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
-            selectedImageFromPicker = originalImage
+            plusPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
         }
         
-        if let selectedImage = selectedImageFromPicker {
-            DispatchQueue.main.async {
-                plusPhotoButton.setImage(selectedImage.withRenderingMode(.alwaysOriginal), for: .normal)
-            }
-            plusPhotoButton.layer.cornerRadius = plusPhotoButton.frame.width/2
-            plusPhotoButton.layer.masksToBounds = true
-            plusPhotoButton.layer.borderColor = UIColor.black.cgColor
-            plusPhotoButton.layer.borderWidth = 3
-            dismiss(animated: true, completion: nil)
-        }
+        plusPhotoButton.layer.cornerRadius = plusPhotoButton.frame.width/2
+        plusPhotoButton.layer.masksToBounds = true
+        plusPhotoButton.layer.borderColor = UIColor.black.cgColor
+        plusPhotoButton.layer.borderWidth = 3
+        dismiss(animated: true, completion: nil)
+        
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -71,7 +65,7 @@ class RegisterController: UIViewController {
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
-
+    
     let passwordTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Password"
@@ -197,7 +191,7 @@ class RegisterController: UIViewController {
         
         plusPhotoButton.anchor(view.topAnchor, left: nil, bottom: nil, right: nil, topConstant: 50, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 140, heightConstant: 140)
         plusPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-
+        
         setupInputFields()
     }
     

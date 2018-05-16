@@ -11,7 +11,7 @@ import UIKit
 struct Post {
     let fromId: String
     let timestamp: NSNumber
-    let text: String
+    let caption: String
     let profileImageUrl: String
     let imageUrl: String
     let videoUrl: String
@@ -23,7 +23,7 @@ struct Post {
     let name: String
     
     init(dictionary: [String: AnyObject]) {
-        self.text = dictionary["text"] as? String ?? ""
+        self.caption = dictionary["caption"] as? String ?? ""
         self.name = dictionary["name"] as? String ?? ""
         self.likes = dictionary["likes"] as? String ?? ""
         self.fromId = dictionary["fromId"] as? String ?? ""

@@ -119,7 +119,8 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         if selectedImage != nil {
             shareImagePost()
         } else {
-            shareTextPost()
+            guard let user = self.user else { return }
+            shareTextPost(user)
         }
     }
     
@@ -145,26 +146,35 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 }
                 
                 guard let imageUrl = url else { return }
+                guard let user = self.user else { return }
                 
                 let postImageUrl = imageUrl.absoluteString
                 
                 print("Successfully uploaded post image:", postImageUrl)
                 
-                self.saveToDatabaseWithImageUrl(imageUrl: postImageUrl)
+                self.saveToDatabaseWithImageUrl(postImageUrl, user: user)
             })
         })
     }
     
-    fileprivate func saveToDatabaseWithImageUrl(imageUrl: String) {
+    fileprivate func saveToDatabaseWithImageUrl(_ imageUrl: String, user: User) {
         guard let postImage = selectedImage else { return }
         guard let caption = messageTextView?.text else { return }
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        let userPostRef = Database.database().reference().child("imagePosts").child(uid)
+        let userPostRef = Database.database().reference().child("posts").child(uid)
         let ref = userPostRef.childByAutoId()
         
-        let values = ["imageUrl": imageUrl, "caption": caption, "imageWidth": postImage.size.width, "imageHeight": postImage.size.height, "creationDate": Date().timeIntervalSince1970] as [String : Any]
+        let values =
+            ["imageUrl": imageUrl,
+             "caption": caption,
+             "imageWidth": postImage.size.width,
+             "imageHeight": postImage.size.height,
+             "creationDate": Date().timeIntervalSince1970,
+             "profileImageUrl": user.profileImageUrl,
+             "name": user.name,
+             "username": user.username] as [String : Any]
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {
@@ -178,15 +188,19 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    func shareTextPost() {
+    func shareTextPost(_ user: User) {
         guard let caption = messageTextView?.text else { return }
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        let userPostRef = Database.database().reference().child("textPosts").child(uid)
+        let userPostRef = Database.database().reference().child("posts").child(uid)
         let ref = userPostRef.childByAutoId()
         
-        let values = ["caption": caption, "creationDate": Date().timeIntervalSince1970] as [String : Any]
+        let values = ["caption": caption,
+                      "creationDate": Date().timeIntervalSince1970,
+                      "profileImageUrl": user.profileImageUrl,
+                      "name": user.name,
+                      "username": user.username] as [String : Any]
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {

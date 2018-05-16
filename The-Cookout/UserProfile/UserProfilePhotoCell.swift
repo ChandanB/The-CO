@@ -6,15 +6,17 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import UIKit
-import Firebase
+import Kingfisher
 import LBTAComponents
 
-class UserProfilePhotoCell: UICollectionViewCell {
+class UserProfilePhotoCell: DatasourceCell {
     
-    var post: Post? {
+    override var datasourceItem: Any? {
         didSet {
-            setupProfileImage()
+            guard let post = datasourceItem as? Post else { return }
+            print (post)
+            let url = URL(string: post.imageUrl)
+            photoImageView.kf.setImage(with: url)
         }
     }
     
@@ -25,23 +27,11 @@ class UserProfilePhotoCell: UICollectionViewCell {
         return iv
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override func setupViews() {
+        super.setupViews()
         
         addSubview(photoImageView)
         photoImageView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    fileprivate func setupProfileImage() {
-        guard let url = post?.imageUrl else { return }
-        self.photoImageView.loadImage(urlString: url)
-        DispatchQueue.main.async {
-            self.photoImageView.loadImage(urlString: url)
-        }
     }
     
 }

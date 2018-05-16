@@ -70,10 +70,8 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
             
             textView.selectedTextRange = textView.textRange(from: textView.beginningOfDocument, to: textView.beginningOfDocument)
             
-            if imageView.image == nil {
-                self.postController?.shareButton.isEnabled = false
-                self.postController?.shareButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
-            }
+            self.postController?.shareButton.isEnabled = true
+            self.postController?.shareButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
         }
             
         else if textView.textColor == UIColor.lightGray && !text.isEmpty {
@@ -92,10 +90,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if imageView.image != nil {
-            self.postController?.shareButton.isEnabled = true
-            self.postController?.shareButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
-        }
+      
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -136,7 +131,6 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         
         addSubview(imageView)
         imageView.anchor(messageTextView.bottomAnchor, left: messageTextView.leftAnchor, bottom: nil, right: messageTextView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 250, heightConstant: 400)
-        
         
         let keyboardToolbar = UIToolbar()
         keyboardToolbar.sizeToFit()

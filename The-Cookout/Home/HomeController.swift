@@ -10,13 +10,9 @@ import LBTAComponents
 import Firebase
 import Kingfisher
 
-class HomeDatasourceController: DatasourceController {
-    
-    var userFeed: [User?] = []
-    var postFeed: [Post?] = []
+class HomeController: DatasourceController {
     
     let homeDatasource = HomeDataSource()
-    var refresher: UIRefreshControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,13 +25,6 @@ class HomeDatasourceController: DatasourceController {
         fetchPostFeed()
         
         setupNavigationBarItems()
-        setupRefresherControl()
-    }
-    
-    func setupRefresherControl() {
-        refresher = UIRefreshControl()
-        refresher.addTarget(self, action: #selector(HomeDatasourceController.populate), for: UIControlEvents.valueChanged)
-        collectionView?.addSubview(refresher)
     }
     
     func setupNavigationBarItems() {
@@ -44,11 +33,11 @@ class HomeDatasourceController: DatasourceController {
     }
     
     private func setupRightNavItem() {
-        let newPostButton = UIButton(type: .system)
-        newPostButton.setImage(#imageLiteral(resourceName: "new_post").withRenderingMode(.alwaysOriginal), for: .normal)
-        newPostButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
-        newPostButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: newPostButton)
+        let messageButton = UIButton(type: .system)
+        messageButton.setImage(#imageLiteral(resourceName: "message").withRenderingMode(.alwaysOriginal), for: .normal)
+        messageButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
+        messageButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: messageButton)
     }
     
     private func setupMiddleNavItems() {
@@ -66,15 +55,18 @@ class HomeDatasourceController: DatasourceController {
     
     func setupLeftNavItem(_ user: User) {
         let profileButton = UIButton(type: .system)
-        
-        fetchImage(with: user.profileImageUrl) { (image) in
+        let url = user.profileImageUrl
+        let fetchImage = FetchImage()
+       
+        fetchImage.fetch(with: url) { (image) in
             profileButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
-            profileButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
-            profileButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
-            profileButton.layer.cornerRadius = 17
-            profileButton.layer.masksToBounds = true
-            profileButton.imageView?.contentMode = .scaleAspectFill
         }
+        
+        profileButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
+        profileButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        profileButton.layer.cornerRadius = 17
+        profileButton.layer.masksToBounds = true
+        profileButton.imageView?.contentMode = .scaleAspectFill
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: profileButton)
         navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleLogout)))
@@ -87,36 +79,25 @@ class HomeDatasourceController: DatasourceController {
             
             do {
                 try Auth.auth().signOut()
-                
-                //what happens? we need to present some kind of login controller
                 let loginController = LoginController()
                 let navController = UINavigationController(rootViewController: loginController)
                 self.present(navController, animated: true, completion: nil)
-                
             } catch let signOutErr {
                 print("Failed to sign out:", signOutErr)
             }
-            
-            
         }))
         
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
         present(alertController, animated: true, completion: nil)
-        
     }
-    
-    @objc func populate() {
-        DispatchQueue.main.async {
-            self.datasource = self.homeDatasource
-            self.collectionView?.reloadData()
-            self.refresher.endRefreshing()
-        }
-    }
-    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        
+        if section == 0 {
+            return 0
+        }
+        
+        return 1
     }
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -127,16 +108,25 @@ class HomeDatasourceController: DatasourceController {
                 return CGSize(width: view.frame.width, height: estimatedHeight + 66)
             }
         } else if indexPath.section == 1 {
+            
             guard let post = self.datasource?.item(indexPath) as? Post else { return .zero }
-            let estimatedHeight = estimatedHeightForText(post.text)
-            return CGSize(width: view.frame.width, height: estimatedHeight + 74)
+            let estimatedHeight = estimatedHeightForText(post.caption)
+            
+            if post.imageWidth.intValue > 0 {
+                var height: CGFloat = 50 + 8 + 8 + estimatedHeight
+                height += view.frame.width
+                return CGSize(width: view.frame.width, height: height + 40)
+            }
+            
+            return CGSize(width: view.frame.width, height: estimatedHeight + 94)
         }
+        
         return CGSize(width: view.frame.width, height: 200)
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
-        let approximateWidthOfBioTextView = view.frame.width - 12 - 50 - 12 - 2
-        let size = CGSize(width: approximateWidthOfBioTextView, height: 1000)
+        let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
+        let size = CGSize(width: approximateWidthOfTextView, height: 1000)
         let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)

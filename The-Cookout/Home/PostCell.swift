@@ -16,34 +16,54 @@ class PostCell: DatasourceCell {
             
             let url = URL(string: post.profileImageUrl)
             profileImageView.kf.setImage(with: url)
-
-            let attributedText = NSMutableAttributedString(string: (post.name), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)])
+            
+            let imageUrl = URL(string: post.imageUrl)
+            photoImageView.kf.setImage(with: imageUrl)
+            
+            let nameAttributedText = NSMutableAttributedString(string: (post.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
             
             let usernameString = "  \(post.username)\n"
-            attributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
+            
+            nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
+            
+            usernameLabel.attributedText = nameAttributedText
+            
+            let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 4
             let range = NSMakeRange(0, attributedText.string.count)
             attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
 
-            attributedText.append(NSAttributedString(string: post.text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]))
-            
             messageTextView.attributedText = attributedText
             
         }
     }
     
+    let optionsButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("•••", for: .normal)
+        btn.setTitleColor(.black, for: .normal)
+        return btn
+    }()
+    
+    let photoImageView: CachedImageView = {
+        let iv = CachedImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        return iv
+    }()
+    
     let messageTextView: UITextView = {
         let tv = UITextView()
         tv.isUserInteractionEnabled = false
         tv.backgroundColor = .clear
+        tv.isScrollEnabled = false
         return tv
     }()
     
-    let profileImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "profile_image")
+    let profileImageView: CachedImageView = {
+        let imageView = CachedImageView()
         imageView.layer.cornerRadius = 25
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
@@ -59,7 +79,6 @@ class PostCell: DatasourceCell {
     let likeButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
-        
         return button
     }()
     
@@ -69,12 +88,17 @@ class PostCell: DatasourceCell {
         
         return button
     }()
-
-    let repostButton: UIButton = {
+    
+    let loveButton: UIButton = {
         let button = UIButton()
-        button.setImage(#imageLiteral(resourceName: "repost"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "love"), for: .normal)
         
         return button
+    }()
+    
+    var usernameLabel: UILabel = {
+        let label = UILabel()
+        return label
     }()
     
     override func setupViews() {
@@ -86,11 +110,17 @@ class PostCell: DatasourceCell {
         
         addSubview(profileImageView)
         addSubview(messageTextView)
-    
+        addSubview(optionsButton)
+        addSubview(usernameLabel)
+        
+        
+        optionsButton.anchor(self.topAnchor, left: nil, bottom: nil, right: self.rightAnchor, topConstant: 12, leftConstant: 0, bottomConstant: 4, rightConstant: 8, widthConstant: 44, heightConstant: 0)
+        
+        usernameLabel.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         profileImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
         
-        messageTextView.anchor(topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 4, leftConstant: 4, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 4, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         
         setupBottomButtons()
         
@@ -98,22 +128,29 @@ class PostCell: DatasourceCell {
     
     fileprivate func setupBottomButtons() {
         let replyButtonContainerView = UIView()
-        let repostButtonContainerView = UIView()
+        let loveButtonContainerView = UIView()
         let likeButtonContainerView = UIView()
         let dislikeButtonContainerView = UIView()
         
-        let buttonStackView = UIStackView(arrangedSubviews: [replyButtonContainerView, likeButtonContainerView, dislikeButtonContainerView, repostButtonContainerView])
+        let buttonStackView = UIStackView(arrangedSubviews: [replyButtonContainerView, likeButtonContainerView, dislikeButtonContainerView, loveButtonContainerView])
         
         buttonStackView.axis = .horizontal
         buttonStackView.distribution = .fillEqually
         
         addSubview(buttonStackView)
-        buttonStackView.anchor(nil, left: messageTextView.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 0, leftConstant: 4, bottomConstant: 2, rightConstant: 0, widthConstant: 0, heightConstant: 20)
+        addSubview(photoImageView)
+        
+        
+        buttonStackView.anchor(nil, left: messageTextView.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 20, leftConstant: 4, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 20)
+        
+         photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        
+        photoImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1).isActive = true
         
         addSubview(replyButton)
         addSubview(likeButton)
         addSubview(dislikeButton)
-        addSubview(repostButton)
+        addSubview(loveButton)
         
         replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
@@ -121,8 +158,7 @@ class PostCell: DatasourceCell {
         
         dislikeButton.anchor(dislikeButtonContainerView.topAnchor, left: dislikeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
-        repostButton.anchor(repostButtonContainerView.topAnchor, left: repostButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
-        
+        loveButton.anchor(loveButtonContainerView.topAnchor, left: loveButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 4, rightConstant: 0, widthConstant: 20, heightConstant: 20)
     }
-
+    
 }

@@ -24,7 +24,6 @@ class UserCell: DatasourceCell {
     
     let profileImageView: CachedImageView = {
         let imageView = CachedImageView()
-        imageView.image = #imageLiteral(resourceName: "profile_image")
         imageView.layer.cornerRadius = 25
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
@@ -33,14 +32,12 @@ class UserCell: DatasourceCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Chandan Brown"
         label.font = UIFont.boldSystemFont(ofSize: 16)
         return label
     }()
     
     let usernameLabel: UILabel = {
         let label = UILabel()
-        label.text = "@Omega"
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = UIColor(r: 130, g: 130, b: 130)
         return label
@@ -48,7 +45,6 @@ class UserCell: DatasourceCell {
     
     let bioTextView: UITextView = {
         let textView = UITextView()
-        textView.text = "Developer of this here app. Welcome to the Cookout. Dab on em for me."
         textView.font = UIFont.systemFont(ofSize: 15)
         textView.isUserInteractionEnabled = false
         textView.backgroundColor = .clear

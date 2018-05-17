@@ -19,6 +19,16 @@ extension String
     }
 }
 
+extension UIImageView {
+    
+    func setRounded() {
+        layer.borderWidth = 1.0
+        layer.borderColor = UIColor.black.cgColor
+        layer.cornerRadius = frame.size.height / 2
+        clipsToBounds = true
+    }
+}
+
 extension Formatter {
     static let iso8601: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()

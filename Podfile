@@ -16,5 +16,6 @@ target 'The-Cookout' do
   pod 'Firebase/Performance'
   pod 'Firebase/Storage'
   pod 'Kingfisher', '~> 4.0'
+  pod 'GSKStretchyHeaderView'
 	
 end

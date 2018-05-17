@@ -20,13 +20,55 @@ class HomeController: DatasourceController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
+        collectionView?.backgroundColor = UIColor(r: 210, g: 210, b: 210)
         self.datasource = self.homeDatasource
         
         fetchUser()
         fetchPostFeed()
+        fetchFollowingUserIds()
         
         setupNavigationBarItems()
+    }
+    
+    fileprivate func fetchFollowingUserIds() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
+            
+            userIdsDictionary.forEach({ (arg) in
+                let (key, value) = arg
+                Database.fetchUserWithUID(uid: key, completion: { (user) in
+                    self.fetchPostsWithUser(user)
+                })
+            })
+            
+        }) { (err) in
+            print("Failed to fetch following user ids:", err)
+        }
+    }
+    
+    func fetchPostFeed() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            self.fetchPostsWithUser(user)
+        }
+    }
+    
+    fileprivate func fetchPostsWithUser(_ user: User) {
+        let ref = Database.database().reference().child("posts").child(user.uid)
+        
+        ref.observeSingleEvent(of: .value) { (snapshot) in
+            guard let dictionaries = snapshot.value as? [String: Any] else { return }
+            
+            dictionaries.forEach({ (key, value) in
+                guard let dictionary = value as? [String: Any] else { return }
+                
+                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                self.homeDatasource.posts.append(post)
+            })
+            self.collectionView?.reloadData()
+        }
     }
     
     func setupNavigationBarItems() {

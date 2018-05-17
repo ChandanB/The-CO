@@ -11,15 +11,20 @@ import LBTAComponents
 import Firebase
 
 class UserProfileHeader: DatasourceCell {
-    
+
     var user: User? {
         didSet {
+            header = self
             setupProfileImage()
             nameLabel.text = user?.name
-            
+            usernameLabel.text = user?.username
             setupEditFollowButton()
         }
     }
+    
+    var header: UserProfileHeader?
+    
+    var userProfileController: UserProfileController?
     
     fileprivate func setupEditFollowButton() {
         guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
@@ -113,7 +118,6 @@ class UserProfileHeader: DatasourceCell {
         self.editProfileFollowButton.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
     }
     
-    
     fileprivate func setupProfileImage() {
         guard let url = user?.profileImageUrl else { return }
         self.profileImageView.loadImage(urlString: url)
@@ -125,9 +129,11 @@ class UserProfileHeader: DatasourceCell {
     
     let profileImageView: CachedImageView = {
         let iv = CachedImageView()
-        iv.layer.cornerRadius = 40
+        iv.layer.cornerRadius = 60
         iv.layer.masksToBounds = true
         iv.contentMode = .scaleAspectFill
+        iv.layer.borderColor = UIColor.black.cgColor
+        iv.layer.borderWidth = 1
         return iv
     }()
     
@@ -156,6 +162,12 @@ class UserProfileHeader: DatasourceCell {
     }()
     
     let nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        return label
+    }()
+    
+    let usernameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
         return label
@@ -206,6 +218,13 @@ class UserProfileHeader: DatasourceCell {
         return button
     }()
     
+    let bannerImageView: CachedImageView = {
+        let iv = CachedImageView()
+        iv.image = #imageLiteral(resourceName: "sky_banner")
+        iv.contentMode = .scaleAspectFill
+        return iv
+    }()
+    
     override func setupViews() {
         super.setupViews()
         
@@ -213,12 +232,18 @@ class UserProfileHeader: DatasourceCell {
         separatorLineView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         addSubview(profileImageView)
-        profileImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 80, heightConstant: 80)
+        addSubview(bannerImageView)
+        
+        bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: profileImageView.topAnchor, right: rightAnchor, topConstant: -20, leftConstant: 0, bottomConstant: -60, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        
+        profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 82, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: 120)
+        profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
         setupBottomToolBar()
         
         addSubview(nameLabel)
-        nameLabel.anchor(profileImageView.bottomAnchor, left: leftAnchor, bottom: listButton.topAnchor, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
+        nameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 50)
+        nameLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
         setupUserStatsView()
         
@@ -250,7 +275,9 @@ class UserProfileHeader: DatasourceCell {
     
         addSubview(stackView)
     
-        stackView.anchor(topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 50)
+        stackView.anchor(nameLabel.bottomAnchor, left: nil, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 50)
+        stackView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+
     }
 
 }

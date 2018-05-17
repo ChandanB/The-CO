@@ -8,71 +8,64 @@
 
 import Firebase
 import LBTAComponents
-import GSKStretchyHeaderView
 
-let offset_HeaderStop:CGFloat = 40.0 // At this offset the Header stops its transformations
+let offset_HeaderStop:CGFloat = 60.0 // At this offset the Header stops its transformations
 let offset_B_LabelHeader:CGFloat = 95.0 // At this offset the Black label reaches the Header
 let distance_W_LabelHeader:CGFloat = 35.0 // The distance between the bottom of the Header and the top of the White Label
 
-class UserProfileController: DatasourceController, GSKStretchyHeaderViewStretchDelegate {
-    
-    func stretchyHeaderView(_ headerView: GSKStretchyHeaderView, didChangeStretchFactor stretchFactor: CGFloat) {
-        print ("Header changed")
-    }
+class UserProfileController: DatasourceController {
     
     let userProfileDatasource = UserProfileDataSource()
     var userProfileHeader = UserProfileHeader()
     
-    var userId: String?
+    var avatarImage:UIImageView!
+    var headerLabel:UILabel!
+    var header: UIView!
+    var headerImageView:UIImageView!
+    var headerBlurImageView:UIImageView!
+    var blurredHeaderImageView:UIImageView!
     
-    let lineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .lightGray
-        return view
-    }()
+    var userId: String?
+    var headerId = "headerId"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
+        collectionView?.backgroundColor = .white
         self.datasource = self.userProfileDatasource
         
-        collectionView?.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        collectionView?.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-        collectionView?.backgroundColor = .white
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = UIColor.clear
-        
-        collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
-        
         fetchUser()
+        header = userProfileHeader
+        avatarImage = userProfileHeader.profileImageView
+        headerLabel = userProfileHeader.usernameLabel
+        headerImageView = userProfileHeader.bannerImageView
+        headerBlurImageView = userProfileHeader.blurredBannerImageView
+        
+        collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
+        
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
+        
+        self.header = header
+
+        self.userProfileHeader = header
+
+        return header
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        
-        // Header - Image
-        headerImageView = self.userProfileHeader.bannerImageView
-        headerImageView?.image = UIImage(named: "header_bg")
-        headerImageView?.contentMode = UIViewContentMode.scaleAspectFill
-        self.userProfileHeader.insertSubview(headerImageView, belowSubview: headerLabel)
-        
-        // Header - Blurred Image
-        
-        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
-        let headerBlurImageView = UIVisualEffectView(effect: blurEffect)
-        headerBlurImageView.frame = view.bounds
-        headerBlurImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        headerBlurImageView.contentMode = UIViewContentMode.scaleAspectFill
-        headerBlurImageView.alpha = 0.0
-        self.userProfileHeader.insertSubview(headerBlurImageView, belowSubview: headerLabel)
-        
-        self.userProfileHeader.clipsToBounds = true
+        header = userProfileHeader
+        avatarImage = userProfileHeader.profileImageView
+        headerLabel = userProfileHeader.usernameLabel
+        headerImageView = userProfileHeader.bannerImageView
+        headerBlurImageView = userProfileHeader.blurredBannerImageView
     }
     
-    fileprivate func fetchOrderedPosts() {
-        guard let uid = self.user?.uid else {return}
+    fileprivate func fetchOrderedPosts(_ user: User) {
+        let uid = user.uid
         let ref = Database.database().reference().child("posts").child(uid)
         
         ref.queryOrdered(byChild: "creationDate").observe(.childAdded) { (snapshot) in
@@ -93,20 +86,17 @@ class UserProfileController: DatasourceController, GSKStretchyHeaderViewStretchD
         let uid = userId ?? Auth.auth().currentUser?.uid ?? ""
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
+            self.userProfileDatasource.users.append(user)
+            self.userProfileHeader.datasourceItem = user
+            
             self.navigationItem.title = self.user?.name
             self.collectionView?.reloadData()
-            self.fetchOrderedPosts()
+            self.fetchOrderedPosts(user)
         }
     }
-    
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! UserProfileHeader
-        
-        header.user = self.user
-        self.userProfileHeader = header
-        
-        return userProfileHeader
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -117,58 +107,47 @@ class UserProfileController: DatasourceController, GSKStretchyHeaderViewStretchD
         return 1
     }
     
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (view.frame.width - 2) / 3
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
+        if section == 1 {
+            return .zero
+        }
+        
+        return CGSize(width: view.frame.width, height: 160)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        if indexPath.section == 0 {
+            return CGSize(width: view.frame.width, height: 290)
+        }
+        
+        let width = (view.frame.width - 2) / 3
         return CGSize(width: width, height: width)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 420)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        hideNavigationBar()
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = UIColor.clear
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.view.backgroundColor = UIColor.white
-    }
-    
-    var scrollView:UIScrollView!
-    var avatarImage:UIImageView!
-    var headerLabel:UILabel!
-    var headerImageView:UIImageView!
-    var headerBlurImageView:UIImageView!
-    var blurredHeaderImageView:UIImageView?
-    
-    
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        avatarImage = self.userProfileHeader.profileImageView
-        headerLabel = self.userProfileHeader.usernameLabel
-        headerImageView = self.userProfileHeader.bannerImageView
-        headerBlurImageView = self.userProfileHeader.bannerImageView
-        blurredHeaderImageView = self.userProfileHeader.bannerImageView
-        
         let offset = scrollView.contentOffset.y
         var avatarTransform = CATransform3DIdentity
         var headerTransform = CATransform3DIdentity
+        var labelTransform = CATransform3DIdentity
         
         // PULL DOWN -----------------
+ //       var frame = self.collectionView?.frame
         
         if offset < 0 {
-            let headerScaleFactor:CGFloat = -(offset) / self.userProfileHeader.bounds.height
-            let headerSizevariation = (((self.userProfileHeader.bounds.height) * (1.0 + headerScaleFactor)) - (self.userProfileHeader.bounds.height))/2.0
-            headerTransform = CATransform3DTranslate(headerTransform, 0, headerSizevariation, 0)
-            headerTransform = CATransform3DScale(headerTransform, 1.0 + headerScaleFactor, 1.0 + headerScaleFactor, 0)
+//
+//            frame?.origin.y = min(0, offset)
+//            self.userProfileHeader.frame = frame!
+//
+//            let headerScaleFactor: CGFloat = -(offset) / (headerImageView.frame.height)
+//            let headerSizevariation = (((headerImageView.bounds.height) * (1.0 + headerScaleFactor)) - (headerImageView.bounds.height))/2.0
+//            headerTransform = CATransform3DTranslate(headerTransform, 0, headerSizevariation, 0)
+//            headerTransform = CATransform3DScale(headerTransform, 1.0 + headerScaleFactor, 1.0 + headerScaleFactor, 0)
+//
+//            headerImageView.layer.transform = headerTransform
             
-            self.userProfileHeader.layer.transform = headerTransform
+    
         }
             
             // SCROLL UP/DOWN ------------
@@ -181,12 +160,12 @@ class UserProfileController: DatasourceController, GSKStretchyHeaderViewStretchD
             
             //  ------------ Label
             
-            let labelTransform = CATransform3DMakeTranslation(0, max(-distance_W_LabelHeader, offset_B_LabelHeader - offset), 0)
+            labelTransform = CATransform3DMakeTranslation(0, max(-distance_W_LabelHeader, offset_B_LabelHeader - offset), 0)
             headerLabel.layer.transform = labelTransform
             
             //  ------------ Blur
             
-            headerBlurImageView?.alpha = min (1.0, (offset - offset_B_LabelHeader)/distance_W_LabelHeader)
+            headerBlurImageView?.alpha = min (0.8, (offset - offset_B_LabelHeader)/distance_W_LabelHeader)
             
             // Avatar -----------
             
@@ -197,27 +176,26 @@ class UserProfileController: DatasourceController, GSKStretchyHeaderViewStretchD
             
             if offset <= offset_HeaderStop {
                 
-                if avatarImage.layer.zPosition < (self.userProfileHeader.layer.zPosition){
-                    self.userProfileHeader.layer.zPosition = 0
+                if avatarImage.layer.zPosition < (headerImageView.layer.zPosition){
+                    headerImageView.layer.zPosition = 0
                 }
                 
             }else {
-                if avatarImage.layer.zPosition >= (self.userProfileHeader.layer.zPosition){
-                    self.userProfileHeader.layer.zPosition = 2
+                if avatarImage.layer.zPosition >= (headerImageView.layer.zPosition){
+                    headerImageView.layer.zPosition = 2
                 }
             }
         }
         
         // Apply Transformations
-        
-        self.userProfileHeader.layer.transform = headerTransform
+        headerImageView.layer.transform = headerTransform
+        headerLabel.layer.transform = labelTransform
         avatarImage.layer.transform = avatarTransform
         
+        
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle{
-        return UIStatusBarStyle.lightContent
-    }
-    
+    private var lastContentOffset: CGFloat = 0
+
 }
 

@@ -11,21 +11,36 @@ import LBTAComponents
 class UserProfileDataSource: Datasource {
     
     var posts = [Post]()
+    var users = [User]()
+    
+    override func headerClasses() -> [DatasourceCell.Type]? {
+        return [UserProfileHeader.self]
+    }
     
     override func cellClasses() -> [DatasourceCell.Type] {
-        return [UserProfilePhotoCell.self]
+        return [UserProfileCell.self, UserProfilePhotoCell.self]
     }
     
     override func item(_ indexPath: IndexPath) -> Any? {
+        
+        if indexPath.section == 0 {
+            return users[indexPath.item]
+        }
+        
         return posts[indexPath.item]
     }
     
     override func numberOfItems(_ section: Int) -> Int {
+        
+        if section == 0 {
+            return users.count
+        }
+        
         return posts.count
     }
     
     override func numberOfSections() -> Int {
-        return 1
+        return 2
     }
     
 }

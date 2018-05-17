@@ -20,7 +20,7 @@
 		1F2BAA4120A8145B00350CEC /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2BAA4020A8145B00350CEC /* RegisterController.swift */; };
 		1F4FD35820A9ED4600AB73C1 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4FD35720A9ED4600AB73C1 /* MainTabBarController.swift */; };
 		1F4FD35A20A9EE7500AB73C1 /* UserProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4FD35920A9EE7500AB73C1 /* UserProfileController.swift */; };
-		1F4FD35D20A9F7E600AB73C1 /* UserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4FD35C20A9F7E600AB73C1 /* UserProfileHeader.swift */; };
+		1F4FD35D20A9F7E600AB73C1 /* UserProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4FD35C20A9F7E600AB73C1 /* UserProfileCell.swift */; };
 		1F4FD36320AA1EE200AB73C1 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4FD36220AA1EE200AB73C1 /* LoginController.swift */; };
 		1F4FD36620AA5CA900AB73C1 /* PostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4FD36520AA5CA900AB73C1 /* PostController.swift */; };
 		1F4FD36820AA5CE400AB73C1 /* PhotoSelectorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4FD36720AA5CE400AB73C1 /* PhotoSelectorController.swift */; };
@@ -38,9 +38,11 @@
 		1F75BEEB20ACF41100BA7AF2 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEE220ACF41100BA7AF2 /* AvatarImageView.swift */; };
 		1F75BEED20ACF41100BA7AF2 /* TWTButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEE420ACF41100BA7AF2 /* TWTButton.swift */; };
 		1F75BEF020ACF5D500BA7AF2 /* FXBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEEF20ACF5D500BA7AF2 /* FXBlurView.swift */; };
+		1F75BEF220AD5B0200BA7AF2 /* StickyLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEF120AD5B0200BA7AF2 /* StickyLayout.swift */; };
 		1FAB5B4320A7B10A003F9943 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */; };
 		1FAB5B4A20A7B10F003F9943 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4920A7B10F003F9943 /* Assets.xcassets */; };
 		1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */; };
+		1FD33C9A20AD99B0009D511B /* UserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD33C9920AD99B0009D511B /* UserProfileHeader.swift */; };
 		FEF96D87CFE0CA30E256AC54 /* Pods_The_Cookout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +60,7 @@
 		1F2BAA4020A8145B00350CEC /* RegisterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		1F4FD35720A9ED4600AB73C1 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		1F4FD35920A9EE7500AB73C1 /* UserProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileController.swift; sourceTree = "<group>"; };
-		1F4FD35C20A9F7E600AB73C1 /* UserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeader.swift; sourceTree = "<group>"; };
+		1F4FD35C20A9F7E600AB73C1 /* UserProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileCell.swift; sourceTree = "<group>"; };
 		1F4FD36220AA1EE200AB73C1 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		1F4FD36520AA5CA900AB73C1 /* PostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostController.swift; sourceTree = "<group>"; };
 		1F4FD36720AA5CE400AB73C1 /* PhotoSelectorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorController.swift; sourceTree = "<group>"; };
@@ -76,11 +78,13 @@
 		1F75BEE220ACF41100BA7AF2 /* AvatarImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarImageView.swift; sourceTree = "<group>"; };
 		1F75BEE420ACF41100BA7AF2 /* TWTButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWTButton.swift; sourceTree = "<group>"; };
 		1F75BEEF20ACF5D500BA7AF2 /* FXBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FXBlurView.swift; sourceTree = "<group>"; };
+		1F75BEF120AD5B0200BA7AF2 /* StickyLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyLayout.swift; sourceTree = "<group>"; };
 		1FAB5B3F20A7B10A003F9943 /* The-Cookout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The-Cookout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1FAB5B4920A7B10F003F9943 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1FAB5B4C20A7B10F003F9943 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1FAB5B4E20A7B10F003F9943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1FD33C9920AD99B0009D511B /* UserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeader.swift; sourceTree = "<group>"; };
 		390C881A38F3B95586CB0671 /* Pods-The-Cookout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.debug.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.debug.xcconfig"; sourceTree = "<group>"; };
 		41062D1ADD562626DE736A1C /* Pods-The-Cookout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.release.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.release.xcconfig"; sourceTree = "<group>"; };
 		A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_The_Cookout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +125,7 @@
 				1F2BAA3C20A80BC800350CEC /* Extensions.swift */,
 				1F75BEB820ABB0C500BA7AF2 /* FetchImage.swift */,
 				1F75BEC120AC277B00BA7AF2 /* FirebaseUtils.swift */,
+				1F75BEF120AD5B0200BA7AF2 /* StickyLayout.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -129,7 +134,8 @@
 			isa = PBXGroup;
 			children = (
 				1F4FD35920A9EE7500AB73C1 /* UserProfileController.swift */,
-				1F4FD35C20A9F7E600AB73C1 /* UserProfileHeader.swift */,
+				1F4FD35C20A9F7E600AB73C1 /* UserProfileCell.swift */,
+				1FD33C9920AD99B0009D511B /* UserProfileHeader.swift */,
 				1F4FD37120AAFA5200AB73C1 /* UserProfilePhotoCell.swift */,
 				1F75BEBD20ABBC9900BA7AF2 /* UserProfileDatasource.swift */,
 			);
@@ -391,7 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F4FD36320AA1EE200AB73C1 /* LoginController.swift in Sources */,
-				1F4FD35D20A9F7E600AB73C1 /* UserProfileHeader.swift in Sources */,
+				1F4FD35D20A9F7E600AB73C1 /* UserProfileCell.swift in Sources */,
 				1F2BAA2A20A7C57D00350CEC /* HomeDatasource.swift in Sources */,
 				1F4FD35820A9ED4600AB73C1 /* MainTabBarController.swift in Sources */,
 				1F75BEED20ACF41100BA7AF2 /* TWTButton.swift in Sources */,
@@ -401,6 +407,7 @@
 				1F2BAA2C20A7D50400350CEC /* User.swift in Sources */,
 				1F2BAA2820A7C55700350CEC /* UserHeaderFooter.swift in Sources */,
 				1F4FD36C20AA804F00AB73C1 /* PhotoSelectorCell.swift in Sources */,
+				1FD33C9A20AD99B0009D511B /* UserProfileHeader.swift in Sources */,
 				1F2BAA3D20A80BC800350CEC /* Extensions.swift in Sources */,
 				1F2BAA3F20A80C6800350CEC /* Message.swift in Sources */,
 				1F75BEC720AC312600BA7AF2 /* UserSearchCell.swift in Sources */,
@@ -414,6 +421,7 @@
 				1F75BEEB20ACF41100BA7AF2 /* AvatarImageView.swift in Sources */,
 				1F2BAA2E20A7D8F500350CEC /* UserCell.swift in Sources */,
 				1F2BAA3220A7EF5700350CEC /* PostCell.swift in Sources */,
+				1F75BEF220AD5B0200BA7AF2 /* StickyLayout.swift in Sources */,
 				1F4FD36820AA5CE400AB73C1 /* PhotoSelectorController.swift in Sources */,
 				1F2BAA3620A7F38D00350CEC /* Post.swift in Sources */,
 				1F4FD36620AA5CA900AB73C1 /* PostController.swift in Sources */,

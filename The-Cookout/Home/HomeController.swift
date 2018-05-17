@@ -13,14 +13,11 @@ import Kingfisher
 class HomeController: DatasourceController {
     
     let homeDatasource = HomeDataSource()
-    var menuIsVisible = false
-    var leadingC: NSLayoutConstraint!
-    var trailingC: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView?.backgroundColor = UIColor(r: 210, g: 210, b: 210)
+        collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         self.datasource = self.homeDatasource
         
         fetchUser()

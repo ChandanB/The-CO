@@ -16,6 +16,7 @@ struct User {
     let username: String
     let profileImage: UIImage
     let profileImageUrl: String
+    let bannerImageUrl: String
     
     init(uid: String, dictionary: [String: AnyObject]) {
         self.uid = uid
@@ -24,6 +25,7 @@ struct User {
         self.email = dictionary["email"] as? String ?? ""
         self.username = dictionary["username"] as? String ?? ""
         self.profileImageUrl = dictionary["profileImageUrl"] as? String ?? ""
+        self.bannerImageUrl = dictionary["bannerImageUrl"] as? String ?? ""
         self.profileImage = UIImage()
     }
 }

@@ -23,7 +23,6 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     let placeholderWidth: CGFloat = 200.0
     var offset = UIOffset()
 
-    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         if searchText.isEmpty {
@@ -40,9 +39,6 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         searchBar.isHidden = false
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = UIColor.clear
-
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -85,7 +81,6 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         
         return true
     }
-    
     
     func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.setPositionAdjustment(offset, for: .search)

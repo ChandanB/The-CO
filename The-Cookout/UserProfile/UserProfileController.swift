@@ -133,19 +133,19 @@ class UserProfileController: DatasourceController {
         var labelTransform = CATransform3DIdentity
         
         // PULL DOWN -----------------
- //       var frame = self.collectionView?.frame
+        var frame = self.collectionView?.frame
         
         if offset < 0 {
-//
+
 //            frame?.origin.y = min(0, offset)
-//            self.userProfileHeader.frame = frame!
-//
-//            let headerScaleFactor: CGFloat = -(offset) / (headerImageView.frame.height)
-//            let headerSizevariation = (((headerImageView.bounds.height) * (1.0 + headerScaleFactor)) - (headerImageView.bounds.height))/2.0
-//            headerTransform = CATransform3DTranslate(headerTransform, 0, headerSizevariation, 0)
-//            headerTransform = CATransform3DScale(headerTransform, 1.0 + headerScaleFactor, 1.0 + headerScaleFactor, 0)
-//
-//            headerImageView.layer.transform = headerTransform
+//            self.header.frame = frame!
+
+            let headerScaleFactor: CGFloat = -(offset) / (header.frame.height)
+            let headerSizevariation = (((header.bounds.height) * (1.0 + headerScaleFactor)) - (header.bounds.height))/2.0
+            headerTransform = CATransform3DTranslate(headerTransform, 0, headerSizevariation, 0)
+            headerTransform = CATransform3DScale(headerTransform, 1.0 + headerScaleFactor, 1.0 + headerScaleFactor, 0)
+
+            header.layer.transform = headerTransform
             
     
         }
@@ -188,7 +188,7 @@ class UserProfileController: DatasourceController {
         }
         
         // Apply Transformations
-        headerImageView.layer.transform = headerTransform
+        header.layer.transform = headerTransform
         headerLabel.layer.transform = labelTransform
         avatarImage.layer.transform = avatarTransform
         

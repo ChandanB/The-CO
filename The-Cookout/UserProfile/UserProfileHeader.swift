@@ -78,7 +78,7 @@ class UserProfileHeader: DatasourceCell {
         addSubview(blurredImageView)
         addSubview(blurredBannerImageView)
         
-        bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)           
     }
     
     fileprivate func setupProfileAndBannerImage() {

@@ -16,6 +16,7 @@ class UserProfileCell: DatasourceCell {
         didSet {
             guard let user = datasourceItem as? User else { return }
             self.user = user
+            setupProfileAndBannerImage()
             nameLabel.text = user.name
             setupEditFollowButton()
         }
@@ -191,9 +192,23 @@ class UserProfileCell: DatasourceCell {
         return button
     }()
 
+    let profileImageView: CachedImageView = {
+        let iv = CachedImageView()
+        iv.layer.cornerRadius = 60
+        iv.backgroundColor = .lightGray
+        iv.layer.masksToBounds = true
+        iv.contentMode = .scaleAspectFill
+        iv.layer.borderColor = UIColor.white.cgColor
+        iv.layer.borderWidth = 1
+        return iv
+    }()
  
     override func setupViews() {
         super.setupViews()
+
+     //   addSubview(profileImageView)
+     //   profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 90, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: 120)
+      //  profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
         addSubview(editProfileFollowButton)
         setupUserStatsView()
@@ -225,6 +240,15 @@ class UserProfileCell: DatasourceCell {
         topDividerView.anchor(stackView.topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
         
         bottomDividerView.anchor(stackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
+    }
+
+    fileprivate func setupProfileAndBannerImage() {
+        guard let profileImageUrl = user?.profileImageUrl else { return }
+        guard let bannerImageUrl = user?.bannerImageUrl else { return }
+        
+        DispatchQueue.main.async {
+         //   self.profileImageView.loadImage(urlString: profileImageUrl)
+        }
     }
     
     fileprivate func setupUserStatsView() {

@@ -9,6 +9,7 @@
 import LBTAComponents
 import Firebase
 import Kingfisher
+import UIFontComplete
 
 class HomeController: DatasourceController {
     
@@ -37,7 +38,7 @@ class HomeController: DatasourceController {
     }
     
     @objc func handleFeedRefresh() {
-        self.homeDatasource.posts.removeAll()
+      //  self.homeDatasource.posts.removeAll()
         fetchAllPosts()
     }
     
@@ -54,6 +55,7 @@ class HomeController: DatasourceController {
             
             userIdsDictionary.forEach({ (arg) in
                 let (key, value) = arg
+                
                 Database.fetchUserWithUID(uid: key, completion: { (user) in
                     self.fetchPostsWithUser(user)
                 })
@@ -137,12 +139,12 @@ class HomeController: DatasourceController {
         profileButton.imageView?.contentMode = .scaleAspectFill
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: profileButton)
-        navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShowUserProfile)))
+        navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShowSideMenu)))
     }
     
-    @objc func handleShowUserProfile() {
-        let userProfile = UserProfileController()
-        present(userProfile, animated: true, completion: nil)
+    @objc func handleShowSideMenu() {
+        let sideMenu = SideMenu()
+        present(sideMenu, animated: true, completion: nil)
     }
     
     @objc func handleLogout() {
@@ -165,7 +167,7 @@ class HomeController: DatasourceController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
+        return 0.5
     }
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -186,12 +188,12 @@ class HomeController: DatasourceController {
     private func estimatedHeightForText(_ text: String) -> CGFloat {
         
         if text == "" {
-            return 10
+            return -15
         }
         
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
+        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 17.0)!]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
@@ -200,6 +202,13 @@ class HomeController: DatasourceController {
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         collectionViewLayout.invalidateLayout()
+    }
+    
+    func didTapComment(post: Post) {
+        print("Message coming from HomeController")
+        print(post.caption)
+        let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(commentsController, animated: true)
     }
     
     var user: User?

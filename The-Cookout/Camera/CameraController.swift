@@ -11,6 +11,18 @@ import AVFoundation
 
 class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
     
+    let topBar: UIView = {
+        let iv = UIView()
+        iv.backgroundColor = .black
+        return iv
+    }()
+    
+    let bottomBar: UIView = {
+        let iv = UIView()
+        iv.backgroundColor = .black
+        return iv
+    }()
+    
     let dismissButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "cancel_shadow").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -31,7 +43,6 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupCaptureSession()
         setupHUD()
     }
@@ -42,12 +53,19 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
     }
     
     fileprivate func setupHUD() {
-        view.addSubview(capturePhotoButton)
-        capturePhotoButton.anchor(nil, left: nil, bottom: view.bottomAnchor, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 24, rightConstant: 0, widthConstant: 80, heightConstant: 80)
+        
+        view.addSubview(topBar)
+        topBar.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 60)
+        
+        view.addSubview(bottomBar)
+        bottomBar.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 100)
+        
+        bottomBar.addSubview(capturePhotoButton)
+        capturePhotoButton.anchor(nil, left: nil, bottom: bottomBar.bottomAnchor, right: nil, topConstant: 12, leftConstant: 0, bottomConstant: 12, rightConstant: 0, widthConstant: 70, heightConstant: 70)
         capturePhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
-        view.addSubview(dismissButton)
-        dismissButton.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
+        topBar.addSubview(dismissButton)
+        dismissButton.anchor(topBar.topAnchor, left: topBar.leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
     }
     
     @objc func handleCapturePhoto() {
@@ -75,8 +93,11 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
         containerView.previewImageView.image = previewImage
         view.addSubview(containerView)
         containerView.anchor(view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        
     }
+    
+    let screenWidth = UIScreen.main.bounds.size.width
+    let screenHeight = UIScreen.main.bounds.size.height - 120
+    
     
     let output = AVCapturePhotoOutput()
     fileprivate func setupCaptureSession() {
@@ -101,7 +122,9 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
         
         //3. setup output preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = view.frame
+        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        previewLayer.frame = CGRect(x: view.bounds.origin.x, y: view.bounds.origin.y, width: screenWidth, height: screenHeight)
+        
         view.layer.addSublayer(previewLayer)
         
         captureSession.startRunning()

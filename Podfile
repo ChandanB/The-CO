@@ -19,7 +19,8 @@ target 'The-Cookout' do
   pod 'GSKStretchyHeaderView'
   pod 'Bolts-Swift'
   pod 'Spring'
-
+  pod 'BonMot'
+  pod 'UIFontComplete'
 
 	
 end

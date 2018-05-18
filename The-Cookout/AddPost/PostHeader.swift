@@ -13,7 +13,7 @@ protocol ReturnPostTextDelegate {
     func returnPostText(text: UITextView)
 }
 
-class PostHeader: UICollectionViewCell, UITextViewDelegate {
+class PostHeader: DatasourceCell, UITextViewDelegate {
     
     var user: User? {
         didSet {
@@ -21,7 +21,9 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         }
     }
     
-    var delegate : ReturnPostTextDelegate?
+    var textdelegate : ReturnPostTextDelegate?
+    var imageDelegate : ReturnPostImageDelegate?
+    
     
     var postController: PostController?
     
@@ -62,26 +64,28 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         let currentText: String = textView.text
         let updatedText = (currentText as NSString).replacingCharacters(in: range, with: text)
         
-        if updatedText.isEmpty && imageView.image == nil {
+        if updatedText.isEmpty {
             
             textView.text = "What's on your mind?"
             textView.textColor = UIColor.lightGray
             
             textView.selectedTextRange = textView.textRange(from: textView.beginningOfDocument, to: textView.beginningOfDocument)
             
-            self.postController?.shareButton.isEnabled = false
-            self.postController?.shareButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
-        }
+            if imageView.image == nil {
+                self.postController?.shareButton.isEnabled = false
+                self.postController?.shareButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
+            }
             
-        else if textView.textColor == UIColor.lightGray && !text.isEmpty {
+        } else if textView.textColor == UIColor.lightGray && !text.isEmpty {
+            
             textView.textColor = UIColor.black
             textView.text = text
             
             self.postController?.shareButton.isEnabled = true
             self.postController?.shareButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
-        }
             
-        else {
+        } else {
+            
             return true
         }
         
@@ -90,21 +94,27 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if imageView.image != nil {
+            textView.text = "Say something about this picture?"
             self.postController?.shareButton.isEnabled = true
             self.postController?.shareButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
+        } else {
+            self.postController?.shareButton.isEnabled = false
+            self.postController?.shareButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
         }
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
+        if textView.text.isEmpty && imageView.image == nil {
             textView.text = "What's on your mind?"
             textView.textColor = UIColor.lightGray
-        } else {
+        } else if imageView.image != nil && textView.text.isEmpty {
+            textView.text = "Say something about this picture?"
             self.postController?.shareButton.isEnabled = true
             self.postController?.shareButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
+            self.imageDelegate?.returnPostImage(image: imageView.image!)
         }
         
-        self.delegate?.returnPostText(text: textView)
+        self.textdelegate?.returnPostText(text: textView)
     }
     
     var imageView: UIImageView = {

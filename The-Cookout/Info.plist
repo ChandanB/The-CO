@@ -2,6 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>ProximaNovaAltCondSemibold.ttf</string>
+		<string>ProximaNovaAltBlack.ttf</string>
+		<string>ProximaNovaAltBold.ttf</string>
+		<string>ProximaNovaAltRegular.ttf</string>
+		<string>ProximaNovaSemibold.ttf</string>
+		<string>ProximaNovaThin.ttf</string>
+		<string>ProximaNovaScOsfThin.ttf</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>We would like to user your camera now</string>
 	<key>CFBundleDevelopmentRegion</key>

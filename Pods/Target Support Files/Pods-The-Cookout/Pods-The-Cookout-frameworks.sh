@@ -144,6 +144,7 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Bolts-Swift/BoltsSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GSKStretchyHeaderView/GSKStretchyHeaderView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework"
@@ -151,11 +152,13 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LBTAComponents/LBTAComponents.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Spring/Spring.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/UIFontComplete/UIFontComplete.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Bolts-Swift/BoltsSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GSKStretchyHeaderView/GSKStretchyHeaderView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework"
@@ -163,6 +166,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LBTAComponents/LBTAComponents.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Spring/Spring.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/UIFontComplete/UIFontComplete.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework"
 fi

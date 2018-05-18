@@ -13,7 +13,7 @@ let offset_HeaderStop:CGFloat = 40.0 // At this offset the Header stops its tran
 let offset_B_LabelHeader:CGFloat = 95.0 // At this offset the Black label reaches the Header
 let distance_W_LabelHeader:CGFloat = 35.0 // The distance between the bottom of the Header and the top of the White Label
 
-class UserProfileController: DatasourceController, UIViewControllerTransitioningDelegate {
+class UserProfileController: DatasourceController {
     
     
     let userProfileDatasource = UserProfileDataSource()
@@ -34,7 +34,8 @@ class UserProfileController: DatasourceController, UIViewControllerTransitioning
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        transitioningDelegate = self
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: #selector(dismissView))
+
         collectionView?.backgroundColor = .white
         self.datasource = self.userProfileDatasource
     
@@ -50,17 +51,10 @@ class UserProfileController: DatasourceController, UIViewControllerTransitioning
         
     }
     
-    let customAnimationPresenter = CustomAnimationPresenter()
-    let customAnimationDismisser = CustomAnimationDismisser()
-    
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return customAnimationPresenter
+    @objc func dismissView() {
+        dismiss(animated: true, completion: nil)
     }
-    
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
-        return customAnimationDismisser
-    }
+  
     
 //    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 //        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
@@ -152,7 +146,7 @@ class UserProfileController: DatasourceController, UIViewControllerTransitioning
             return 0
         }
         
-        let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
+        let approximateWidthOfTextView = view.frame.width - 12 - 40 - 12 - 2
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
         let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
         
@@ -160,16 +154,6 @@ class UserProfileController: DatasourceController, UIViewControllerTransitioning
         
         return estimatedFrame.height
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     

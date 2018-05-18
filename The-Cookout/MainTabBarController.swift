@@ -47,17 +47,18 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         
         let likeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "like_unselected"), selectedImage: #imageLiteral(resourceName: "like_selected"))
         
-//        // user profile
-//        let userProfileController = UserProfileController()
-//        let userProfileNavController = UINavigationController(rootViewController: userProfileController)
-//        
-//        userProfileNavController.tabBarItem.image = #imageLiteral(resourceName: "profile_unselected")
-//        userProfileNavController.tabBarItem.selectedImage = #imageLiteral(resourceName: "profile_selected")
+        // user profile
+        let userProfileController = UserProfileController()
+        let userProfileNavController = UINavigationController(rootViewController: userProfileController)
+        
+        userProfileNavController.tabBarItem.image = #imageLiteral(resourceName: "profile_unselected")
+        userProfileNavController.tabBarItem.selectedImage = #imageLiteral(resourceName: "profile_selected")
         
         viewControllers = [homeNavController,
                            searchNavController,
                            plusNavController,
-                           likeNavController]
+                           likeNavController,
+                           userProfileNavController]
         
         //modify tab bar item insets
         guard let items = tabBar.items else { return }

@@ -6,10 +6,10 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import UIKit
+import LBTAComponents
 import Firebase
 
-class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate {
+class PostController: DatasourceController, ReturnPostImageDelegate, ReturnPostTextDelegate {
     
     let cellId = "cellId"
     let headerId = "headerId"
@@ -20,7 +20,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     var photoSelectorController: PhotoSelectorController?
     var postHeader: PostHeader?
     
-    let shareButton: UIButton = {
+    lazy var shareButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Share", for: .normal)
         button.backgroundColor = UIColor(r: 149, g: 204, b: 244)
@@ -28,7 +28,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(sharePost), for: .touchUpInside)
-        button.isEnabled = false
         return button
     }()
     
@@ -48,8 +47,9 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTapped()
-        
-        self.postHeader?.delegate = self
+
+        self.postHeader?.textdelegate = self
+        self.postHeader?.imageDelegate = self
         
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         navigationController?.navigationBar.backgroundColor = .white
@@ -118,7 +118,9 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
     }
     
-    @objc func sharePost() {        
+    @objc func sharePost() {
+        print("Share clicked")
+        dismissKeyboard()
         if selectedImage != nil {
             shareImagePost()
         } else {
@@ -171,7 +173,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         var trimmedCaption = caption.trim()
         
-        if trimmedCaption == "What's on your mind?" {
+        if trimmedCaption == "What's on your mind?" || trimmedCaption == "Say something about this picture?" {
             trimmedCaption = ""
         }
         
@@ -186,8 +188,9 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
              "username": user.username] as [String : Any]
         
         ref.updateChildValues(values) { (err, ref) in
+            
             if let err = err {
-                self.navigationItem.rightBarButtonItem?.isEnabled = true
+                self.navigationItem.rightBarButtonItem?.isEnabled = false
                 print("Failed to save post to DB", err)
                 return
             }
@@ -209,6 +212,12 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let userPostRef = Database.database().reference().child("posts").child(uid)
         let ref = userPostRef.childByAutoId()
         
+        let trimmedCaption = caption.trim()
+        
+        if trimmedCaption == ""  {
+            return
+        }
+        
         let values = ["caption": caption.trim(),
                       "creationDate": Date().timeIntervalSince1970,
                       "profileImageUrl": user.profileImageUrl,
@@ -217,7 +226,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {
-                self.navigationItem.rightBarButtonItem?.isEnabled = true
+                self.navigationItem.rightBarButtonItem?.isEnabled = false
                 print("Failed to save post to DB", err)
                 return
             }

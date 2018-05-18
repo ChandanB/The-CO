@@ -14,7 +14,6 @@ class PhotoSelectorCell: UICollectionViewCell {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.backgroundColor = .lightGray
         return iv
     }()
     

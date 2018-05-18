@@ -9,6 +9,8 @@
 import Kingfisher
 import LBTAComponents
 import Firebase
+import BonMot
+import UIFontComplete
 
 class UserProfileCell: DatasourceCell {
 
@@ -16,15 +18,38 @@ class UserProfileCell: DatasourceCell {
         didSet {
             guard let user = datasourceItem as? User else { return }
             self.user = user
+            let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
+
             setupProfileAndBannerImage()
             nameLabel.text = user.name
-            bioTextView.text = user.bio
+            nameLabel.font = font!
             usernameLabel.text = "@\(user.username)"
             setupEditFollowButton()
+            setupUserBio(user)
         }
     }
     
-    var user: User? 
+    var user: User?
+    
+    func setupUserBio(_ user: User) {
+        
+        let bio = user.bio
+        let font = CustomFont.proximaNovaAlt.of(size: 12.0)
+        
+        var style = StringStyle(
+            .font(font!),
+            .lineHeightMultiple(1.8)
+        )
+        
+        style.lineSpacing = 3
+        
+        let attributedString = bio.styled(with: style)
+        
+        bioTextView.attributedText = attributedString
+        bioTextView.textAlignment = .center
+        bioTextView.sizeToFit()
+        bioTextView.isScrollEnabled = false
+    }
     
     func setupEditFollowButton() {
         
@@ -225,9 +250,6 @@ class UserProfileCell: DatasourceCell {
     
     let bioTextView: UITextView = {
         let textView = UITextView()
-        textView.font = UIFont.systemFont(ofSize: 15)
-        textView.isUserInteractionEnabled = true
-        textView.textAlignment = .center
         return textView
     }()
     
@@ -238,8 +260,9 @@ class UserProfileCell: DatasourceCell {
         addSubview(bannerImageView)
         addSubview(profileImageView)
         addSubview(usernameLabel)
-        addSubview(editProfileFollowButton)
         addSubview(bioTextView)
+        addSubview(editProfileFollowButton)
+        
 
         bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
         
@@ -248,15 +271,14 @@ class UserProfileCell: DatasourceCell {
         
         usernameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
+        
+        let height = bioTextView.text.height(withConstrainedWidth: frame.width - 12 - 12 - 2, font:  UIFont.systemFont(ofSize: 15))
+        
+        
+        bioTextView.anchor(usernameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
+        bioTextView.centerXAnchor.constraint(equalTo: usernameLabel.centerXAnchor).isActive = true
 
         setupUserStatsView()
-        
-        
-        let height = bioTextView.text.height(withConstrainedWidth: frame.width - 26, font:  UIFont.systemFont(ofSize: 16))
-    
-        
-        bioTextView.anchor(usernameLabel.bottomAnchor, left: leftAnchor, bottom: followersLabel.topAnchor, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: (height * 2.5))
-        bioTextView.centerXAnchor.constraint(equalTo: usernameLabel.centerXAnchor).isActive = true 
         
         editProfileFollowButton.anchor(followersLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
 
@@ -267,7 +289,6 @@ class UserProfileCell: DatasourceCell {
         let stackView = UIStackView(arrangedSubviews: [postsLabel, followersLabel, followingLabel])
         stackView.distribution = .fillEqually
         stackView.backgroundColor = .clear
-
         
         addSubview(stackView)
         

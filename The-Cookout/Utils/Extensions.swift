@@ -8,8 +8,20 @@
 
 import UIKit
 import Firebase
+import UIFontComplete
 
 let imageCache = NSCache<AnyObject, AnyObject>()
+
+enum CustomFont: String, FontRepresentable {
+    case proximaNova = "Proxima Nova"
+    case proximaNovaAlt = "ProximaNovaA-Regular"
+    case proximaNovaCondensed = "ProximaNovaACond-Semibold"
+    case proximaNovaSemibold = "ProximaNova-Semibold"
+    case proximaNovaThin = "ProximaNovaT-Thin"
+    case proximaNovaScOsf = "ProximaNovaS-Thin"
+    case proximaNovaBold = "ProximaNovaA-Bold"
+    case proximaNovaBlack = "ProximaNovaA-Black"
+}
 
 extension String
 {

@@ -33,6 +33,14 @@
 		1F56619F20AEA19800F8E1B7 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F56619E20AEA19800F8E1B7 /* SideMenu.swift */; };
 		1F5661A120AEA4EE00F8E1B7 /* CustomAnimationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5661A020AEA4EE00F8E1B7 /* CustomAnimationPresenter.swift */; };
 		1F5661A520AEA6C100F8E1B7 /* CustomAnimationDismisser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5661A420AEA6C100F8E1B7 /* CustomAnimationDismisser.swift */; };
+		1F5661AE20AEDF9100F8E1B7 /* ProximaNovaAltBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661A820AEDF8D00F8E1B7 /* ProximaNovaAltBold.ttf */; };
+		1F5661AF20AEDF9100F8E1B7 /* ProximaNovaScOsfThin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661A920AEDF8E00F8E1B7 /* ProximaNovaScOsfThin.ttf */; };
+		1F5661B020AEDF9100F8E1B7 /* ProximaNovaSemibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661AA20AEDF8F00F8E1B7 /* ProximaNovaSemibold.ttf */; };
+		1F5661B120AEDF9100F8E1B7 /* ProximaNovaAltRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661AB20AEDF8F00F8E1B7 /* ProximaNovaAltRegular.ttf */; };
+		1F5661B220AEDF9100F8E1B7 /* ProximaNovaAltCondSemibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661AC20AEDF9000F8E1B7 /* ProximaNovaAltCondSemibold.ttf */; };
+		1F5661B320AEDF9100F8E1B7 /* ProximaNovaThin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661AD20AEDF9100F8E1B7 /* ProximaNovaThin.ttf */; };
+		1F5661B520AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661B420AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf */; };
+		1F5661B820AF086C00F8E1B7 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5661B720AF086C00F8E1B7 /* CommentsController.swift */; };
 		1F75BEB920ABB0C600BA7AF2 /* FetchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEB820ABB0C500BA7AF2 /* FetchImage.swift */; };
 		1F75BEBC20ABB46200BA7AF2 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F75BEBB20ABB46200BA7AF2 /* Default-568h@2x.png */; };
 		1F75BEBE20ABBC9900BA7AF2 /* UserProfileDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEBD20ABBC9900BA7AF2 /* UserProfileDatasource.swift */; };
@@ -75,6 +83,14 @@
 		1F56619E20AEA19800F8E1B7 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
 		1F5661A020AEA4EE00F8E1B7 /* CustomAnimationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnimationPresenter.swift; sourceTree = "<group>"; };
 		1F5661A420AEA6C100F8E1B7 /* CustomAnimationDismisser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnimationDismisser.swift; sourceTree = "<group>"; };
+		1F5661A820AEDF8D00F8E1B7 /* ProximaNovaAltBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaAltBold.ttf; sourceTree = "<group>"; };
+		1F5661A920AEDF8E00F8E1B7 /* ProximaNovaScOsfThin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaScOsfThin.ttf; sourceTree = "<group>"; };
+		1F5661AA20AEDF8F00F8E1B7 /* ProximaNovaSemibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaSemibold.ttf; sourceTree = "<group>"; };
+		1F5661AB20AEDF8F00F8E1B7 /* ProximaNovaAltRegular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaAltRegular.ttf; sourceTree = "<group>"; };
+		1F5661AC20AEDF9000F8E1B7 /* ProximaNovaAltCondSemibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaAltCondSemibold.ttf; sourceTree = "<group>"; };
+		1F5661AD20AEDF9100F8E1B7 /* ProximaNovaThin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaThin.ttf; sourceTree = "<group>"; };
+		1F5661B420AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaAltBlack.ttf; sourceTree = "<group>"; };
+		1F5661B720AF086C00F8E1B7 /* CommentsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
 		1F75BEB820ABB0C500BA7AF2 /* FetchImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
 		1F75BEBB20ABB46200BA7AF2 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F75BEBD20ABBC9900BA7AF2 /* UserProfileDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDatasource.swift; sourceTree = "<group>"; };
@@ -145,6 +161,7 @@
 				1F2BAA2220A7BF0200350CEC /* HomeController.swift */,
 				1F2BAA3120A7EF5700350CEC /* PostCell.swift */,
 				1F2BAA2920A7C57D00350CEC /* HomeDatasource.swift */,
+				1F5661B720AF086C00F8E1B7 /* CommentsController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -162,8 +179,8 @@
 			isa = PBXGroup;
 			children = (
 				1F4FD36920AA62A900AB73C1 /* PostHeader.swift */,
-				1F4FD36720AA5CE400AB73C1 /* PhotoSelectorController.swift */,
 				1F4FD36520AA5CA900AB73C1 /* PostController.swift */,
+				1F4FD36720AA5CE400AB73C1 /* PhotoSelectorController.swift */,
 				1F4FD36D20AA838E00AB73C1 /* PhotoSelectorHeader.swift */,
 				1F4FD36B20AA804F00AB73C1 /* PhotoSelectorCell.swift */,
 			);
@@ -196,6 +213,20 @@
 			path = CustomAnimationPresenter;
 			sourceTree = "<group>";
 		};
+		1F5661A720AEDF6E00F8E1B7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1F5661B420AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf */,
+				1F5661A820AEDF8D00F8E1B7 /* ProximaNovaAltBold.ttf */,
+				1F5661AC20AEDF9000F8E1B7 /* ProximaNovaAltCondSemibold.ttf */,
+				1F5661AB20AEDF8F00F8E1B7 /* ProximaNovaAltRegular.ttf */,
+				1F5661A920AEDF8E00F8E1B7 /* ProximaNovaScOsfThin.ttf */,
+				1F5661AA20AEDF8F00F8E1B7 /* ProximaNovaSemibold.ttf */,
+				1F5661AD20AEDF9100F8E1B7 /* ProximaNovaThin.ttf */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		1F75BEBA20ABB30D00BA7AF2 /* Other */ = {
 			isa = PBXGroup;
 			children = (
@@ -219,6 +250,7 @@
 		1FAB5B3620A7B10A003F9943 = {
 			isa = PBXGroup;
 			children = (
+				1F5661A720AEDF6E00F8E1B7 /* Resources */,
 				1F75BEBB20ABB46200BA7AF2 /* Default-568h@2x.png */,
 				1F2BAA3720A8058600350CEC /* GoogleService-Info.plist */,
 				1FAB5B4120A7B10A003F9943 /* The-Cookout */,
@@ -335,6 +367,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F5661B320AEDF9100F8E1B7 /* ProximaNovaThin.ttf in Resources */,
+				1F5661AF20AEDF9100F8E1B7 /* ProximaNovaScOsfThin.ttf in Resources */,
+				1F5661B020AEDF9100F8E1B7 /* ProximaNovaSemibold.ttf in Resources */,
+				1F5661B220AEDF9100F8E1B7 /* ProximaNovaAltCondSemibold.ttf in Resources */,
+				1F5661B120AEDF9100F8E1B7 /* ProximaNovaAltRegular.ttf in Resources */,
+				1F5661AE20AEDF9100F8E1B7 /* ProximaNovaAltBold.ttf in Resources */,
+				1F5661B520AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf in Resources */,
 				1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */,
 				1F75BEBC20ABB46200BA7AF2 /* Default-568h@2x.png in Resources */,
 				1FAB5B4A20A7B10F003F9943 /* Assets.xcassets in Resources */,
@@ -371,6 +410,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Bolts-Swift/BoltsSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework",
 				"${BUILT_PRODUCTS_DIR}/GSKStretchyHeaderView/GSKStretchyHeaderView.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
@@ -378,12 +418,14 @@
 				"${BUILT_PRODUCTS_DIR}/LBTAComponents/LBTAComponents.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
+				"${BUILT_PRODUCTS_DIR}/UIFontComplete/UIFontComplete.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BoltsSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BonMot.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GSKStretchyHeaderView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
@@ -391,6 +433,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LBTAComponents.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIFontComplete.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -408,6 +451,7 @@
 			files = (
 				1F4FD36320AA1EE200AB73C1 /* LoginController.swift in Sources */,
 				1F4FD35D20A9F7E600AB73C1 /* UserProfileCell.swift in Sources */,
+				1F5661B820AF086C00F8E1B7 /* CommentsController.swift in Sources */,
 				1F2BAA2A20A7C57D00350CEC /* HomeDatasource.swift in Sources */,
 				1F56619F20AEA19800F8E1B7 /* SideMenu.swift in Sources */,
 				1F4FD35820A9ED4600AB73C1 /* MainTabBarController.swift in Sources */,

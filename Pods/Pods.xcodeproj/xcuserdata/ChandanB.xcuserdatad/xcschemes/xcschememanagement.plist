@@ -9,6 +9,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>BonMot.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>FirebaseAuth.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -65,6 +70,11 @@
 			<false/>
 		</dict>
 		<key>Spring.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>UIFontComplete.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

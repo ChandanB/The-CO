@@ -5,15 +5,28 @@
 //  Created by Chandan Brown on 5/12/18.
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
+// Proxima Nova Alt ["ProximaNovaA-Bold", "ProximaNovaA-Regular", "ProximaNovaA-Black"]
+// Proxima Nova ["ProximaNova-Semibold", "ProximaNovaT-Thin"]
+// Proxima Nova ScOsf ["ProximaNovaS-Thin"]
+// Proxima Nova Alt Condensed ["ProximaNovaACond-Semibold"]
+
 
 import LBTAComponents
+import UIFontComplete
+
+
+protocol HomePostCellDelegate {
+    func didTapComment(post: Post)
+}
 
 class PostCell: DatasourceCell {
     
+    var delegate: HomePostCellDelegate?
+
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
-            
+            self.post = post
             let url = URL(string: post.user.profileImageUrl)
             profileImageView.kf.setImage(with: url)
             
@@ -25,30 +38,44 @@ class PostCell: DatasourceCell {
         }
     }
     
+    var post: Post?
+        
     fileprivate func setupAttibutedCaption(_ post: Post) {
-        let nameAttributedText = NSMutableAttributedString(string: (post.user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
+        
+        let name = post.user.name
+     //   let boldFont = CustomFont.proximaNovaBold.of(size: 15.0)
+     //   let thinFont = CustomFont.proximaNovaThin.of(size: 15.0)
+        let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
+        let regular = CustomFont.proximaNovaAlt.of(size: 16.0)
+        
+        let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedStringKey.font: font!])
         
         let usernameString = " @\(post.user.username)"
         
-        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
+        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
         nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
                 
         let timeAgoDisplay = post.creationDate.timeAgoDisplay()
         let time = timeAgoDisplay
         
-        nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
+        nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
         nameLabel.attributedText = nameAttributedText
         
-        let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
+        let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: regular!])
         
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 4
+        paragraphStyle.lineSpacing = 5
         let range = NSMakeRange(0, attributedText.string.count)
         attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
         
         messageTextView.attributedText = attributedText
+        
+        if messageTextView.text == "" {
+            messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 1)
+        }
+        
     }
     
     let optionsButton: UIButton = {
@@ -81,19 +108,20 @@ class PostCell: DatasourceCell {
         return imageView
     }()
     
-    let replyButton: UIButton = {
+    lazy var replyButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "reply"), for: .normal)
+        button.addTarget(self, action: #selector(handleComment), for: .touchUpInside)
         return button
     }()
     
-    let likeButton: UIButton = {
+    lazy var likeButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
         return button
     }()
     
-    let dislikeButton: UIButton = {
+    lazy var dislikeButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "dislike"), for: .normal)
         
@@ -126,7 +154,6 @@ class PostCell: DatasourceCell {
         addSubview(optionsButton)
         addSubview(nameLabel)
         
-        
         optionsButton.anchor(self.topAnchor, left: nil, bottom: nil, right: self.rightAnchor, topConstant: 12, leftConstant: 0, bottomConstant: 4, rightConstant: 8, widthConstant: 44, heightConstant: 0)
         
         nameLabel.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
@@ -138,6 +165,7 @@ class PostCell: DatasourceCell {
         setupBottomButtons()
         
     }
+
     
     fileprivate func setupBottomButtons() {
         let replyButtonContainerView = UIView()
@@ -173,4 +201,12 @@ class PostCell: DatasourceCell {
         loveButton.anchor(loveButtonContainerView.topAnchor, left: loveButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
     }
     
+    @objc func handleComment() {
+        guard let post = self.datasourceItem as? Post else { return }
+        (self.controller as? HomeController)?.didTapComment(post: post)
+    }
+    
+    
 }
+
+

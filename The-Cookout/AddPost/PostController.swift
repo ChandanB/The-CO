@@ -40,6 +40,11 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         self.present(navController, animated: true, completion: nil)
     }
     
+    func handleShowCamera() {
+        let cameraController = CameraController()
+        self.present(cameraController, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTapped()
@@ -189,9 +194,13 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             
             print("Successfully saved post to DB")
             self.dismiss(animated: true, completion: nil)
+            
+            NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
         }
     }
     
+    static let updateFeedNotificationName = NSNotification.Name(rawValue: "updateFeed")
+
     func shareTextPost(_ user: User) {
         guard let caption = messageTextView?.text else { return }
         
@@ -214,6 +223,8 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             }
             print("Successfully saved post to DB")
             self.dismiss(animated: true, completion: nil)
+            
+            NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
         }
         
     }

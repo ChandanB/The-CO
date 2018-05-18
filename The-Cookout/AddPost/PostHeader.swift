@@ -143,11 +143,17 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         keyboardToolbar.isTranslucent = false
         keyboardToolbar.barTintColor = UIColor.white
         
-        let galleryButton = UIBarButtonItem(image: #imageLiteral(resourceName: "gallery"), style: .done, target: self, action: #selector(handleOpenPhotoSelector))
+        let galleryButton = UIBarButtonItem(image: #imageLiteral(resourceName: "gallery").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(handleOpenPhotoSelector))
         galleryButton.tintColor = .black
         
-        keyboardToolbar.items = [galleryButton]
+        let showCameraButton = UIBarButtonItem(image:#imageLiteral(resourceName: "camera3").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(showCamera))
+        
+        keyboardToolbar.items = [galleryButton, showCameraButton]
         messageTextView.inputAccessoryView = keyboardToolbar
+    }
+    
+    @objc func showCamera(){
+        self.postController?.handleShowCamera()
     }
     
     func showKeyboard() {

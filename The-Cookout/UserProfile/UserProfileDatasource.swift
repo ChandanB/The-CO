@@ -13,9 +13,9 @@ class UserProfileDataSource: Datasource {
     var posts = [Post]()
     var users = [User]()
     
-    override func headerClasses() -> [DatasourceCell.Type]? {
-        return [UserProfileHeader.self]
-    }
+//    override func headerClasses() -> [DatasourceCell.Type]? {
+//        return [UserProfileHeader.self]
+//    }
     
     override func cellClasses() -> [DatasourceCell.Type] {
         return [UserProfileCell.self, UserProfilePhotoCell.self]

@@ -20,39 +20,35 @@ class PostCell: DatasourceCell {
             let imageUrl = URL(string: post.imageUrl)
             photoImageView.kf.setImage(with: imageUrl)
             
-            let nameAttributedText = NSMutableAttributedString(string: (post.user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
-            
-            let usernameString = "  @\(post.user.username)"
-            
-            nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
-            
-            nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
-            
-            let date = NSDate(timeIntervalSince1970: TimeInterval(truncating: post.timestamp))
-            
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let dateString = formatter.string(from: date as Date)
-            let yourDate = formatter.date(from: dateString)
-            formatter.dateFormat = "dd-MMM-yyyy"
-            let timeString = formatter.string(from: yourDate!)
-            
-            let time = " \(timeString)"
-            
-            nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
-            
-            nameLabel.attributedText = nameAttributedText
-            
-            let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
-            
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineSpacing = 4
-            let range = NSMakeRange(0, attributedText.string.count)
-            attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
-            
-            messageTextView.attributedText = attributedText
+            setupAttibutedCaption(post)
             
         }
+    }
+    
+    fileprivate func setupAttibutedCaption(_ post: Post) {
+        let nameAttributedText = NSMutableAttributedString(string: (post.user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
+        
+        let usernameString = " @\(post.user.username)"
+        
+        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.gray]))
+        
+        nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
+                
+        let timeAgoDisplay = post.creationDate.timeAgoDisplay()
+        let time = timeAgoDisplay
+        
+        nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor.lightGray]))
+        
+        nameLabel.attributedText = nameAttributedText
+        
+        let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4
+        let range = NSMakeRange(0, attributedText.string.count)
+        attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
+        
+        messageTextView.attributedText = attributedText
     }
     
     let optionsButton: UIButton = {

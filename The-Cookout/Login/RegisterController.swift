@@ -8,6 +8,7 @@
 
 import Firebase
 import LBTAComponents
+import Spring
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -98,6 +99,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
             
             if let err = error {
                 print("Failed to create user:", err)
+                self.signUpButton.layer.animation(forKey: "shake")
+                self.signUpButton.layer.animationKeys()
                 return
             }
             

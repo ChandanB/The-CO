@@ -16,15 +16,34 @@ class HomeController: DatasourceController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateFeed), name: PostController.updateFeedNotificationName, object: nil)
         
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         self.datasource = self.homeDatasource
         
         fetchUser()
-        fetchPostFeed()
-        fetchFollowingUserIds()
+        fetchAllPosts()
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleFeedRefresh), for: .valueChanged)
+        collectionView?.refreshControl = refreshControl
         
         setupNavigationBarItems()
+    }
+    
+    @objc func handleUpdateFeed() {
+        handleFeedRefresh()
+    }
+    
+    @objc func handleFeedRefresh() {
+        self.homeDatasource.posts.removeAll()
+        fetchAllPosts()
+    }
+    
+    func fetchAllPosts() {
+        fetchPostFeed()
+        fetchFollowingUserIds()
     }
     
     fileprivate func fetchFollowingUserIds() {
@@ -35,6 +54,7 @@ class HomeController: DatasourceController {
             
             userIdsDictionary.forEach({ (arg) in
                 let (key, value) = arg
+                
                 Database.fetchUserWithUID(uid: key, completion: { (user) in
                     self.fetchPostsWithUser(user)
                 })
@@ -44,6 +64,7 @@ class HomeController: DatasourceController {
             print("Failed to fetch following user ids:", err)
         }
     }
+    
     
     func fetchPostFeed() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -58,12 +79,19 @@ class HomeController: DatasourceController {
         ref.observeSingleEvent(of: .value) { (snapshot) in
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
             
+            self.collectionView?.refreshControl?.endRefreshing()
+            
             dictionaries.forEach({ (key, value) in
                 guard let dictionary = value as? [String: Any] else { return }
                 
                 let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 self.homeDatasource.posts.append(post)
             })
+            
+            self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
+                return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+            })
+            
             self.collectionView?.reloadData()
         }
     }
@@ -139,6 +167,7 @@ class HomeController: DatasourceController {
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         guard let post = self.datasource?.item(indexPath) as? Post else { return .zero }
+        
         let estimatedHeight = estimatedHeightForText(post.caption)
         
         if post.imageWidth.intValue > 0 {
@@ -151,6 +180,11 @@ class HomeController: DatasourceController {
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
+        
+        if text == "" {
+            return 10
+        }
+        
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
         let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]

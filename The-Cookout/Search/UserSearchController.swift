@@ -8,6 +8,8 @@
 
 import LBTAComponents
 import Firebase
+import BoltsSwift
+
 
 class UserSearchController : DatasourceController, UISearchBarDelegate {
     
@@ -127,7 +129,7 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
                 let user = User(uid: key, dictionary: dictionary)
                 self.searchDatasource.topUsers.append(user)
             })
-            
+                        
             DispatchQueue.main.async {
                 self.collectionView?.reloadData()
             }

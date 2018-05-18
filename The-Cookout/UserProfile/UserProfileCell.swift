@@ -18,6 +18,8 @@ class UserProfileCell: DatasourceCell {
             self.user = user
             setupProfileAndBannerImage()
             nameLabel.text = user.name
+            bioTextView.text = user.bio
+            usernameLabel.text = user.username
             setupEditFollowButton()
         }
     }
@@ -147,6 +149,12 @@ class UserProfileCell: DatasourceCell {
         return label
     }()
     
+    let usernameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        return label
+    }()
+    
     let postsLabel: UILabel = {
         let label = UILabel()
         let fontStyle = UIFont.boldSystemFont(ofSize: 12)
@@ -155,6 +163,7 @@ class UserProfileCell: DatasourceCell {
         label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.backgroundColor = .clear
         return label
     }()
     
@@ -166,6 +175,7 @@ class UserProfileCell: DatasourceCell {
         label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.backgroundColor = .clear
         return label
     }()
     
@@ -177,6 +187,7 @@ class UserProfileCell: DatasourceCell {
         label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.backgroundColor = .clear
         return label
     }()
     
@@ -202,22 +213,66 @@ class UserProfileCell: DatasourceCell {
         iv.layer.borderWidth = 1
         return iv
     }()
- 
+    
+    let bannerImageView: CachedImageView = {
+        let iv = CachedImageView()
+        iv.backgroundColor = .red
+        iv.contentMode = .scaleAspectFill
+        iv.alpha = 1.0
+        iv.clipsToBounds = true
+        return iv
+    }()
+    
+    let bioTextView: UITextView = {
+        let textView = UITextView()
+        textView.font = UIFont.systemFont(ofSize: 15)
+        textView.isUserInteractionEnabled = true
+        textView.textAlignment = .center
+        return textView
+    }()
+    
+    
     override func setupViews() {
         super.setupViews()
-
-     //   addSubview(profileImageView)
-     //   profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 90, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: 120)
-      //  profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
+        addSubview(bannerImageView)
+        addSubview(profileImageView)
+        addSubview(usernameLabel)
         addSubview(editProfileFollowButton)
-        setupUserStatsView()
+        addSubview(bioTextView)
 
-        editProfileFollowButton.anchor(postsLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 2, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 34)
+        bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
+        
+        profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 90, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: 120)
+        profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        
+        usernameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
+
+        setupUserStatsView()
+        
+        
+        let height = bioTextView.text.height(withConstrainedWidth: frame.width - 26, font:  UIFont.systemFont(ofSize: 16))
+    
+        
+        bioTextView.anchor(usernameLabel.bottomAnchor, left: leftAnchor, bottom: followersLabel.topAnchor, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: (height * 2.5))
+        bioTextView.centerXAnchor.constraint(equalTo: usernameLabel.centerXAnchor).isActive = true 
+        
+        editProfileFollowButton.anchor(followersLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
 
         setupBottomToolBar()
-    
+    }
+   
+    fileprivate func setupUserStatsView() {
+        let stackView = UIStackView(arrangedSubviews: [postsLabel, followersLabel, followingLabel])
+        stackView.distribution = .fillEqually
+        stackView.backgroundColor = .clear
 
+        
+        addSubview(stackView)
+        
+        stackView.anchor(bioTextView.bottomAnchor, left: bioTextView.leftAnchor, bottom: nil, right: bioTextView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
+        stackView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
     }
     
     fileprivate func setupBottomToolBar() {
@@ -235,32 +290,22 @@ class UserProfileCell: DatasourceCell {
         addSubview(topDividerView)
         addSubview(bottomDividerView)
         
-        stackView.anchor(editProfileFollowButton.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 25, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
+        stackView.anchor(nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 25, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
         
         topDividerView.anchor(stackView.topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
         
         bottomDividerView.anchor(stackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
     }
-
+    
+    
     fileprivate func setupProfileAndBannerImage() {
         guard let profileImageUrl = user?.profileImageUrl else { return }
         guard let bannerImageUrl = user?.bannerImageUrl else { return }
         
         DispatchQueue.main.async {
-         //   self.profileImageView.loadImage(urlString: profileImageUrl)
+            self.profileImageView.loadImage(urlString: profileImageUrl)
+            self.bannerImageView.loadImage(urlString: bannerImageUrl)
         }
-    }
-    
-    fileprivate func setupUserStatsView() {
-        let stackView = UIStackView(arrangedSubviews: [postsLabel, followersLabel, followingLabel])
-        stackView.distribution = .fillEqually
-    
-        addSubview(stackView)
-    
-        stackView.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: -12, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 50)
-        stackView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        stackView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-
     }
 
 }

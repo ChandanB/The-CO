@@ -30,9 +30,6 @@ extension UIImageView
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight] // for supporting device rotation
         self.addSubview(blurEffectView)
     }
-}
-
-extension UIImageView {
     
     func setRounded() {
         layer.borderWidth = 1.0
@@ -40,7 +37,39 @@ extension UIImageView {
         layer.cornerRadius = frame.size.height / 2
         clipsToBounds = true
     }
+    
+    func loadImageUsingCacheWithUrlString(_ urlString: String) {
+        
+        self.image = nil
+        
+        //check cache for image first
+        if let cachedImage = imageCache.object(forKey: urlString as AnyObject) as? UIImage {
+            self.image = cachedImage
+            return
+        }
+        
+        //otherwise fire off a new download
+        let url = URL(string: urlString)
+        URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
+            
+            //download hit an error so lets return out
+            if error != nil {
+                print(error ?? "")
+                return
+            }
+            
+            DispatchQueue.main.async(execute: {
+                
+                if let downloadedImage = UIImage(data: data!) {
+                    imageCache.setObject(downloadedImage, forKey: urlString as AnyObject)
+                    
+                    self.image = downloadedImage
+                }
+            })
+        }).resume()
+    }
 }
+
 
 extension Formatter {
     static let iso8601: ISO8601DateFormatter = {
@@ -116,36 +145,80 @@ extension Array where Element: Equatable {
     
 }
 
-extension UIImageView {
+extension String {
     
-    func loadImageUsingCacheWithUrlString(_ urlString: String) {
+    
+    func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [.font: font], context: nil)
+        return boundingBox.height
+    }
+    
+    func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
         
-        self.image = nil
+        return ceil(boundingBox.height)
+    }
+    
+    func width(withConstrainedHeight height: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
         
-        //check cache for image first
-        if let cachedImage = imageCache.object(forKey: urlString as AnyObject) as? UIImage {
-            self.image = cachedImage
-            return
-        }
-        
-        //otherwise fire off a new download
-        let url = URL(string: urlString)
-        URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
-            
-            //download hit an error so lets return out
-            if error != nil {
-                print(error ?? "")
-                return
-            }
-            
-            DispatchQueue.main.async(execute: {
-                
-                if let downloadedImage = UIImage(data: data!) {
-                    imageCache.setObject(downloadedImage, forKey: urlString as AnyObject)
-                    
-                    self.image = downloadedImage
-                }
-            })
-        }).resume()
+        return ceil(boundingBox.width)
     }
 }
+
+extension NSAttributedString {
+    func height(withConstrainedWidth width: CGFloat) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+        
+        return ceil(boundingBox.height)
+    }
+    
+    func width(withConstrainedHeight height: CGFloat) -> CGFloat {
+        let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height)
+        let boundingBox = boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+        
+        return ceil(boundingBox.width)
+    }
+}
+
+extension Date {
+    func timeAgoDisplay() -> String {
+        let secondsAgo = Int(Date().timeIntervalSince(self))
+        
+        let minute = 60
+        let hour = 60 * minute
+        let day = 24 * hour
+        let week = 7 * day
+        let month = 4 * week
+        
+        let quotient: Int
+        let unit: String
+        if secondsAgo < minute {
+            quotient = secondsAgo
+            unit = "second"
+        } else if secondsAgo < hour {
+            quotient = secondsAgo / minute
+            unit = "min"
+        } else if secondsAgo < day {
+            quotient = secondsAgo / hour
+            unit = "hour"
+        } else if secondsAgo < week {
+            quotient = secondsAgo / day
+            unit = "day"
+        } else if secondsAgo < month {
+            quotient = secondsAgo / week
+            unit = "week"
+        } else {
+            quotient = secondsAgo / month
+            unit = "month"
+        }
+        
+        return "\(quotient) \(unit)\(quotient == 1 ? "" : "s") ago"
+        
+    }
+}
+

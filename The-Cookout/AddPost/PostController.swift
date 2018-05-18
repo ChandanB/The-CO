@@ -203,6 +203,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
+    
     static let updateFeedNotificationName = NSNotification.Name(rawValue: "updateFeed")
 
     func shareTextPost(_ user: User) {
@@ -240,7 +241,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     @objc func handleCancel() {
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: false, completion: nil)
     }
     
     fileprivate func fetchUser() {

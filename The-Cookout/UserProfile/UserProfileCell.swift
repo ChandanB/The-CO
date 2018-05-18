@@ -144,21 +144,25 @@ class UserProfileCell: DatasourceCell {
     }
     
     
-    let listButton: UIButton = {
+    lazy var listButton: UIButton = {
         let btn = UIButton(type: .system)
         let image = #imageLiteral(resourceName: "list").resizeImage(targetSize: CGSize(width: 30, height: 30))
         btn.setImage(image, for: .normal)
         return btn
     }()
     
-    let gridButton: UIButton = {
+    lazy var gridButton: UIButton = {
         let btn = UIButton(type: .system)
         let image = #imageLiteral(resourceName: "grid").resizeImage(targetSize: CGSize(width: 30, height: 30))
         btn.setImage(image, for: .normal)
         btn.tintColor = UIColor(white: 0, alpha: 0.1)
-        
+        btn.addTarget(self, action: #selector(changeToGridView), for: .touchUpInside)
         return btn
     }()
+    
+    @objc func changeToGridView() {
+        
+    }
     
     let likesButton: UIButton = {
         let btn = UIButton(type: .system)

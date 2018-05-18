@@ -10,6 +10,8 @@ import LBTAComponents
 
 struct Post {
     
+    var id: String?
+
     let user: User
     let timestamp: NSNumber
     let caption: String
@@ -19,6 +21,8 @@ struct Post {
     let imageHeight: NSNumber
     let votes: NSNumber
     let creationDate: Date
+    
+    var hasLiked = false
     
     init(user: User, dictionary: [String: AnyObject]) {
         self.user = user

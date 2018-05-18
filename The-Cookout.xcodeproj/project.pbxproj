@@ -49,6 +49,9 @@
 		1F75BEC720AC312600BA7AF2 /* UserSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEC620AC312600BA7AF2 /* UserSearchCell.swift */; };
 		1F75BECA20AC323400BA7AF2 /* SearchDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEC920AC323400BA7AF2 /* SearchDatasource.swift */; };
 		1F75BEF220AD5B0200BA7AF2 /* StickyLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEF120AD5B0200BA7AF2 /* StickyLayout.swift */; };
+		1F8DF92420AF2B5300AEB43B /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8DF92320AF2B5300AEB43B /* CommentCell.swift */; };
+		1F8DF92620AF2B8B00AEB43B /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8DF92520AF2B8B00AEB43B /* Comment.swift */; };
+		1F8DF92C20AF2EE700AEB43B /* CommentsDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8DF92B20AF2EE700AEB43B /* CommentsDatasource.swift */; };
 		1FAB5B4320A7B10A003F9943 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */; };
 		1FAB5B4A20A7B10F003F9943 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4920A7B10F003F9943 /* Assets.xcassets */; };
 		1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */; };
@@ -99,6 +102,9 @@
 		1F75BEC620AC312600BA7AF2 /* UserSearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchCell.swift; sourceTree = "<group>"; };
 		1F75BEC920AC323400BA7AF2 /* SearchDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDatasource.swift; sourceTree = "<group>"; };
 		1F75BEF120AD5B0200BA7AF2 /* StickyLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyLayout.swift; sourceTree = "<group>"; };
+		1F8DF92320AF2B5300AEB43B /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
+		1F8DF92520AF2B8B00AEB43B /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		1F8DF92B20AF2EE700AEB43B /* CommentsDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsDatasource.swift; sourceTree = "<group>"; };
 		1FAB5B3F20A7B10A003F9943 /* The-Cookout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The-Cookout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1FAB5B4920A7B10F003F9943 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -128,6 +134,7 @@
 				1F2BAA2B20A7D50400350CEC /* User.swift */,
 				1F2BAA3520A7F38D00350CEC /* Post.swift */,
 				1F2BAA3E20A80C6800350CEC /* Message.swift */,
+				1F8DF92520AF2B8B00AEB43B /* Comment.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -162,6 +169,8 @@
 				1F2BAA3120A7EF5700350CEC /* PostCell.swift */,
 				1F2BAA2920A7C57D00350CEC /* HomeDatasource.swift */,
 				1F5661B720AF086C00F8E1B7 /* CommentsController.swift */,
+				1F8DF92320AF2B5300AEB43B /* CommentCell.swift */,
+				1F8DF92B20AF2EE700AEB43B /* CommentsDatasource.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -227,14 +236,6 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		1F75BEBA20ABB30D00BA7AF2 /* Other */ = {
-			isa = PBXGroup;
-			children = (
-				1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */,
-			);
-			path = Other;
-			sourceTree = "<group>";
-		};
 		1F75BEC320AC281700BA7AF2 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -281,8 +282,8 @@
 				1F4FD36420AA5C9B00AB73C1 /* AddPost */,
 				1F2BAA2520A7C52C00350CEC /* Model */,
 				1F2BAA3920A80B9900350CEC /* Utils */,
-				1F75BEBA20ABB30D00BA7AF2 /* Other */,
 				1F4FD35720A9ED4600AB73C1 /* MainTabBarController.swift */,
+				1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */,
 				1FAB5B4920A7B10F003F9943 /* Assets.xcassets */,
 				1FAB5B4E20A7B10F003F9943 /* Info.plist */,
 				1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */,
@@ -469,12 +470,15 @@
 				1F2BAA2320A7BF0200350CEC /* HomeController.swift in Sources */,
 				1F75BEBE20ABBC9900BA7AF2 /* UserProfileDatasource.swift in Sources */,
 				1F4FD36A20AA62A900AB73C1 /* PostHeader.swift in Sources */,
+				1F8DF92620AF2B8B00AEB43B /* Comment.swift in Sources */,
 				1F5661A120AEA4EE00F8E1B7 /* CustomAnimationPresenter.swift in Sources */,
 				1F75BECA20AC323400BA7AF2 /* SearchDatasource.swift in Sources */,
 				1F75BEC220AC277B00BA7AF2 /* FirebaseUtils.swift in Sources */,
+				1F8DF92420AF2B5300AEB43B /* CommentCell.swift in Sources */,
 				1F2BAA2E20A7D8F500350CEC /* UserCell.swift in Sources */,
 				1F2BAA3220A7EF5700350CEC /* PostCell.swift in Sources */,
 				1F75BEF220AD5B0200BA7AF2 /* StickyLayout.swift in Sources */,
+				1F8DF92C20AF2EE700AEB43B /* CommentsDatasource.swift in Sources */,
 				1F5661A520AEA6C100F8E1B7 /* CustomAnimationDismisser.swift in Sources */,
 				1F4FD36820AA5CE400AB73C1 /* PhotoSelectorController.swift in Sources */,
 				1F56619A20ADF07D00F8E1B7 /* CameraController.swift in Sources */,

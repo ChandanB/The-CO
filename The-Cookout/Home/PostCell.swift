@@ -15,18 +15,14 @@ import LBTAComponents
 import UIFontComplete
 
 
-protocol HomePostCellDelegate {
-    func didTapComment(post: Post)
-}
-
 class PostCell: DatasourceCell {
     
-    var delegate: HomePostCellDelegate?
-
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
-            self.post = post
+            
+            loveButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "like_selected").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+            
             let url = URL(string: post.user.profileImageUrl)
             profileImageView.kf.setImage(with: url)
             
@@ -38,8 +34,6 @@ class PostCell: DatasourceCell {
         }
     }
     
-    var post: Post?
-        
     fileprivate func setupAttibutedCaption(_ post: Post) {
         
         let name = post.user.name
@@ -115,25 +109,44 @@ class PostCell: DatasourceCell {
         return button
     }()
     
-    lazy var likeButton: UIButton = {
+    @objc func handleComment() {
+        guard let post = self.datasourceItem as? Post else { return }
+        (self.controller as? HomeController)?.didTapComment(post: post)
+    }
+    
+    lazy var upvoteButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
+        button.addTarget(self, action: #selector(handleUpvote), for: .touchUpInside)
         return button
     }()
     
-    lazy var dislikeButton: UIButton = {
+    @objc func handleUpvote() {
+     //   (self.controller as? HomeController)?.didLike(for: self)
+    }
+    
+    
+    lazy var downvoteButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "dislike"), for: .normal)
-        
+        button.addTarget(self, action: #selector(handleDownvote), for: .touchUpInside)
         return button
     }()
     
-    let loveButton: UIButton = {
+    @objc func handleDownvote() {
+        //   (self.controller as? HomeController)?.didLike(for: self)
+    }
+    
+    lazy var loveButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "love"), for: .normal)
-        
+        button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
         return button
     }()
+    
+    @objc func handleLike() {
+        (self.controller as? HomeController)?.didLike(for: self)
+    }
     
     var nameLabel: UILabel = {
         let label = UILabel()
@@ -170,10 +183,10 @@ class PostCell: DatasourceCell {
     fileprivate func setupBottomButtons() {
         let replyButtonContainerView = UIView()
         let loveButtonContainerView = UIView()
-        let likeButtonContainerView = UIView()
-        let dislikeButtonContainerView = UIView()
+        let upvoteButtonContainerView = UIView()
+        let downvoteButtonContainerView = UIView()
         
-        let buttonStackView = UIStackView(arrangedSubviews: [replyButtonContainerView, likeButtonContainerView, dislikeButtonContainerView, loveButtonContainerView])
+        let buttonStackView = UIStackView(arrangedSubviews: [replyButtonContainerView, upvoteButtonContainerView, downvoteButtonContainerView, loveButtonContainerView])
         
         buttonStackView.axis = .horizontal
         buttonStackView.distribution = .fillEqually
@@ -188,23 +201,19 @@ class PostCell: DatasourceCell {
         photoImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1).isActive = true
         
         addSubview(replyButton)
-        addSubview(likeButton)
-        addSubview(dislikeButton)
+        addSubview(upvoteButton)
+        addSubview(downvoteButton)
         addSubview(loveButton)
         
         replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
-        likeButton.anchor(likeButtonContainerView.topAnchor, left: likeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        upvoteButton.anchor(upvoteButtonContainerView.topAnchor, left: upvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
-        dislikeButton.anchor(dislikeButtonContainerView.topAnchor, left: dislikeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        downvoteButton.anchor(downvoteButtonContainerView.topAnchor, left: downvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
         loveButton.anchor(loveButtonContainerView.topAnchor, left: loveButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
     }
     
-    @objc func handleComment() {
-        guard let post = self.datasourceItem as? Post else { return }
-        (self.controller as? HomeController)?.didTapComment(post: post)
-    }
     
     
 }

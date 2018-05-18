@@ -31,7 +31,7 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
             self.searchDatasource.filteredUsers = self.searchDatasource.users
         } else {
             self.searchDatasource.filteredUsers = self.searchDatasource.users.filter { (user) -> Bool in
-                return user.name.lowercased().contains(searchText.lowercased())
+                return user.username.lowercased().contains(searchText.lowercased())
             }
         }
         

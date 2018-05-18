@@ -22,14 +22,14 @@ class HomeController: DatasourceController {
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         self.datasource = self.homeDatasource
         
-        fetchUser()
-        fetchAllPosts()
-        
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleFeedRefresh), for: .valueChanged)
+        refreshControl.layer.zPosition = -1
         collectionView?.refreshControl = refreshControl
         
         setupNavigationBarItems()
+        fetchUser()
+        fetchAllPosts()        
     }
     
     @objc func handleUpdateFeed() {
@@ -54,7 +54,6 @@ class HomeController: DatasourceController {
             
             userIdsDictionary.forEach({ (arg) in
                 let (key, value) = arg
-                
                 Database.fetchUserWithUID(uid: key, completion: { (user) in
                     self.fetchPostsWithUser(user)
                 })
@@ -75,11 +74,11 @@ class HomeController: DatasourceController {
     
     fileprivate func fetchPostsWithUser(_ user: User) {
         let ref = Database.database().reference().child("posts").child(user.uid)
-        
+
         ref.observeSingleEvent(of: .value) { (snapshot) in
-            guard let dictionaries = snapshot.value as? [String: Any] else { return }
-            
             self.collectionView?.refreshControl?.endRefreshing()
+
+            guard let dictionaries = snapshot.value as? [String: Any] else { return }
             
             dictionaries.forEach({ (key, value) in
                 guard let dictionary = value as? [String: Any] else { return }
@@ -138,7 +137,12 @@ class HomeController: DatasourceController {
         profileButton.imageView?.contentMode = .scaleAspectFill
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: profileButton)
-        navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleLogout)))
+        navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShowUserProfile)))
+    }
+    
+    @objc func handleShowUserProfile() {
+        let userProfile = UserProfileController()
+        present(userProfile, animated: true, completion: nil)
     }
     
     @objc func handleLogout() {
@@ -204,7 +208,6 @@ class HomeController: DatasourceController {
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
             self.setupLeftNavItem(self.user!)
-            self.collectionView?.reloadData()
         }
     }
     

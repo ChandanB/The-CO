@@ -46,7 +46,6 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         textView.textContainer.lineBreakMode = NSLineBreakMode.byCharWrapping
         textView.sizeToFit()
         textView.selectedTextRange = textView.textRange(from: textView.beginningOfDocument, to: textView.beginningOfDocument)
-        
         return textView
     }()
     
@@ -60,7 +59,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
-        let currentText:String = textView.text
+        let currentText: String = textView.text
         let updatedText = (currentText as NSString).replacingCharacters(in: range, with: text)
         
         if updatedText.isEmpty && imageView.image == nil {

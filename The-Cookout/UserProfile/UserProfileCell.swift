@@ -19,14 +19,14 @@ class UserProfileCell: DatasourceCell {
             setupProfileAndBannerImage()
             nameLabel.text = user.name
             bioTextView.text = user.bio
-            usernameLabel.text = user.username
+            usernameLabel.text = "@\(user.username)"
             setupEditFollowButton()
         }
     }
     
     var user: User? 
     
-    fileprivate func setupEditFollowButton() {
+    func setupEditFollowButton() {
         
         guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
         
@@ -216,7 +216,7 @@ class UserProfileCell: DatasourceCell {
     
     let bannerImageView: CachedImageView = {
         let iv = CachedImageView()
-        iv.backgroundColor = .red
+        iv.backgroundColor = twitterBlue
         iv.contentMode = .scaleAspectFill
         iv.alpha = 1.0
         iv.clipsToBounds = true

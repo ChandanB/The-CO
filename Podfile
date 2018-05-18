@@ -18,7 +18,7 @@ target 'The-Cookout' do
   pod 'Kingfisher', '~> 4.0'
   pod 'GSKStretchyHeaderView'
   pod 'Bolts-Swift'
-  pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
+  pod 'Spring'
 
 
 	

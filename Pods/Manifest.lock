@@ -84,7 +84,7 @@ DEPENDENCIES:
   - GSKStretchyHeaderView
   - Kingfisher (~> 4.0)
   - LBTAComponents
-  - Spring (from `https://github.com/MengTo/Spring.git`)
+  - Spring
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -107,15 +107,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - Protobuf
-
-EXTERNAL SOURCES:
-  Spring:
-    :git: https://github.com/MengTo/Spring.git
-
-CHECKOUT OPTIONS:
-  Spring:
-    :commit: c540239f3590bbaf4a35c3959c329dd5ed4e3eee
-    :git: https://github.com/MengTo/Spring.git
+    - Spring
 
 SPEC CHECKSUMS:
   Bolts-Swift: fa98d1b59fc1acea9b21a21306dcdca1c85e3737
@@ -137,8 +129,8 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
-  Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
+  Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
 
-PODFILE CHECKSUM: efb83ba0f416f5354d7d9dea033a40c2b46f97cd
+PODFILE CHECKSUM: 125b79de78a319f852c41b3db2ef933fe6e6d2fd
 
 COCOAPODS: 1.5.2

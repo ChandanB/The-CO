@@ -142,6 +142,10 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
             return .zero
         }
         
+        if searchDatasource.topUsers.count == 0 {
+            return .zero
+        }
+        
         return CGSize(width: view.frame.width, height: 33)
     }
     
@@ -149,6 +153,10 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         
         if section == 1 {
+            return .zero
+        }
+        
+        if searchDatasource.topUsers.count == 0 {
             return .zero
         }
         

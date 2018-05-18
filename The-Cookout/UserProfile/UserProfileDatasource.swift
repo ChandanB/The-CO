@@ -12,13 +12,15 @@ class UserProfileDataSource: Datasource {
     
     var posts = [Post]()
     var users = [User]()
+    var userProfileCell = UserProfileCell.self
     
 //    override func headerClasses() -> [DatasourceCell.Type]? {
 //        return [UserProfileHeader.self]
 //    }
     
     override func cellClasses() -> [DatasourceCell.Type] {
-        return [UserProfileCell.self, UserProfilePhotoCell.self]
+    
+        return [userProfileCell, UserProfilePhotoCell.self]
     }
     
     override func item(_ indexPath: IndexPath) -> Any? {

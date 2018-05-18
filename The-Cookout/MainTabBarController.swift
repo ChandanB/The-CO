@@ -18,6 +18,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.delegate = self
+        
         if Auth.auth().currentUser == nil {
             //show if not logged in
             DispatchQueue.main.async {
@@ -28,7 +30,6 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
             return
         }
         
-        self.delegate = self
         setupViewControllers()
     }
     
@@ -40,22 +41,23 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         //search
         let searchNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "search_unselected"), selectedImage: #imageLiteral(resourceName: "search_selected"), rootViewController: UserSearchController())
         
+        //post
         let plusNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "plus_unselected"), selectedImage: #imageLiteral(resourceName: "plus_unselected"))
+
         
         let likeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "like_unselected"), selectedImage: #imageLiteral(resourceName: "like_selected"))
         
-        // user profile
-        let userProfileController = UserProfileController()
-        let userProfileNavController = UINavigationController(rootViewController: userProfileController)
-        
-        userProfileNavController.tabBarItem.image = #imageLiteral(resourceName: "profile_unselected")
-        userProfileNavController.tabBarItem.selectedImage = #imageLiteral(resourceName: "profile_selected")
+//        // user profile
+//        let userProfileController = UserProfileController()
+//        let userProfileNavController = UINavigationController(rootViewController: userProfileController)
+//        
+//        userProfileNavController.tabBarItem.image = #imageLiteral(resourceName: "profile_unselected")
+//        userProfileNavController.tabBarItem.selectedImage = #imageLiteral(resourceName: "profile_selected")
         
         viewControllers = [homeNavController,
                            searchNavController,
                            plusNavController,
-                           likeNavController,
-                           userProfileNavController]
+                           likeNavController]
         
         //modify tab bar item insets
         guard let items = tabBar.items else { return }

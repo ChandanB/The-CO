@@ -77,7 +77,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
             let postController = PostController(collectionViewLayout: layout)
             let navController = UINavigationController(rootViewController: postController)
             
-            present(navController, animated: false, completion: nil)
+            present(navController, animated: true, completion: nil)
             
             return false
         }

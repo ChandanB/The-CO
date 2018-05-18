@@ -282,10 +282,10 @@
 				1F2BAA2520A7C52C00350CEC /* Model */,
 				1F2BAA3920A80B9900350CEC /* Utils */,
 				1F75BEBA20ABB30D00BA7AF2 /* Other */,
+				1F4FD35720A9ED4600AB73C1 /* MainTabBarController.swift */,
 				1FAB5B4920A7B10F003F9943 /* Assets.xcassets */,
 				1FAB5B4E20A7B10F003F9943 /* Info.plist */,
 				1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */,
-				1F4FD35720A9ED4600AB73C1 /* MainTabBarController.swift */,
 			);
 			path = "The-Cookout";
 			sourceTree = "<group>";

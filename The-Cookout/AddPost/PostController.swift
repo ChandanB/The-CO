@@ -6,10 +6,10 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import LBTAComponents
+import UIKit
 import Firebase
 
-class PostController: DatasourceController, ReturnPostImageDelegate, ReturnPostTextDelegate {
+class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate {
     
     let cellId = "cellId"
     let headerId = "headerId"
@@ -19,6 +19,7 @@ class PostController: DatasourceController, ReturnPostImageDelegate, ReturnPostT
     var messageTextView: UITextView?
     var photoSelectorController: PhotoSelectorController?
     var postHeader: PostHeader?
+    
     
     lazy var shareButton: UIButton = {
         let button = UIButton(type: .system)
@@ -46,7 +47,7 @@ class PostController: DatasourceController, ReturnPostImageDelegate, ReturnPostT
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hideKeyboardWhenTapped()
+     //   self.hideKeyboardWhenTapped()
 
         self.postHeader?.textdelegate = self
         self.postHeader?.imageDelegate = self
@@ -239,7 +240,7 @@ class PostController: DatasourceController, ReturnPostImageDelegate, ReturnPostT
     }
     
     @objc func handleCancel() {
-        dismiss(animated: false, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     fileprivate func fetchUser() {

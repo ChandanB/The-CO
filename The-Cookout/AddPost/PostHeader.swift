@@ -13,7 +13,7 @@ protocol ReturnPostTextDelegate {
     func returnPostText(text: UITextView)
 }
 
-class PostHeader: DatasourceCell, UITextViewDelegate {
+class PostHeader: UICollectionViewCell, UITextViewDelegate {
     
     var user: User? {
         didSet {
@@ -24,6 +24,57 @@ class PostHeader: DatasourceCell, UITextViewDelegate {
     var textdelegate : ReturnPostTextDelegate?
     var imageDelegate : ReturnPostImageDelegate?
     
+//    lazy var containerView: UIView = {
+//
+//        var showCameraButton: SpringButton = {
+//            let button = SpringButton()
+//            button.setImage(#imageLiteral(resourceName: "camera3").withRenderingMode(.alwaysOriginal), for: .normal)
+//            button.addTarget(self, action: #selector(showCamera), for: .touchUpInside)
+//            button.layer.cornerRadius = 5
+//            button.layer.borderWidth = 1
+//            button.clipsToBounds = true
+//            button.backgroundColor = .white
+//            return button
+//        }()
+//
+//
+//        let containerView = UIView()
+//        containerView.backgroundColor = .white
+//        containerView.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+//
+//        var galleryButton = UIButton(type: .system)
+//        galleryButton.setImage(#imageLiteral(resourceName: "gallery").withRenderingMode(.alwaysOriginal), for: .normal)
+//        galleryButton.tintColor = .black
+//        galleryButton.addTarget(self, action: #selector(handleOpenPhotoSelector), for: .touchUpInside)
+//
+//        containerView.addSubview(galleryButton)
+//        galleryButton.anchor(containerView.topAnchor, left: containerView.leftAnchor, bottom: containerView.bottomAnchor, right: nil, topConstant: 0, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 0)
+//
+//        containerView.addSubview(showCameraButton)
+//        showCameraButton.anchor(nil, left: containerView.leftAnchor, bottom: containerView.topAnchor, right: nil, topConstant: 0, leftConstant: 12, bottomConstant: 12, rightConstant: 0, widthConstant: 60, heightConstant: 60)
+//        showCameraButton.layer.zPosition = -1
+//
+//        return containerView
+//    }()
+//
+//    @objc func handleSubmit() {
+//        print("Handling Submit...")
+//    }
+//
+//    @objc func handleOpenPhotoSelector() {
+//        print("OOPNE")
+//        self.postController?.handleOpenPhotoSelector()
+//    }
+//
+//    override var inputAccessoryView: UIView? {
+//        get {
+//            return containerView
+//        }
+//    }
+//
+//    override var canBecomeFirstResponder: Bool {
+//        return true
+//    }
     
     var postController: PostController?
     

@@ -207,7 +207,7 @@ class HomeController: DatasourceController {
     func didTapComment(post: Post) {
         print("Message coming from HomeController")
         print(post.caption)
-        let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
+        let commentsController = CommentsController()
         navigationController?.pushViewController(commentsController, animated: true)
     }
     

@@ -48,7 +48,9 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         let likeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "like_unselected"), selectedImage: #imageLiteral(resourceName: "like_selected"))
         
         // user profile
-        let userProfileController = UserProfileController()
+        let layout = UICollectionViewFlowLayout()
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
+        
         let userProfileNavController = UINavigationController(rootViewController: userProfileController)
         
         userProfileNavController.tabBarItem.image = #imageLiteral(resourceName: "profile_unselected")

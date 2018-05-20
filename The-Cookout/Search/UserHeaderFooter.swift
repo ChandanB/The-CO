@@ -8,7 +8,6 @@
 
 import LBTAComponents
 
-let twitterBlue = UIColor(r: 61, g: 167, b: 244)
 
 class UserHeader: DatasourceCell {
     

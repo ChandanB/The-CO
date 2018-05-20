@@ -9,7 +9,13 @@
 import Kingfisher
 import LBTAComponents
 
+protocol UserProfileTextDelegate {
+    func didLike(for cell: UserProfileTextCell)
+}
+
 class UserProfileTextCell: DatasourceCell {
+    
+     var delegate: UserProfileTextDelegate?
     
     override var datasourceItem: Any? {
         didSet {
@@ -125,7 +131,8 @@ class UserProfileTextCell: DatasourceCell {
     }()
     
     @objc func handleLike() {
-        (self.controller as? UserProfileController)?.didLike(for: self)
+        print("Like pressed")
+        delegate?.didLike(for: self)
     }
     
     var nameLabel: UILabel = {

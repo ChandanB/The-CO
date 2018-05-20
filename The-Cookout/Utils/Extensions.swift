@@ -11,6 +11,7 @@ import Firebase
 import UIFontComplete
 
 let imageCache = NSCache<AnyObject, AnyObject>()
+let twitterBlue = UIColor(r: 55, g: 115, b: 210)
 
 enum CustomFont: String, FontRepresentable {
     case proximaNova = "Proxima Nova"

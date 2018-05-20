@@ -69,7 +69,7 @@ class HomeController: DatasourceController {
     
     fileprivate func fetchPostsWithUser(_ user: User) {
         let ref = Database.database().reference().child("posts").child(user.uid)
-        
+
         ref.observeSingleEvent(of: .value) { (snapshot) in
 
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
@@ -81,8 +81,9 @@ class HomeController: DatasourceController {
                 post.id = key
                 
                 guard let uid = Auth.auth().currentUser?.uid else { return }
+                self.collectionView?.refreshControl?.endRefreshing()
+               
                 Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value) { (snapshot) in
-                    print(snapshot)
                     
                     if let value = snapshot.value as? Int, value == 1 {
                         post.hasLiked = true
@@ -91,9 +92,6 @@ class HomeController: DatasourceController {
                     }
                     
                     self.homeDatasource.posts.append(post)
-                    print(self.homeDatasource.posts.count)
-                    
-                    self.collectionView?.refreshControl?.endRefreshing()
                     
                     self.homeDatasource.posts .sort(by: { (p1, p2) -> Bool in
                         return p1.creationDate.compare(p2.creationDate) == .orderedDescending
@@ -185,7 +183,7 @@ class HomeController: DatasourceController {
         
         let estimatedHeight = estimatedHeightForText(post.caption)
         
-        if post.imageWidth.intValue > 0 {
+        if post.hasImage == "true" {
             var height: CGFloat = 50 + 8 + 8 + estimatedHeight
             height += view.frame.width
             return CGSize(width: view.frame.width, height: height + 72)

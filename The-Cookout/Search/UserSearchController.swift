@@ -50,7 +50,8 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         
         let user = self.searchDatasource.filteredUsers[indexPath.item]
         
-        let userProfileController = UserProfileController()
+        let layout = UICollectionViewFlowLayout()
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
         userProfileController.userId = user.uid
         navigationController?.pushViewController(userProfileController, animated: true)
     }

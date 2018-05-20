@@ -29,7 +29,20 @@ class UserProfileCell: DatasourceCell {
         }
     }
     
-    var user: User?
+    var user: User? {
+        didSet {
+            guard let user = datasourceItem as? User else { return }
+            self.user = user
+            let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
+            
+            setupProfileAndBannerImage()
+            nameLabel.text = user.name
+            nameLabel.font = font!
+            usernameLabel.text = "@\(user.username)"
+            setupEditFollowButton()
+            setupUserBio(user)
+        }
+    }
     
     func setupUserBio(_ user: User) {
         
@@ -145,23 +158,31 @@ class UserProfileCell: DatasourceCell {
     
     
     lazy var listButton: UIButton = {
-        let btn = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "list").resizeImage(targetSize: CGSize(width: 30, height: 30))
-        btn.setImage(image, for: .normal)
-        return btn
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "list"), for: .normal)
+        button.tintColor = UIColor(white: 0, alpha: 0.2)
+        button.addTarget(self, action: #selector(handleChangeToListView), for: .touchUpInside)
+        return button
     }()
+    
+    @objc func handleChangeToListView() {
+        print("Changing to list view")
+        listButton.tintColor = twitterBlue
+        gridButton.tintColor = UIColor(white: 0, alpha: 0.2)
+        (self.controller as? UserProfileController)?.didChangeToListView(self.user!)
+    }
     
     lazy var gridButton: UIButton = {
-        let btn = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "grid").resizeImage(targetSize: CGSize(width: 30, height: 30))
-        btn.setImage(image, for: .normal)
-        btn.tintColor = UIColor(white: 0, alpha: 0.1)
-        btn.addTarget(self, action: #selector(changeToGridView), for: .touchUpInside)
-        return btn
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "grid"), for: .normal)
+        button.addTarget(self, action: #selector(handleChangeToGridView), for: .touchUpInside)
+        return button
     }()
     
-    @objc func changeToGridView() {
-        
+    @objc func handleChangeToGridView() {
+        gridButton.tintColor = twitterBlue
+        listButton.tintColor = UIColor(white: 0, alpha: 0.2)
+        (self.controller as? UserProfileController)?.didChangeToGridView(self.user!)
     }
     
     let likesButton: UIButton = {
@@ -267,7 +288,6 @@ class UserProfileCell: DatasourceCell {
         addSubview(bioTextView)
         addSubview(editProfileFollowButton)
         
-
         bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
         
         profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 90, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: 120)
@@ -275,9 +295,6 @@ class UserProfileCell: DatasourceCell {
         
         usernameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
-        
-        let height = bioTextView.text.height(withConstrainedWidth: frame.width - 12 - 12 - 2, font:  UIFont.systemFont(ofSize: 15))
-        
         
         bioTextView.anchor(usernameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         bioTextView.centerXAnchor.constraint(equalTo: usernameLabel.centerXAnchor).isActive = true
@@ -308,7 +325,7 @@ class UserProfileCell: DatasourceCell {
         let bottomDividerView = UIView()
         bottomDividerView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
-        let stackView = UIStackView(arrangedSubviews: [listButton, gridButton, likesButton])
+        let stackView = UIStackView(arrangedSubviews: [gridButton, listButton, likesButton])
         stackView.distribution = .fillEqually
         
         addSubview(stackView)

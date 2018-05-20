@@ -8,41 +8,44 @@
 
 import LBTAComponents
 
-class UserProfileDataSource: Datasource {
+class UserProfileDatasource: Datasource {
     
-    var posts = [Post]()
-    var users = [User]()
-    var userProfileCell = UserProfileCell.self
+    var user: User?
+    var gridData = [Post]()
+    var listData = [Post]()
     
-//    override func headerClasses() -> [DatasourceCell.Type]? {
-//        return [UserProfileHeader.self]
-//    }
-    
+    override func headerClasses() -> [DatasourceCell.Type]? {
+        return [UserProfileCell.self]
+    }
+
     override func cellClasses() -> [DatasourceCell.Type] {
-    
-        return [userProfileCell, UserProfilePhotoCell.self]
+        return [UserProfilePhotoCell.self, PostCell.self]
     }
     
     override func item(_ indexPath: IndexPath) -> Any? {
-        
         if indexPath.section == 0 {
-            return users[indexPath.item]
+            return gridData[indexPath.item]
         }
-        
-        return posts[indexPath.item]
+        return listData[indexPath.item]
     }
     
     override func numberOfItems(_ section: Int) -> Int {
-        
         if section == 0 {
-            return users.count
+            return gridData.count
         }
-        
-        return posts.count
+         return listData.count
     }
     
+    override func headerItem(_ section: Int) -> Any? {
+        return user!
+    }
+
     override func numberOfSections() -> Int {
         return 2
     }
     
 }
+
+
+
+

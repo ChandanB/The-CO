@@ -23,6 +23,8 @@ struct Post {
     let creationDate: Date
     
     var hasLiked = false
+    var hasText: String
+    var hasImage: String
     
     init(user: User, dictionary: [String: AnyObject]) {
         self.user = user
@@ -30,6 +32,8 @@ struct Post {
         self.caption = dictionary["caption"] as? String ?? ""
         self.imageUrl = dictionary["imageUrl"] as? String ?? ""
         self.videoUrl = dictionary["videoUrl"] as? String ?? ""
+        self.hasText = dictionary["hasText"] as? String ?? "false"
+        self.hasImage = dictionary["hasImage"] as? String ?? "false"
         self.timestamp = dictionary["timestamp"] as? NSNumber ?? 0
         self.imageWidth = dictionary["imageWidth"] as? NSNumber ?? 0
         self.imageHeight = dictionary["imageHeight"] as? NSNumber ?? 0

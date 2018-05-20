@@ -56,6 +56,7 @@
 		1FAB5B4A20A7B10F003F9943 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4920A7B10F003F9943 /* Assets.xcassets */; };
 		1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */; };
 		1FD33C9A20AD99B0009D511B /* UserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD33C9920AD99B0009D511B /* UserProfileHeader.swift */; };
+		1FF5076620AF5B5D0092F462 /* UserProfileTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5076520AF5B5D0092F462 /* UserProfileTextCell.swift */; };
 		FEF96D87CFE0CA30E256AC54 /* Pods_The_Cookout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +112,7 @@
 		1FAB5B4C20A7B10F003F9943 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1FAB5B4E20A7B10F003F9943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FD33C9920AD99B0009D511B /* UserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeader.swift; sourceTree = "<group>"; };
+		1FF5076520AF5B5D0092F462 /* UserProfileTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTextCell.swift; sourceTree = "<group>"; };
 		390C881A38F3B95586CB0671 /* Pods-The-Cookout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.debug.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.debug.xcconfig"; sourceTree = "<group>"; };
 		41062D1ADD562626DE736A1C /* Pods-The-Cookout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.release.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.release.xcconfig"; sourceTree = "<group>"; };
 		A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_The_Cookout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,8 +157,9 @@
 			children = (
 				1F4FD35920A9EE7500AB73C1 /* UserProfileController.swift */,
 				1F4FD35C20A9F7E600AB73C1 /* UserProfileCell.swift */,
-				1FD33C9920AD99B0009D511B /* UserProfileHeader.swift */,
+				1FF5076520AF5B5D0092F462 /* UserProfileTextCell.swift */,
 				1F4FD37120AAFA5200AB73C1 /* UserProfilePhotoCell.swift */,
+				1FD33C9920AD99B0009D511B /* UserProfileHeader.swift */,
 				1F75BEBD20ABBC9900BA7AF2 /* UserProfileDatasource.swift */,
 			);
 			path = UserProfile;
@@ -187,8 +190,8 @@
 		1F4FD36420AA5C9B00AB73C1 /* AddPost */ = {
 			isa = PBXGroup;
 			children = (
-				1F4FD36920AA62A900AB73C1 /* PostHeader.swift */,
 				1F4FD36520AA5CA900AB73C1 /* PostController.swift */,
+				1F4FD36920AA62A900AB73C1 /* PostHeader.swift */,
 				1F4FD36720AA5CE400AB73C1 /* PhotoSelectorController.swift */,
 				1F4FD36D20AA838E00AB73C1 /* PhotoSelectorHeader.swift */,
 				1F4FD36B20AA804F00AB73C1 /* PhotoSelectorCell.swift */,
@@ -468,6 +471,7 @@
 				1F75BEC720AC312600BA7AF2 /* UserSearchCell.swift in Sources */,
 				1F4FD35A20A9EE7500AB73C1 /* UserProfileController.swift in Sources */,
 				1F2BAA2320A7BF0200350CEC /* HomeController.swift in Sources */,
+				1FF5076620AF5B5D0092F462 /* UserProfileTextCell.swift in Sources */,
 				1F75BEBE20ABBC9900BA7AF2 /* UserProfileDatasource.swift in Sources */,
 				1F4FD36A20AA62A900AB73C1 /* PostHeader.swift in Sources */,
 				1F8DF92620AF2B8B00AEB43B /* Comment.swift in Sources */,

@@ -14,7 +14,6 @@ class UserProfilePhotoCell: DatasourceCell {
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
-            print (post)
             let url = URL(string: post.imageUrl)
             photoImageView.kf.setImage(with: url)
         }

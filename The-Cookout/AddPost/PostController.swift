@@ -20,7 +20,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     var photoSelectorController: PhotoSelectorController?
     var postHeader: PostHeader?
     
-    
     lazy var shareButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Share", for: .normal)
@@ -169,16 +168,13 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        let userPostRef = Database.database().reference().child("posts").child(uid)
-        let ref = userPostRef.childByAutoId()
-        
         var trimmedCaption = caption.trim()
         
         if trimmedCaption == "What's on your mind?" || trimmedCaption == "Say something about this picture?" {
             trimmedCaption = ""
         }
         
-        let values =
+        var values =
             ["imageUrl": imageUrl,
              "caption": trimmedCaption,
              "imageWidth": postImage.size.width,
@@ -186,7 +182,14 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
              "creationDate": Date().timeIntervalSince1970,
              "profileImageUrl": user.profileImageUrl,
              "name": user.name,
-             "username": user.username] as [String : Any]
+             "username": user.username, "hasImage": "true"] as [String : Any]
+        
+        if trimmedCaption != "" {
+            values.updateValue("true", forKey: "hasText")
+        }
+        
+        let userPostRef = Database.database().reference().child("posts").child(uid)
+        let ref = userPostRef.childByAutoId()
         
         ref.updateChildValues(values) { (err, ref) in
             
@@ -203,16 +206,12 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    
     static let updateFeedNotificationName = NSNotification.Name(rawValue: "updateFeed")
 
     func shareTextPost(_ user: User) {
         guard let caption = messageTextView?.text else { return }
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        let userPostRef = Database.database().reference().child("posts").child(uid)
-        let ref = userPostRef.childByAutoId()
         
         let trimmedCaption = caption.trim()
         
@@ -224,7 +223,10 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
                       "creationDate": Date().timeIntervalSince1970,
                       "profileImageUrl": user.profileImageUrl,
                       "name": user.name,
-                      "username": user.username] as [String : Any]
+                      "username": user.username, "hasText": "true"] as [String : Any]
+        
+        let userPostRef = Database.database().reference().child("posts").child(uid)
+        let ref = userPostRef.childByAutoId()
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {
@@ -237,7 +239,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             
             NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
         }
-        
     }
     
     @objc func handleCancel() {

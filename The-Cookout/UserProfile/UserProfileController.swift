@@ -20,6 +20,9 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     var gridArray = [Post]()
     var listArray = [Post]()
+    var postCount = 0
+    var followingCount = 0
+    var followersCount = 0
     
     func didChangeToGridView() {
         isGridView = true
@@ -45,7 +48,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.backgroundColor = .white
         
         fetchUser()
-        
     }
     
     @objc func dismissView() {
@@ -96,12 +98,37 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 if post.hasText == "true" && post.hasImage == "false" {
                     self.listArray.append(post)
                 }
-                
             })
-            
             self.collectionView?.reloadData()
         }
     }
+    
+    fileprivate func fetchStatsCount() {
+        
+        guard let uid = self.user?.uid else { return }
+        let postsRef = Database.database().reference().child("posts").child(uid)
+        postsRef.observe(.value) { (snapshot) in
+            guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+            self.postCount = allObjects.count
+        }
+        
+        let followingRef = Database.database().reference().child("following").child(uid)
+        followingRef.observe(.value) { (snapshot) in
+            guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+            self.followingCount = allObjects.count
+        }
+        
+        let followersRef = Database.database().reference().child("followers").child(uid)
+        followersRef.observe(.value) { (snapshot) in
+            guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+            self.followersCount = allObjects.count
+        }
+        
+        self.collectionView?.reloadData()
+        
+    }
+    
+   
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
@@ -151,9 +178,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! UserProfileHeader
-            
             header.user = self.user
             header.delegate = self
+            header.postCount = self.postCount
+            header.followersCount = self.followersCount
+            header.followingCount = self.followingCount
             
             return header
         }
@@ -212,6 +241,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.user = user
                 self.navigationItem.title = self.user?.name
                 self.collectionView?.reloadData()
+                self.fetchStatsCount()
                 self.paginatePosts()
             }
         }

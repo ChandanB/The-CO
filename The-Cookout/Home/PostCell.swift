@@ -116,7 +116,8 @@ class PostCell: DatasourceCell {
     
     @objc func handleComment() {
         print("tapped comment")
-      //  (self.controller as? HomeController)?.didTapProfilePicture(for cell: self)
+        guard let post = self.datasourceItem as? Post else { return }
+        (self.controller as? HomeController)?.didTapComment(post: post)
     }
     
     lazy var loveButton: UIButton = {

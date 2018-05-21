@@ -21,6 +21,34 @@ class UserProfileHeader: DatasourceCell {
 
     var delegate: UserProfileHeaderDelegate?
     
+    var postCount: Int? {
+        didSet {
+            let fontStyle = UIFont.boldSystemFont(ofSize: 12)
+            let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedStringKey.font: fontStyle])
+            attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
+            postsLabel.attributedText = attributedText
+        }
+    }
+    
+    var followersCount: Int? {
+        didSet {
+            let fontStyle = UIFont.boldSystemFont(ofSize: 12)
+            let attributedText = NSMutableAttributedString(string: "\(followersCount ?? 0)\n", attributes: [NSAttributedStringKey.font: fontStyle])
+            attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
+            followersLabel.attributedText = attributedText
+        }
+    }
+
+    var followingCount: Int? {
+        didSet {
+            let fontStyle = UIFont.boldSystemFont(ofSize: 12)
+            let attributedText = NSMutableAttributedString(string: "\(followingCount ?? 0)\n", attributes: [NSAttributedStringKey.font: fontStyle])
+            attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
+            followingLabel.attributedText = attributedText
+        }
+    }
+
+    
     var user: User? {
         didSet {
             let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
@@ -67,7 +95,6 @@ class UserProfileHeader: DatasourceCell {
             Database.database().reference().child("following").child(currentLoggedInUserId).child(userId!).observeSingleEvent(of: .value) { (snapshot) in
                 
                 if let isFollowing = snapshot.value as? Int, isFollowing == 1 {
-                    
                     UIView.performWithoutAnimation {
                         self.editProfileFollowButton.setTitle("Unfollow", for: .normal)
                         self.editProfileFollowButton.layoutIfNeeded()
@@ -115,10 +142,10 @@ class UserProfileHeader: DatasourceCell {
         } else {
             
             //follow
-            let ref = Database.database().reference().child("following").child(currentLoggedInUserId)
-            
+            let followingRef = Database.database().reference().child("following").child(currentLoggedInUserId)
+    
             let values = [userId: 1]
-            ref.updateChildValues(values) { (err, ref) in
+            followingRef.updateChildValues(values) { (err, ref) in
                 if let err = err {
                     print("Failed to follow user:", err)
                     return
@@ -131,6 +158,16 @@ class UserProfileHeader: DatasourceCell {
                 }
                 self.editProfileFollowButton.backgroundColor = .white
                 self.editProfileFollowButton.setTitleColor(.black, for: .normal)
+                
+                let values = [currentLoggedInUserId: 1]
+                let followerRef = Database.database().reference().child("followers").child((self.user?.uid)!)
+                followerRef.updateChildValues(values) { (err, ref) in
+                    if let err = err {
+                        print("Failed to follow user:", err)
+                        return
+                    }
+                    
+                }
             }
         }
     }
@@ -197,10 +234,6 @@ class UserProfileHeader: DatasourceCell {
     
     let postsLabel: UILabel = {
         let label = UILabel()
-        let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-        let attributedText = NSMutableAttributedString(string: "11\n", attributes: [NSAttributedStringKey.font: fontStyle])
-        attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
-        label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
         label.backgroundColor = .clear
@@ -209,10 +242,6 @@ class UserProfileHeader: DatasourceCell {
     
     let followersLabel: UILabel = {
         let label = UILabel()
-        let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font: fontStyle])
-        attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
-        label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
         label.backgroundColor = .clear
@@ -221,10 +250,6 @@ class UserProfileHeader: DatasourceCell {
     
     let followingLabel: UILabel = {
         let label = UILabel()
-        let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font: fontStyle])
-        attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
-        label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
         label.backgroundColor = .clear

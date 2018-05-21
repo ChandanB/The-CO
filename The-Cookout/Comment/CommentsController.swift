@@ -9,7 +9,32 @@
 import LBTAComponents
 import Firebase
 
-class CommentsController: DatasourceController {
+class CommentsController: DatasourceController, CommentInputAccessoryViewDelegate {
+    
+    
+    func didSubmit(for comment: String) {
+        print("Trying to insert comment into Firebase")
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        print("post id:", self.post?.id ?? "")
+        
+        print("Inserting comment:", comment)
+        
+        let postId = self.post?.id ?? ""
+        let values = ["text": comment, "creationDate": Date().timeIntervalSince1970, "uid": uid] as [String : Any]
+        
+        Database.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
+            
+            if let err = err {
+                print("Failed to insert comment:", err)
+                return
+            }
+            
+            print("Successfully inserted comment.")
+            
+            self.containerView.clearCommentTextField()
+        }
+    }
     
     var post: Post?
     
@@ -20,6 +45,8 @@ class CommentsController: DatasourceController {
         
         navigationItem.title = "Comments"
         self.datasource = commentsDatasource
+        collectionView?.alwaysBounceVertical = true
+        collectionView?.keyboardDismissMode = .interactive
         
         collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
         collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
@@ -71,51 +98,12 @@ class CommentsController: DatasourceController {
         tabBarController?.tabBar.isHidden = false
     }
     
-    lazy var containerView: UIView = {
-        let containerView = UIView()
-        containerView.backgroundColor = .white
-        containerView.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
-        
-        let submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit", for: .normal)
-        submitButton.setTitleColor(.black, for: .normal)
-        submitButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        submitButton.addTarget(self, action: #selector(handleSubmit), for: .touchUpInside)
-        containerView.addSubview(submitButton)
-        submitButton.anchor(containerView.topAnchor, left: nil, bottom: containerView.bottomAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 12, widthConstant: 50, heightConstant: 0)
-        
-        containerView.addSubview(self.commentTextField)
-        self.commentTextField.anchor(containerView.topAnchor, left: containerView.leftAnchor, bottom: containerView.bottomAnchor, right: submitButton.leftAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        
-        return containerView
+    lazy var containerView: CommentInputAccessoryView = {
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
+        let commentInputAccessoryView = CommentInputAccessoryView(frame: frame)
+        commentInputAccessoryView.delegate = self
+        return commentInputAccessoryView
     }()
-    
-    let commentTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Enter Comment"
-        return textField
-    }()
-    
-    @objc func handleSubmit() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard let postId = self.post?.id else {
-            print("FAIL")
-            return
-        }
-        
-        print("post id:", postId)
-        print("Inserting comment:", commentTextField.text ?? "")
-        
-        let values = ["text": commentTextField.text ?? "", "creationDate": Date().timeIntervalSince1970, "uid": uid] as [String : Any]
-        Database.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
-            
-            if let err = err {
-                print("Failed to insert comment:", err)
-                return
-            }
-            print("Successfully inserted comment.")
-        }
-    }
     
     override var inputAccessoryView: UIView? {
         get {

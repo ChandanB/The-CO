@@ -145,18 +145,27 @@ class UserProfileHeader: DatasourceCell {
         self.editProfileFollowButton.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
     }
     
+    lazy var likesButton: UIButton = {
+        let btn = UIButton(type: .system)
+        let image = #imageLiteral(resourceName: "Like_icon").resizeImage(targetSize: CGSize(width: 25, height: 20))
+        btn.setImage(image, for: .normal)
+        btn.tintColor = UIColor(white: 0, alpha: 0.3)
+        return btn
+    }()
     
     lazy var listButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "list"), for: .normal)
+        let image = #imageLiteral(resourceName: "List_icon").resizeImage(targetSize: CGSize(width: 25, height: 25))
+        button.setImage(image, for: .normal)
+        button.tintColor = UIColor(white: 0, alpha: 0.3)
         button.addTarget(self, action: #selector(handleChangeToListView), for: .touchUpInside)
         return button
     }()
     
     lazy var gridButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "grid"), for: .normal)
-        button.tintColor = UIColor(white: 0, alpha: 0.2)
+        let image = #imageLiteral(resourceName: "grid").resizeImage(targetSize: CGSize(width: 25, height: 25))
+        button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(handleChangeToGridView), for: .touchUpInside)
         return button
     }()
@@ -164,7 +173,7 @@ class UserProfileHeader: DatasourceCell {
     @objc func handleChangeToListView() {
         print("Changing to list view")
         listButton.tintColor = twitterBlue
-        gridButton.tintColor = UIColor(white: 0, alpha: 0.2)
+        gridButton.tintColor = UIColor(white: 0, alpha: 0.4)
         delegate?.didChangeToListView()
     }
     
@@ -173,14 +182,6 @@ class UserProfileHeader: DatasourceCell {
         listButton.tintColor = UIColor(white: 0, alpha: 0.2)
         delegate?.didChangeToGridView()
     }
-    
-    let likesButton: UIButton = {
-        let btn = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "likes_folder").resizeImage(targetSize: CGSize(width: 30, height: 30))
-        btn.setImage(image, for: .normal)
-        btn.tintColor = UIColor(white: 0, alpha: 0.1)
-        return btn
-    }()
     
     let nameLabel: UILabel = {
         let label = UILabel()

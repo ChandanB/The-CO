@@ -206,7 +206,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         let galleryButton = UIBarButtonItem(image: #imageLiteral(resourceName: "gallery").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(handleOpenPhotoSelector))
         galleryButton.tintColor = .black
         
-        let showCameraButton = UIBarButtonItem(image:#imageLiteral(resourceName: "camera3").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(showCamera))
+        let showCameraButton = UIBarButtonItem(image: #imageLiteral(resourceName: "Camera3").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(showCamera))
         
         keyboardToolbar.items = [galleryButton, showCameraButton]
         messageTextView.inputAccessoryView = keyboardToolbar

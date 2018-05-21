@@ -1,5 +1,5 @@
 //
-//  HomeDatasourceController.swift
+//  HomeController.swift
 //  The-Cookout
 //
 //  Created by Chandan Brown on 5/12/18.
@@ -11,9 +11,10 @@ import Firebase
 import Kingfisher
 import UIFontComplete
 
-class HomeController: DatasourceController {
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, PostDelegate {
     
-    let homeDatasource = HomeDatasource()
+    let postCellId = "postCellId"
+    var posts = [Post]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,19 +23,23 @@ class HomeController: DatasourceController {
         
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
-        self.datasource = self.homeDatasource
-        
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
-        refreshControl.layer.zPosition = -1
-        collectionView?.refreshControl = refreshControl
-        
+        collectionView?.register(PostCell.self, forCellWithReuseIdentifier: postCellId)
+
+        setupRefresherControl()
         setupNavigationBarItems()
         fetchAllPosts()
     }
     
-    @objc override func handleRefresh() {
-        self.homeDatasource.posts.removeAll()
+    var isFinishedPaging = false
+    
+    fileprivate func setupRefresherControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        refreshControl.layer.zPosition = -1
+        collectionView?.refreshControl = refreshControl
+    }
+    
+    @objc func handleRefresh() {
         fetchAllPosts()
     }
     
@@ -45,7 +50,7 @@ class HomeController: DatasourceController {
     
     fileprivate func fetchFollowingUserIds() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value) { (snapshot) in
             
             guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
             
@@ -54,9 +59,6 @@ class HomeController: DatasourceController {
                     self.fetchPostsWithUser(user)
                 })
             })
-            
-        }) { (err) in
-            print("Failed to fetch following user ids:", err)
         }
     }
     
@@ -68,22 +70,39 @@ class HomeController: DatasourceController {
     }
     
     fileprivate func fetchPostsWithUser(_ user: User) {
-        let ref = Database.database().reference().child("posts").child(user.uid)
-
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-
-            guard let dictionaries = snapshot.value as? [String: Any] else { return }
+        let uid = user.uid
+        let ref = Database.database().reference().child("posts").child(uid)
+        var query = ref.queryOrdered(byChild: "creationDate")
+        
+        if self.posts.count > 0 {
+            let value = posts.last?.creationDate.timeIntervalSince1970
+            query = query.queryEnding(atValue: value)
+        }
+        
+        query.queryLimited(toLast: 8).observeSingleEvent(of: .value) { (snapshot) in
+        
+            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
-            dictionaries.forEach({ (key, value) in
+            allObjects.reverse()
+            
+            if allObjects.count < 8 {
+                self.isFinishedPaging = true
+            }
+            
+            if self.posts.count > 0 && allObjects.count > 0 {
+                allObjects.removeFirst()
+            }
+            
+            self.collectionView?.refreshControl?.endRefreshing()
+
+            allObjects.forEach({ (snapshot) in
                 
-                guard let dictionary = value as? [String: Any] else { return }
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
                 var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                post.id = key
+                post.id = snapshot.key
                 
                 guard let uid = Auth.auth().currentUser?.uid else { return }
-                self.collectionView?.refreshControl?.endRefreshing()
-               
-                Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value) { (snapshot) in
+                Database.database().reference().child("likes").child(post.id!).child(uid).observeSingleEvent(of: .value) { (snapshot) in
                     
                     if let value = snapshot.value as? Int, value == 1 {
                         post.hasLiked = true
@@ -91,16 +110,30 @@ class HomeController: DatasourceController {
                         post.hasLiked = false
                     }
                     
-                    self.homeDatasource.posts.append(post)
-                    
-                    self.homeDatasource.posts .sort(by: { (p1, p2) -> Bool in
-                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
-                    })
+                    self.posts.append(post)
                     
                     self.collectionView?.reloadData()
                 }
             })
         }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.posts.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
+        
+        if indexPath.item == self.posts.count - 1 && isFinishedPaging {
+            handleRefresh()
+        }
+        
+        cell.datasourceItem = posts[indexPath.item]
+        
+        return cell
+        
     }
     
     func setupNavigationBarItems() {
@@ -111,9 +144,9 @@ class HomeController: DatasourceController {
     
     private func setupRightNavItem() {
         let messageButton = UIButton(type: .system)
-        messageButton.setImage(#imageLiteral(resourceName: "message").withRenderingMode(.alwaysOriginal), for: .normal)
+        messageButton.setImage(#imageLiteral(resourceName: "Messages_Icon").withRenderingMode(.alwaysOriginal), for: .normal)
         messageButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
-        messageButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        messageButton.heightAnchor.constraint(equalToConstant: 28).isActive = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: messageButton)
     }
     
@@ -177,9 +210,9 @@ class HomeController: DatasourceController {
         return 0.5
     }
     
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        guard let post = self.datasource?.item(indexPath) as? Post else { return .zero }
+        let post = self.posts[indexPath.item] 
         
         let estimatedHeight = estimatedHeightForText(post.caption)
         
@@ -189,7 +222,7 @@ class HomeController: DatasourceController {
             return CGSize(width: view.frame.width, height: height + 72)
         }
         
-        return CGSize(width: view.frame.width, height: estimatedHeight + 126)
+        return CGSize(width: view.frame.width, height: estimatedHeight + 130)
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
@@ -220,7 +253,7 @@ class HomeController: DatasourceController {
     func didLike(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         
-        var post = self.homeDatasource.posts[indexPath.item]
+        var post = self.posts[indexPath.item]
         
         guard let postId = post.id else { return }
         
@@ -238,7 +271,7 @@ class HomeController: DatasourceController {
             
             post.hasLiked = !post.hasLiked
             
-            self.homeDatasource.posts[indexPath.item] = post
+            self.posts[indexPath.item] = post
             
             self.collectionView?.reloadItems(at: [indexPath])
             
@@ -253,5 +286,12 @@ class HomeController: DatasourceController {
             self.setupLeftNavItem(self.user!)
         }
     }
+    
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        if scrollView.isAtBottom && isFinishedPaging {
+//            handleRefresh()
+//        }
+    }
+
     
 }

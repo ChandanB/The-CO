@@ -66,13 +66,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             query = query.queryEnding(atValue: value)
         }
         
-        query.queryLimited(toLast: 12).observeSingleEvent(of: .value) { (snapshot) in
+        query.queryLimited(toLast: 9).observeSingleEvent(of: .value) { (snapshot) in
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()
             
-            if allObjects.count < 12 {
-                self.isFinishedPaging = true
+            if allObjects.count < 9 {
+                self.isFinishedPaging = false
             }
             
             if self.isGridView && self.gridArray.count > 0 && allObjects.count > 0 {
@@ -133,15 +133,14 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             return CGSize(width: view.frame.width, height: height + 72)
         }
             
-        print("Somethings Wrong")
-        return CGSize(width: view.frame.width, height: estimatedHeight + 126)
+        return CGSize(width: view.frame.width, height: estimatedHeight + 130)
             
     }
         
         override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             
             if isGridView {
-                if indexPath.item == self.gridArray.count - 1 && !isFinishedPaging {
+                if indexPath.item == self.gridArray.count - 1 && isFinishedPaging {
                     paginatePosts()
                 }
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
@@ -149,7 +148,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 return cell
             }
             
-            if indexPath.item == self.listArray.count - 1 && !isFinishedPaging {
+            if indexPath.item == self.listArray.count - 1 && isFinishedPaging {
                 paginatePosts()
             }
             
@@ -250,7 +249,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.listArray[indexPath.item] = post
                 
                 self.collectionView?.reloadItems(at: [indexPath])
-                
             }
         }
         

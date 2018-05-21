@@ -15,7 +15,14 @@ import LBTAComponents
 import UIFontComplete
 
 
+protocol PostDelegate {
+    func didLike(for cell: PostCell)
+    func didTapComment(post: Post)
+}
+
 class PostCell: DatasourceCell {
+    
+    var delegate: PostDelegate?
     
     override var datasourceItem: Any? {
         didSet {
@@ -37,8 +44,6 @@ class PostCell: DatasourceCell {
     fileprivate func setupAttibutedCaption(_ post: Post) {
         
         let name = post.user.name
-     //   let boldFont = CustomFont.proximaNovaBold.of(size: 15.0)
-     //   let thinFont = CustomFont.proximaNovaThin.of(size: 15.0)
         let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
         let regular = CustomFont.proximaNovaAlt.of(size: 16.0)
         
@@ -110,8 +115,9 @@ class PostCell: DatasourceCell {
     }()
     
     @objc func handleComment() {
+        print("tapped comment")
         guard let post = self.datasourceItem as? Post else { return }
-        (self.controller as? HomeController)?.didTapComment(post: post)
+        delegate?.didTapComment(post: post)
     }
     
     lazy var upvoteButton: UIButton = {
@@ -122,9 +128,8 @@ class PostCell: DatasourceCell {
     }()
     
     @objc func handleUpvote() {
-     //   (self.controller as? HomeController)?.didLike(for: self)
+       // delegate?.didLike(for: self)
     }
-    
     
     lazy var downvoteButton: UIButton = {
         let button = UIButton()
@@ -145,7 +150,7 @@ class PostCell: DatasourceCell {
     }()
     
     @objc func handleLike() {
-        (self.controller as? HomeController)?.didLike(for: self)
+        delegate?.didLike(for: self)
     }
     
     var nameLabel: UILabel = {

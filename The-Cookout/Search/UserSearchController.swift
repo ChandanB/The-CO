@@ -10,7 +10,6 @@ import LBTAComponents
 import Firebase
 import BoltsSwift
 
-
 class UserSearchController : DatasourceController, UISearchBarDelegate {
     
     let searchBar: UISearchBar = {

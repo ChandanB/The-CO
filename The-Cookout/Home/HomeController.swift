@@ -11,20 +11,20 @@ import Firebase
 import Kingfisher
 import UIFontComplete
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, PostDelegate {
+class HomeController: DatasourceController {
     
-    let postCellId = "postCellId"
-    var posts = [Post]()
-    
+    let homeDatasource = HomeDatasource()
+    let refreshControl = UIRefreshControl()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
-        collectionView?.register(PostCell.self, forCellWithReuseIdentifier: postCellId)
-
+        self.datasource = homeDatasource
+        
         setupRefresherControl()
         setupNavigationBarItems()
         fetchAllPosts()
@@ -33,13 +33,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     var isFinishedPaging = false
     
     fileprivate func setupRefresherControl() {
-        let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         refreshControl.layer.zPosition = -1
         collectionView?.refreshControl = refreshControl
     }
     
-    @objc func handleRefresh() {
+    @objc override func handleRefresh() {
+        refreshControl.beginRefreshing()
+        self.homeDatasource.posts.removeAll()
         fetchAllPosts()
     }
     
@@ -57,6 +58,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             userIdsDictionary.forEach({ (key, value) in
                 Database.fetchUserWithUID(uid: key, completion: { (user) in
                     self.fetchPostsWithUser(user)
+                    if self.refreshControl.isRefreshing {
+                        self.refreshPage(user)
+                    }
                 })
             })
         }
@@ -66,43 +70,29 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.fetchPostsWithUser(user)
+            if self.refreshControl.isRefreshing {
+                self.refreshPage(user)
+            }
         }
     }
     
-    fileprivate func fetchPostsWithUser(_ user: User) {
-        let uid = user.uid
-        let ref = Database.database().reference().child("posts").child(uid)
-        var query = ref.queryOrdered(byChild: "creationDate")
+    fileprivate func refreshPage(_ user: User) {
         
-        if self.posts.count > 0 {
-            let value = posts.last?.creationDate.timeIntervalSince1970
-            query = query.queryEnding(atValue: value)
-        }
-        
-        query.queryLimited(toLast: 8).observeSingleEvent(of: .value) { (snapshot) in
-        
-            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
-            
-            allObjects.reverse()
-            
-            if allObjects.count < 8 {
-                self.isFinishedPaging = true
-            }
-            
-            if self.posts.count > 0 && allObjects.count > 0 {
-                allObjects.removeFirst()
-            }
-            
-            self.collectionView?.refreshControl?.endRefreshing()
+        let ref = Database.database().reference().child("posts").child(user.uid)
+        self.refreshControl.endRefreshing()
 
-            allObjects.forEach({ (snapshot) in
+        ref.observeSingleEvent(of: .childAdded, with: { (snapshot) in
+
+            guard let dictionaries = snapshot.value as? [String: Any] else { return }
+            
+            dictionaries.forEach({ (key, value) in
+                guard let dictionary = value as? [String: Any] else { return }
                 
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
                 var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                post.id = snapshot.key
+                post.id = key
                 
                 guard let uid = Auth.auth().currentUser?.uid else { return }
-                Database.database().reference().child("likes").child(post.id!).child(uid).observeSingleEvent(of: .value) { (snapshot) in
+                Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                     
                     if let value = snapshot.value as? Int, value == 1 {
                         post.hasLiked = true
@@ -110,7 +100,69 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                         post.hasLiked = false
                     }
                     
-                    self.posts.append(post)
+                    self.homeDatasource.posts.append(post)
+                    
+                    self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
+                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                    })
+                    
+                    self.collectionView?.reloadData()
+                    self.isFinishedPaging = false
+                    self.fetchPostsWithUser(user)
+
+                }, withCancel: { (err) in
+                    print("Failed to fetch like info for post:", err)
+                })
+            })
+            
+        }) { (err) in
+            print("Failed to fetch posts:", err)
+        }
+    }
+    
+ 
+    fileprivate func fetchPostsWithUser(_ user: User) {
+        
+        let uid = user.uid
+        let ref = Database.database().reference().child("posts").child(uid)
+        var query = ref.queryOrdered(byChild: "creationDate")
+        
+        if self.homeDatasource.posts.count > 0 {
+            let value = self.homeDatasource.posts.last?.creationDate.timeIntervalSince1970
+            query = query.queryEnding(atValue: value)
+        }
+        
+        query.queryLimited(toLast: 20).observe(.value) { (snapshot) in
+            
+            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+            
+            allObjects.reverse()
+            
+            if allObjects.count < 20 {
+                self.isFinishedPaging = true
+            } else {
+                self.isFinishedPaging = false
+            }
+            
+            if  self.homeDatasource.posts.count > 0 && allObjects.count > 0 {
+                allObjects.removeFirst()
+            }
+            
+            allObjects.forEach({ (snapshot) in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                post.id = snapshot.key
+                let ref = Database.database().reference().child("likes").child(post.id!)
+                
+                ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
+                    
+                    if let value = snapshot.value as? Int, value == 1 {
+                        post.hasLiked = true
+                    } else {
+                        post.hasLiked = false
+                    }
+                    
+                    self.homeDatasource.posts.append(post)
                     
                     self.collectionView?.reloadData()
                 }
@@ -119,20 +171,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.posts.count
+        return self.homeDatasource.posts.count
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
-        
-        if indexPath.item == self.posts.count - 1 && isFinishedPaging {
-            handleRefresh()
-        }
-        
-        cell.datasourceItem = posts[indexPath.item]
-        
-        return cell
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
     }
     
     func setupNavigationBarItems() {
@@ -216,9 +259,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return 0.5
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let post = self.posts[indexPath.item] 
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let posts = self.homeDatasource.posts
+        let post = posts[indexPath.item]
         
         let estimatedHeight = estimatedHeightForText(post.caption)
         
@@ -259,7 +302,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func didLike(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         
-        var post = self.posts[indexPath.item]
+        var post = self.homeDatasource.posts[indexPath.item]
         
         guard let postId = post.id else { return }
         
@@ -277,7 +320,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             
             post.hasLiked = !post.hasLiked
             
-            self.posts[indexPath.item] = post
+            self.homeDatasource.posts[indexPath.item] = post
             
             self.collectionView?.reloadItems(at: [indexPath])
             
@@ -288,16 +331,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     fileprivate func fetchUser() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
-            self.user = user
-            self.setupLeftNavItem(self.user!)
+            self.setupLeftNavItem(user)
         }
     }
     
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-//        if scrollView.isAtBottom && isFinishedPaging {
-//            handleRefresh()
-//        }
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row + 1 == self.homeDatasource.posts.count && !isFinishedPaging {
+            fetchAllPosts()
+        }
     }
-
-    
 }

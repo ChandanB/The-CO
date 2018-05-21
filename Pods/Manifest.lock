@@ -73,6 +73,7 @@ PODS:
   - Protobuf (3.5.0)
   - Spring (1.0.5)
   - UIFontComplete (3.0.0)
+  - VegaScrollFlowLayout (1.1)
 
 DEPENDENCIES:
   - Bolts-Swift
@@ -89,6 +90,7 @@ DEPENDENCIES:
   - LBTAComponents
   - Spring
   - UIFontComplete
+  - VegaScrollFlowLayout
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -114,6 +116,7 @@ SPEC REPOS:
     - Protobuf
     - Spring
     - UIFontComplete
+    - VegaScrollFlowLayout
 
 SPEC CHECKSUMS:
   Bolts-Swift: fa98d1b59fc1acea9b21a21306dcdca1c85e3737
@@ -138,7 +141,8 @@ SPEC CHECKSUMS:
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
   UIFontComplete: 5b0f59a83308816c610164b79a2540b3520f9b72
+  VegaScrollFlowLayout: 9158061f29179147755f937c2b21693fc5dbbac3
 
-PODFILE CHECKSUM: 959e2afeab084a1c4cecfc79c3e8962e6ea67568
+PODFILE CHECKSUM: 3c5ee2f0edfb5f44c44e1479af4356bde8f5f026
 
 COCOAPODS: 1.5.2

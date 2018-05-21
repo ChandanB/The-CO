@@ -21,6 +21,6 @@ target 'The-Cookout' do
   pod 'Spring'
   pod 'BonMot'
   pod 'UIFontComplete'
-
+  pod 'VegaScrollFlowLayout'
 	
 end

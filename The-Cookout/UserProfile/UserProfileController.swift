@@ -9,8 +9,8 @@
 import Firebase
 import LBTAComponents
 
+
 class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserProfileTextDelegate {
-    
     
     var userId: String?
     var cellId = "cellId"
@@ -66,12 +66,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             query = query.queryEnding(atValue: value)
         }
         
-        query.queryLimited(toLast: 9).observeSingleEvent(of: .value) { (snapshot) in
+        query.queryLimited(toLast: 12).observe(.value) { (snapshot) in
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()
             
-            if allObjects.count < 9 {
+            if allObjects.count < 12 {
                 self.isFinishedPaging = false
             }
             
@@ -98,9 +98,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 }
                 
             })
-            
-            print(self.listArray.count)
-            
+                
             self.collectionView?.reloadData()
         }
     }
@@ -123,7 +121,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             let width = (view.frame.width - 2) / 3
             return CGSize(width: width, height: width)
         }
-            
+        
         let post = self.listArray[indexPath.item] 
         let estimatedHeight = estimatedHeightForListText(post.caption)
     
@@ -251,6 +249,18 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.collectionView?.reloadItems(at: [indexPath])
             }
         }
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if isGridView {
+            if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
+                fetchAllPosts()
+            }
+        } else {
+            if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
+                fetchAllPosts()
+            }
+        }
+    }
         
 }
 

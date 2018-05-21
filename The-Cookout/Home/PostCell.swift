@@ -14,19 +14,12 @@
 import LBTAComponents
 import UIFontComplete
 
-
-protocol PostDelegate {
-    func didLike(for cell: PostCell)
-    func didTapComment(post: Post)
-}
-
 class PostCell: DatasourceCell {
-    
-    var delegate: PostDelegate?
-    
+        
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
+            setupAttibutedCaption(post)
             
             loveButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "like_selected").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
             
@@ -35,9 +28,6 @@ class PostCell: DatasourceCell {
             
             let imageUrl = URL(string: post.imageUrl)
             photoImageView.kf.setImage(with: imageUrl)
-            
-            setupAttibutedCaption(post)
-            
         }
     }
     
@@ -117,7 +107,7 @@ class PostCell: DatasourceCell {
     @objc func handleComment() {
         print("tapped comment")
         guard let post = self.datasourceItem as? Post else { return }
-        delegate?.didTapComment(post: post)
+        (self.controller as? HomeController)?.didTapComment(post: post)
     }
     
     lazy var upvoteButton: UIButton = {
@@ -150,7 +140,7 @@ class PostCell: DatasourceCell {
     }()
     
     @objc func handleLike() {
-        delegate?.didLike(for: self)
+        (self.controller as? HomeController)?.didLike(for: self)
     }
     
     var nameLabel: UILabel = {

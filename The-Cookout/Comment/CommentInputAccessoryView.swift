@@ -20,6 +20,7 @@ class CommentInputAccessoryView: UIView {
         let label = UILabel()
         label.text = "Enter Comment"
         label.textColor = UIColor.lightGray
+        label.backgroundColor = .white
         return label
     }()
     
@@ -32,6 +33,7 @@ class CommentInputAccessoryView: UIView {
         let tv = CommentInputTextView()
         tv.isScrollEnabled = false
         tv.font = UIFont.systemFont(ofSize: 18)
+        tv.backgroundColor = .white
         return tv
     }()
     

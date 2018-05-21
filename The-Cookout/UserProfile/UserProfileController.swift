@@ -93,12 +93,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                     self.gridArray.append(post)
                 }
                 
-                if post.hasText == "true" {
+                if post.hasText == "true" && post.hasImage == "false" {
                     self.listArray.append(post)
                 }
                 
             })
-                
+            
             self.collectionView?.reloadData()
         }
     }
@@ -138,16 +138,9 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             
             if isGridView {
-                if indexPath.item == self.gridArray.count - 1 && isFinishedPaging {
-                    paginatePosts()
-                }
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
                 cell.datasourceItem = self.gridArray[indexPath.item]
                 return cell
-            }
-            
-            if indexPath.item == self.listArray.count - 1 && isFinishedPaging {
-                paginatePosts()
             }
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
@@ -253,13 +246,9 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if isGridView {
             if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
-                fetchAllPosts()
+                self.paginatePosts()
             }
-        } else {
-            if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
-                fetchAllPosts()
-            }
-        }
+        } 
     }
         
 }

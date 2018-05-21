@@ -44,7 +44,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         //search
         let vegaLayout = VegaScrollFlowLayout()
         let userSearchController = UserSearchController()
-        userSearchController.collectionView?.collectionViewLayout = vegaLayout
+      //  userSearchController.collectionView?.collectionViewLayout = vegaLayout
         let searchNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "search_unselected"), selectedImage: #imageLiteral(resourceName: "search_selected"), rootViewController: userSearchController)
         
         

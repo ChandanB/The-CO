@@ -270,17 +270,18 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
         
         if message.fromId == Auth.auth().currentUser?.uid {
             //outgoing blue
-            cell.bubbleView.backgroundColor = ChatMessageCell.blueColor
-            cell.textView.textColor = UIColor.white
+            cell.bubbleView.backgroundColor = UIColor(r: 240, g: 240, b: 240)
             cell.profileImageView.isHidden = true
-            
+            cell.textView.textColor = .black
             cell.bubbleViewRightAnchor?.isActive = true
             cell.bubbleViewLeftAnchor?.isActive = false
             
         } else {
             //incoming gray
-            cell.bubbleView.backgroundColor = UIColor(r: 240, g: 240, b: 240)
-            cell.textView.textColor = UIColor.black
+            cell.bubbleView.backgroundColor = .clear
+            cell.bubbleView.layer.borderWidth = 0.2
+            cell.bubbleView.layer.borderColor = UIColor.gray.cgColor
+            cell.textView.textColor = .black
             cell.profileImageView.isHidden = false
             
             cell.bubbleViewRightAnchor?.isActive = false

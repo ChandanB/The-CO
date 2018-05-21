@@ -14,6 +14,7 @@
 import LBTAComponents
 import UIFontComplete
 
+
 class PostCell: DatasourceCell {
         
     override var datasourceItem: Any? {
@@ -23,9 +24,12 @@ class PostCell: DatasourceCell {
             
             loveButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "like_selected").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
             
-            let url = URL(string: post.user.profileImageUrl)
-            profileImageView.kf.setImage(with: url)
+            let fetchImage = FetchImage()
             
+            fetchImage.fetch(with: post.user.profileImageUrl) { (image) in
+                self.profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+            }
+        
             let imageUrl = URL(string: post.imageUrl)
             photoImageView.kf.setImage(with: imageUrl)
         }
@@ -61,9 +65,9 @@ class PostCell: DatasourceCell {
         
         messageTextView.attributedText = attributedText
         
-        if messageTextView.text == "" {
-            messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 1)
-        }
+//        if post.caption == "" {
+//            messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 1)
+//        }
         
     }
     
@@ -89,13 +93,19 @@ class PostCell: DatasourceCell {
         return tv
     }()
     
-    let profileImageView: CachedImageView = {
-        let imageView = CachedImageView()
-        imageView.layer.cornerRadius = 25
-        imageView.layer.masksToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        return imageView
+    lazy var profileImageButton: UIButton = {
+        let button = UIButton()
+        button.layer.cornerRadius = 25
+        button.layer.masksToBounds = true
+        button.contentMode = .scaleAspectFill
+        button.addTarget(self, action: #selector(handleUserProfile), for: .touchUpInside)
+        return button
     }()
+    
+    @objc func handleUserProfile() {
+        print("DId tap picture")
+        (self.controller as? HomeController)?.didTapProfilePicture(for: self)
+    }
     
     lazy var replyButton: UIButton = {
         let button = UIButton()
@@ -106,9 +116,20 @@ class PostCell: DatasourceCell {
     
     @objc func handleComment() {
         print("tapped comment")
-        guard let post = self.datasourceItem as? Post else { return }
-        (self.controller as? HomeController)?.didTapComment(post: post)
+      //  (self.controller as? HomeController)?.didTapProfilePicture(for cell: self)
     }
+    
+    lazy var loveButton: UIButton = {
+        let button = UIButton()
+        button.setImage(#imageLiteral(resourceName: "love"), for: .normal)
+        button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc func handleLike() {
+        (self.controller as? HomeController)?.didLike(for: self)
+    }
+    
     
     lazy var upvoteButton: UIButton = {
         let button = UIButton()
@@ -132,17 +153,6 @@ class PostCell: DatasourceCell {
         //   (self.controller as? HomeController)?.didLike(for: self)
     }
     
-    lazy var loveButton: UIButton = {
-        let button = UIButton()
-        button.setImage(#imageLiteral(resourceName: "love"), for: .normal)
-        button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
-        return button
-    }()
-    
-    @objc func handleLike() {
-        (self.controller as? HomeController)?.didLike(for: self)
-    }
-    
     var nameLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byWordWrapping
@@ -157,18 +167,18 @@ class PostCell: DatasourceCell {
         separatorLineView.isHidden = false
         separatorLineView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
-        addSubview(profileImageView)
+        addSubview(profileImageButton)
         addSubview(messageTextView)
         addSubview(optionsButton)
         addSubview(nameLabel)
         
         optionsButton.anchor(self.topAnchor, left: nil, bottom: nil, right: self.rightAnchor, topConstant: 12, leftConstant: 0, bottomConstant: 4, rightConstant: 8, widthConstant: 44, heightConstant: 0)
         
-        nameLabel.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        nameLabel.anchor(profileImageButton.topAnchor, left: profileImageButton.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
-        profileImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
+        profileImageButton.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
         
-        messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 4, rightConstant: 12, widthConstant: 0, heightConstant: 0)
+        messageTextView.anchor(profileImageButton.bottomAnchor, left: self.leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 4, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         
         setupBottomButtons()
         
@@ -189,7 +199,7 @@ class PostCell: DatasourceCell {
         addSubview(buttonStackView)
         addSubview(photoImageView)
         
-        buttonStackView.anchor(nil, left: profileImageView.rightAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 26, leftConstant: 4, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 26)
+        buttonStackView.anchor(nil, left: profileImageButton.rightAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 26, leftConstant: 4, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 26)
         
         photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         

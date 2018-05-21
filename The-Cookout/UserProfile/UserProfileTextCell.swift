@@ -61,9 +61,9 @@ class UserProfileTextCell: DatasourceCell {
         
         messageTextView.attributedText = attributedText
         
-        if messageTextView.text == "" {
-            messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 1)
-        }
+//        if messageTextView.text == "" {
+//            messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 1)
+//        }
     }
     
     let optionsButton: UIButton = {

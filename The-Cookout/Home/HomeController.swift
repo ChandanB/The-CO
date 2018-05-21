@@ -152,15 +152,9 @@ class HomeController: DatasourceController {
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
                 var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 post.id = snapshot.key
-                let ref = Database.database().reference().child("likes").child(post.id!)
+                let ref = Database.database().reference().child(post.id!)
                 
                 ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
-                    
-                    if let value = snapshot.value as? Int, value == 1 {
-                        post.hasLiked = true
-                    } else {
-                        post.hasLiked = false
-                    }
                     
                     self.homeDatasource.posts.append(post)
                     
@@ -297,6 +291,17 @@ class HomeController: DatasourceController {
         let commentsController = CommentsController()
         commentsController.post = post
         navigationController?.pushViewController(commentsController, animated: true)
+    }
+    
+    func didTapProfilePicture(for cell: PostCell) {
+        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+        let layout = UICollectionViewFlowLayout()
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
+        let post = self.homeDatasource.posts[indexPath.item]
+        let user = post.user
+        userProfileController.user = user
+        userProfileController.userId = user.uid
+        navigationController?.pushViewController(userProfileController, animated: true)
     }
     
     func didLike(for cell: PostCell) {

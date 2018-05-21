@@ -24,7 +24,6 @@ class SideMenu: DatasourceController, UIViewControllerTransitioningDelegate {
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
         return customAnimationDismisser
     }
     

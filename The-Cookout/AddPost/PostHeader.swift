@@ -144,7 +144,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if imageView.image != nil {
+        if imageView.image != nil && textView.text.isEmpty {
             textView.text = "Say something about this picture?"
             self.postController?.shareButton.isEnabled = true
             self.postController?.shareButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
@@ -206,7 +206,10 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         let galleryButton = UIBarButtonItem(image: #imageLiteral(resourceName: "gallery").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(handleOpenPhotoSelector))
         galleryButton.tintColor = .black
         
-        let showCameraButton = UIBarButtonItem(image: #imageLiteral(resourceName: "Camera3").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(showCamera))
+        let camera = #imageLiteral(resourceName: "Camera3")
+        let image = camera.resizeImage(targetSize: CGSize(width: 36, height: 36))
+        
+        let showCameraButton = UIBarButtonItem(image: image.withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(showCamera))
         
         keyboardToolbar.items = [galleryButton, showCameraButton]
         messageTextView.inputAccessoryView = keyboardToolbar

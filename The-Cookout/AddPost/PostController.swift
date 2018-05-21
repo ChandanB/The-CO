@@ -41,12 +41,13 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func handleShowCamera() {
         let cameraController = CameraController()
+        cameraController.delegate = self
         self.present(cameraController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-     //   self.hideKeyboardWhenTapped()
+        self.hideKeyboardWhenTapped()
 
         self.postHeader?.textdelegate = self
         self.postHeader?.imageDelegate = self

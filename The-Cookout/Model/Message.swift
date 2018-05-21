@@ -9,25 +9,24 @@
 import LBTAComponents
 import Firebase
 
-class Message: NSObject {
+struct Message {
     
-    let fromId: String?
     let text: String?
-    let timestamp: NSNumber?
     let toId: String?
+    let fromId: String?
     let imageUrl: String?
     let videoUrl: String?
+    let timestamp: NSNumber?
     let imageWidth: NSNumber?
     let imageHeight: NSNumber?
     
-    init(dictionary: [String: Any]) {
-        self.fromId = dictionary["fromId"] as? String
+    init(dictionary: [String: AnyObject]) {
         self.text = dictionary["text"] as? String
         self.toId = dictionary["toId"] as? String
-        self.timestamp = dictionary["timestamp"] as? NSNumber
+        self.fromId = dictionary["fromId"] as? String
         self.imageUrl = dictionary["imageUrl"] as? String
         self.videoUrl = dictionary["videoUrl"] as? String
-        
+        self.timestamp = dictionary["timestamp"] as? NSNumber
         self.imageWidth = dictionary["imageWidth"] as? NSNumber
         self.imageHeight = dictionary["imageHeight"] as? NSNumber
     }

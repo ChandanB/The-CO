@@ -133,7 +133,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         cell.datasourceItem = posts[indexPath.item]
         
         return cell
-        
     }
     
     func setupNavigationBarItems() {
@@ -147,7 +146,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         messageButton.setImage(#imageLiteral(resourceName: "Messages_Icon").withRenderingMode(.alwaysOriginal), for: .normal)
         messageButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
         messageButton.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        messageButton.addTarget(self, action: #selector(handleMessagesTapped), for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: messageButton)
+    }
+    
+    @objc func handleMessagesTapped() {
+        let messagesController = MessagesController()
+        let navigationController = UINavigationController(rootViewController: messagesController)
+        present(navigationController, animated: true, completion: nil)
     }
     
     private func setupMiddleNavItems() {

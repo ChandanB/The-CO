@@ -9,7 +9,6 @@
 import LBTAComponents
 
 struct Post {
-    
     var id: String?
 
     let user: User

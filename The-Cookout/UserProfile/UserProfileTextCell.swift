@@ -97,8 +97,8 @@ class UserProfileTextCell: DatasourceCell {
     }()
     
     @objc func handleComment() {
-        guard let post = self.datasourceItem as? Post else { return }
-        (self.controller as? HomeController)?.didTapComment(post: post)
+      //  guard let post = self.datasourceItem as? Post else { return }
+     //   (self.controller as? HomeController)?.didTapComment(post: post)
     }
     
     lazy var upvoteButton: UIButton = {

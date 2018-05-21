@@ -9,7 +9,15 @@
 import UIKit
 import AVFoundation
 
-class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
+class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, ReturnPostImageDelegate {
+    
+    var delegate : ReturnPostImageDelegate?
+    
+    func returnPostImage(image: UIImage) {
+        handleCapturePhoto()
+        self.delegate?.returnPostImage(image: image)
+        self.dismiss(animated: true, completion: nil)
+    }
     
     let topBar: UIView = {
         let iv = UIView()
@@ -54,18 +62,25 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
     
     fileprivate func setupHUD() {
         
-        view.addSubview(topBar)
-        topBar.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 60)
+//        view.addSubview(topBar)
+//        topBar.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 60)
+//
+//        view.addSubview(bottomBar)
+//        bottomBar.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 100)
         
-        view.addSubview(bottomBar)
-        bottomBar.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 100)
+//        view.addSubview(capturePhotoButton)
+//        capturePhotoButton.anchor(nil, left: nil, bottom: bottomBar.bottomAnchor, right: nil, topConstant: 12, leftConstant: 0, bottomConstant: 12, rightConstant: 0, widthConstant: 70, heightConstant: 70)
+//        capturePhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//
+//        view.addSubview(dismissButton)
+//        dismissButton.anchor(topBar.topAnchor, left: topBar.leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
         
-        bottomBar.addSubview(capturePhotoButton)
-        capturePhotoButton.anchor(nil, left: nil, bottom: bottomBar.bottomAnchor, right: nil, topConstant: 12, leftConstant: 0, bottomConstant: 12, rightConstant: 0, widthConstant: 70, heightConstant: 70)
+        view.addSubview(capturePhotoButton)
+        capturePhotoButton.anchor(nil, left: nil, bottom: view.bottomAnchor, right: nil, topConstant: 12, leftConstant: 0, bottomConstant: 24, rightConstant: 0, widthConstant: 80, heightConstant: 80)
         capturePhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
-        topBar.addSubview(dismissButton)
-        dismissButton.anchor(topBar.topAnchor, left: topBar.leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
+        view.addSubview(dismissButton)
+        dismissButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 24, rightConstant: 0, widthConstant: 80, heightConstant: 80)
     }
     
     @objc func handleCapturePhoto() {
@@ -91,6 +106,7 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
         
         let containerView = PreviewPhotoContainerView()
         containerView.previewImageView.image = previewImage
+        containerView.delegate = self
         view.addSubview(containerView)
         containerView.anchor(view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
@@ -121,9 +137,13 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
         }
         
         //3. setup output preview
+//        let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+//        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+//        previewLayer.frame = CGRect(x: view.bounds.origin.x, y: view.bounds.origin.y, width: screenWidth, height: screenHeight)
+        
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        previewLayer.frame = CGRect(x: view.bounds.origin.x, y: view.bounds.origin.y, width: screenWidth, height: screenHeight)
+        previewLayer.frame = CGRect(x: view.bounds.origin.x, y: view.bounds.origin.y, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height)
         
         view.layer.addSublayer(previewLayer)
         

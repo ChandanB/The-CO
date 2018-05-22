@@ -22,5 +22,8 @@ target 'The-Cookout' do
   pod 'BonMot'
   pod 'UIFontComplete'
   pod 'VegaScrollFlowLayout'
+  pod 'SkeletonView'
+  pod 'SCLAlertView'
+  pod 'FaveButton', '~> 2.0.3'
 	
 end

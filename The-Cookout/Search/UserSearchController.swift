@@ -9,6 +9,7 @@
 import LBTAComponents
 import Firebase
 import BoltsSwift
+import VegaScrollFlowLayout
 
 class UserSearchController : DatasourceController, UISearchBarDelegate {
     
@@ -57,9 +58,18 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     }
     
     let searchDatasource = SearchDataSource()
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        let vegaLayout = VegaScrollFlowLayout()
+//        self.collectionView?.collectionViewLayout = vegaLayout
         
         guard let navBar = navigationController?.navigationBar else { return }
         

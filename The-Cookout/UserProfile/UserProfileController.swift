@@ -39,6 +39,8 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(paginatePosts), name: PostController.updateFeedNotificationName, object: nil)
+        
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(PostCell.self, forCellWithReuseIdentifier: postCellId)
@@ -55,7 +57,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     
-    fileprivate func paginatePosts() {
+    @objc func paginatePosts() {
         guard let uid = self.user?.uid else { return }
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
@@ -63,12 +65,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         if isGridView && gridArray.count > 0 {
             let value = self.gridArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
+            
         } else if !isGridView && listArray.count > 0 {
             let value = self.listArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
         }
         
-        query.queryLimited(toLast: 12).observe(.value) { (snapshot) in
+        query.queryLimited(toLast: 12).observe(.childAdded) { (snapshot) in
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()

@@ -13,7 +13,7 @@
 
 import LBTAComponents
 import UIFontComplete
-
+import FaveButton
 
 class PostCell: DatasourceCell {
         
@@ -22,7 +22,13 @@ class PostCell: DatasourceCell {
             guard let post = datasourceItem as? Post else { return }
             setupAttibutedCaption(post)
             
-            loveButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "like_selected").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+            loveButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+            
+            if post.hasLiked == true {
+                loveButton.tintColor = .red
+            } else {
+                loveButton.tintColor = .clear
+            }
             
             let fetchImage = FetchImage()
             
@@ -38,8 +44,8 @@ class PostCell: DatasourceCell {
     fileprivate func setupAttibutedCaption(_ post: Post) {
         
         let name = post.user.name
-        let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
-        let regular = CustomFont.proximaNovaAlt.of(size: 16.0)
+        let font = CustomFont.proximaNovaSemibold.of(size: 14.0)
+        let regular = CustomFont.proximaNovaAlt.of(size: 15.0)
         
         let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedStringKey.font: font!])
         
@@ -65,10 +71,6 @@ class PostCell: DatasourceCell {
         
         messageTextView.attributedText = attributedText
         
-//        if post.caption == "" {
-//            messageTextView.anchor(profileImageView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 1)
-//        }
-        
     }
     
     let optionsButton: UIButton = {
@@ -85,6 +87,15 @@ class PostCell: DatasourceCell {
         return iv
     }()
     
+    let heartPopup: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.image = #imageLiteral(resourceName: "heart.png")
+        iv.alpha = 0
+        return iv
+    }()
+    
     let messageTextView: UITextView = {
         let tv = UITextView()
         tv.isUserInteractionEnabled = false
@@ -95,7 +106,7 @@ class PostCell: DatasourceCell {
     
     lazy var profileImageButton: UIButton = {
         let button = UIButton()
-        button.layer.cornerRadius = 25
+        button.layer.cornerRadius = 22
         button.layer.masksToBounds = true
         button.contentMode = .scaleAspectFill
         button.addTarget(self, action: #selector(handleUserProfile), for: .touchUpInside)
@@ -115,22 +126,21 @@ class PostCell: DatasourceCell {
     }()
     
     @objc func handleComment() {
-        print("tapped comment")
         guard let post = self.datasourceItem as? Post else { return }
         (self.controller as? HomeController)?.didTapComment(post: post)
     }
     
-    lazy var loveButton: UIButton = {
-        let button = UIButton()
-        button.setImage(#imageLiteral(resourceName: "love"), for: .normal)
+    lazy var loveButton: FaveButton = {
+        let button = FaveButton()
+        button.setImage(#imageLiteral(resourceName: "heart"), for: .normal)
         button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
         return button
     }()
     
     @objc func handleLike() {
-        (self.controller as? HomeController)?.didLike(for: self)
+        (self.controller as? HomeController)?.faveButton(self.loveButton, didSelected: true)
+        (self.controller as? HomeController)?.faveButtonSelected(self.loveButton, didSelected: true, for: self)
     }
-    
     
     lazy var upvoteButton: UIButton = {
         let button = UIButton()
@@ -177,7 +187,7 @@ class PostCell: DatasourceCell {
         
         nameLabel.anchor(profileImageButton.topAnchor, left: profileImageButton.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
-        profileImageButton.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 50, heightConstant: 50)
+        profileImageButton.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 44, heightConstant: 44)
         
         messageTextView.anchor(profileImageButton.bottomAnchor, left: self.leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 4, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         
@@ -199,12 +209,21 @@ class PostCell: DatasourceCell {
         
         addSubview(buttonStackView)
         addSubview(photoImageView)
+        photoImageView.addSubview(heartPopup)
         
         buttonStackView.anchor(nil, left: profileImageButton.rightAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 26, leftConstant: 4, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 26)
         
         photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         photoImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1).isActive = true
+        heartPopup.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
+        heartPopup.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true
+        heartPopup.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor).isActive = true
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+        tapGestureRecognizer.numberOfTapsRequired = 2
+        photoImageView.isUserInteractionEnabled = true
+        photoImageView.addGestureRecognizer(tapGestureRecognizer)
+        
         
         addSubview(replyButton)
         addSubview(upvoteButton)
@@ -218,6 +237,13 @@ class PostCell: DatasourceCell {
         downvoteButton.anchor(downvoteButtonContainerView.topAnchor, left: downvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
         loveButton.anchor(loveButtonContainerView.topAnchor, left: loveButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+    }
+    
+    @objc func imageTapped()
+    {
+        let tappedImage = self.heartPopup
+         (self.controller as? HomeController)?.faveButtonSelected(self.loveButton, didSelected: true, for: self)
+        (self.controller as? HomeController)?.likeAnimation(tappedImage)
     }
     
     

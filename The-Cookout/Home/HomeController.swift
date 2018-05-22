@@ -10,8 +10,10 @@ import LBTAComponents
 import Firebase
 import Kingfisher
 import UIFontComplete
+import FaveButton
 
-class HomeController: DatasourceController {
+
+class HomeController: DatasourceController, FaveButtonDelegate {
     
     let homeDatasource = HomeDatasource()
     let refreshControl = UIRefreshControl()
@@ -293,18 +295,7 @@ class HomeController: DatasourceController {
         navigationController?.pushViewController(commentsController, animated: true)
     }
     
-    func didTapProfilePicture(for cell: PostCell) {
-        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        let layout = UICollectionViewFlowLayout()
-        let userProfileController = UserProfileController(collectionViewLayout: layout)
-        let post = self.homeDatasource.posts[indexPath.item]
-        let user = post.user
-        userProfileController.user = user
-        userProfileController.userId = user.uid
-        navigationController?.pushViewController(userProfileController, animated: true)
-    }
-    
-    func didLike(for cell: PostCell) {
+    func faveButtonSelected(_ faveButton: FaveButton, didSelected selected: Bool, for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         
         var post = self.homeDatasource.posts[indexPath.item]
@@ -330,6 +321,52 @@ class HomeController: DatasourceController {
             self.collectionView?.reloadItems(at: [indexPath])
             
         }
+    }
+    
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool){
+        faveButton.circleFromColor = .red
+        faveButton.circleToColor = .blue
+        faveButton.dotFirstColor = .red
+        faveButton.dotSecondColor = .blue
+    }
+    
+    func faveButtonDotColors(_ faveButton: FaveButton) -> [DotColors]?{
+        return dotColors
+    }
+    
+    func likeAnimation(_ heartPopup: UIImageView) {
+        print("Like tapped")
+        UIView.animate(withDuration: 0.4, delay: 0, options: .allowUserInteraction, animations: {() -> Void in
+            heartPopup.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+            heartPopup.alpha = 1.0
+        }, completion: {(_ finished: Bool) -> Void in
+            UIView.animate(withDuration: 0.6, delay: 0, options: .allowUserInteraction, animations: {() -> Void in
+                heartPopup.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            }, completion: {(_ finished: Bool) -> Void in
+                UIView.animate(withDuration: 0.3, delay: 0, options: .allowUserInteraction, animations: {() -> Void in
+                    heartPopup.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+                    heartPopup.alpha = 0.0
+                }, completion: {(_ finished: Bool) -> Void in
+                    heartPopup.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                })
+            })
+        })
+    }
+
+    
+    func didTapProfilePicture(for cell: PostCell) {
+        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+        let layout = UICollectionViewFlowLayout()
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
+        let post = self.homeDatasource.posts[indexPath.item]
+        let user = post.user
+        userProfileController.user = user
+        userProfileController.userId = user.uid
+        navigationController?.pushViewController(userProfileController, animated: true)
+    }
+    
+    func didLike(for cell: PostCell) {
+    
     }
     
     var user: User?

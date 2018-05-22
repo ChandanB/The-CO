@@ -11,7 +11,6 @@ import Firebase
 import UIFontComplete
 
 let imageCache = NSCache<AnyObject, AnyObject>()
-let twitterBlue = UIColor(r: 55, g: 115, b: 210)
 
 enum CustomFont: String, FontRepresentable {
     case proximaNova = "Proxima Nova"
@@ -126,6 +125,10 @@ extension UIImage {
 
 extension UIViewController {
     func hideKeyboardWhenTapped() {
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y += 70
+        }
+        
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)

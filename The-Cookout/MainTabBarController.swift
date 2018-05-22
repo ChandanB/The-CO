@@ -10,7 +10,6 @@ import UIKit
 import LBTAComponents
 import Kingfisher
 import Firebase
-import VegaScrollFlowLayout
 
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
@@ -36,17 +35,14 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     func setupViewControllers() {
         
-        //home
+       //home
       //  let homeLayout = UICollectionViewFlowLayout()
 
         let homeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "home_unselected"), selectedImage: #imageLiteral(resourceName: "home_selected"), rootViewController: HomeController())
         
         //search
-        let vegaLayout = VegaScrollFlowLayout()
         let userSearchController = UserSearchController()
-      //  userSearchController.collectionView?.collectionViewLayout = vegaLayout
         let searchNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "search_unselected"), selectedImage: #imageLiteral(resourceName: "search_selected"), rootViewController: userSearchController)
-        
         
         //post
         let plusNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "plus_unselected"), selectedImage: #imageLiteral(resourceName: "plus_unselected"))

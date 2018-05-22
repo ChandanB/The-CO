@@ -8,11 +8,12 @@
 
 import Firebase
 import LBTAComponents
+import Spring
 
 class LoginController: UIViewController {
     
-    let logoContainerView: UIView = {
-        let view = UIView()
+    let logoContainerView: SpringView = {
+        let view = SpringView()
         
         let logoImageView = UIImageView(image: #imageLiteral(resourceName: "cookout_logo"))
         logoImageView.contentMode = .scaleAspectFill
@@ -25,8 +26,8 @@ class LoginController: UIViewController {
         return view
     }()
     
-    let emailTextField: UITextField = {
-        let tf = UITextField()
+    let emailTextField: SpringTextField = {
+        let tf = SpringTextField()
         tf.placeholder = "Email"
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
@@ -37,8 +38,8 @@ class LoginController: UIViewController {
         return tf
     }()
     
-    let passwordTextField: UITextField = {
-        let tf = UITextField()
+    let passwordTextField: SpringTextField = {
+        let tf = SpringTextField()
         tf.placeholder = "Password"
         tf.isSecureTextEntry = true
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -53,15 +54,15 @@ class LoginController: UIViewController {
         
         if isFormValid {
             loginButton.isEnabled = true
-            loginButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
+            loginButton.backgroundColor = twitterBlue
         } else {
             loginButton.isEnabled = false
             loginButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
         }
     }
     
-    let loginButton: UIButton = {
-        let button = UIButton(type: .system)
+    let loginButton: SpringButton = {
+        let button = SpringButton(type: .system)
         button.setTitle("Login", for: .normal)
         button.backgroundColor = UIColor(r: 149, g: 204, b: 244)
         button.layer.cornerRadius = 5
@@ -80,6 +81,10 @@ class LoginController: UIViewController {
             
             if let err = error {
                 print("Failed to Sign In:", err)
+                self.loginButton.animation = "pop"
+                self.loginButton.curve = "spring"
+                self.loginButton.duration = 1.2
+                self.loginButton.animate()
                 return
             }
             //successfully logged in our user
@@ -87,11 +92,11 @@ class LoginController: UIViewController {
             guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
             
             guard let uid = Auth.auth().currentUser?.uid else { return }
-          Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 print(snapshot.value ?? "")
-                                
+                
                 mainTabBarController.setupViewControllers()
-                self.dismiss(animated: true, completion: nil)
+                self.handleAnimations()
                 
             }) { (err) in
                 print("Failed to fetch user:", err)
@@ -99,16 +104,16 @@ class LoginController: UIViewController {
         })
     }
     
-    let forgotPasswordButton: UIButton = {
-        let button = UIButton(type: .system)
+    let forgotPasswordButton: SpringButton = {
+        let button = SpringButton(type: .system)
         button.setTitle("Forgot Password?", for: .normal)
         button.setTitleColor(UIColor(r: 17, g: 155, b: 237), for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 10)
         return button
     }()
     
-    let dontHaveAccountButton: UIButton = {
-        let button = UIButton(type: .system)
+    let dontHaveAccountButton: SpringButton = {
+        let button = SpringButton(type: .system)
         
         let attributedTitle = NSMutableAttributedString(string: "Don't have an account?  ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor: UIColor.lightGray])
         
@@ -140,7 +145,7 @@ class LoginController: UIViewController {
         view.addSubview(dontHaveAccountButton)
         dontHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
         
-         setupInputFields()
+        setupInputFields()
     }
     
     func setupInputFields() {
@@ -161,6 +166,48 @@ class LoginController: UIViewController {
         
         loginButton.anchor(forgotPasswordButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 18, bottomConstant: 0, rightConstant: 18, widthConstant: 0, heightConstant: 50)
         
+    }
+    
+    fileprivate func handleAnimations() {
+        self.dontHaveAccountButton.animation = "fall"
+        self.dontHaveAccountButton.duration = 0.1
+        self.dontHaveAccountButton.animate()
+        
+        self.emailTextField.animation = "zoomOut"
+        self.emailTextField.curve = "easeOut"
+        self.emailTextField.duration = 0.2
+        self.emailTextField.animate()
+        self.emailTextField.animateNext {
+            self.passwordTextField.animation = "zoomOut"
+            self.passwordTextField.curve = "easeOut"
+            self.passwordTextField.duration = 0.2
+            self.passwordTextField.animate()
+            self.passwordTextField.animateNext {
+                self.forgotPasswordButton.animation = "zoomOut"
+                self.passwordTextField.duration = 0.2
+                self.forgotPasswordButton.animate()
+                self.forgotPasswordButton.animateNext {
+                    self.loginButton.animation = "zoomOut"
+                    self.loginButton.curve = "easeOut"
+                    self.loginButton.duration = 0.2
+                    self.loginButton.animate()
+                    self.loginButton.animateNext {
+                        self.logoContainerView.animation = "pop"
+                        self.logoContainerView.curve = "easeOut"
+                        self.logoContainerView.duration = 1.0
+                        self.logoContainerView.rotate = 3.0
+                        self.logoContainerView.animate()
+                        self.logoContainerView.animateNext {
+                            self.logoContainerView.animation = "fall"
+                            self.logoContainerView.curve = "easeIn"
+                            self.logoContainerView.duration = 1.0
+                            self.logoContainerView.animate()
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -188,7 +235,7 @@ class LoginController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }

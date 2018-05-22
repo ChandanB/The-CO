@@ -13,7 +13,7 @@ import UIFontComplete
 import FaveButton
 
 
-class HomeController: DatasourceController, FaveButtonDelegate {
+class HomeController: DatasourceController {
     
     let homeDatasource = HomeDatasource()
     let refreshControl = UIRefreshControl()
@@ -42,12 +42,10 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     }
     
     @objc override func handleRefresh() {
+        self.homeDatasource.posts.removeAll()
         refreshControl.beginRefreshing()
         self.isFinishedPaging = false
-        UIView.performWithoutAnimation {
-            self.homeDatasource.posts.removeAll()
-            fetchAllPosts()
-        }
+        fetchAllPosts()
     }
     
     func fetchAllPosts() {
@@ -109,11 +107,6 @@ class HomeController: DatasourceController, FaveButtonDelegate {
                     
                     self.homeDatasource.posts.append(post)
                     
-                    self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
-                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
-                    })
-                    
-                    self.collectionView?.reloadData()
                     self.fetchPostsWithUser(user)
 
                 }, withCancel: { (err) in
@@ -143,7 +136,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
             
             allObjects.reverse()
             
-            if allObjects.count < 12 {
+            if allObjects.count < 15 {
                 self.isFinishedPaging = true
             } else {
                 self.isFinishedPaging = false
@@ -168,6 +161,10 @@ class HomeController: DatasourceController, FaveButtonDelegate {
                         post.hasLiked = false
                     }
                     
+                    self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
+                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                    })
+                    
                     self.homeDatasource.posts.append(post)
                     self.collectionView?.reloadData()
                 }
@@ -180,7 +177,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        return UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
     }
     
     func setupNavigationBarItems() {
@@ -261,7 +258,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0.5
+        return 1
     }
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -287,7 +284,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
         
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 17.0)!]
+        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 16.0)!]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
@@ -331,17 +328,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
             
         }
     }
-    
-    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool){
-        faveButton.circleFromColor = .red
-        faveButton.circleToColor = .blue
-        faveButton.dotFirstColor = .red
-        faveButton.dotSecondColor = .blue
-    }
-    
-    func faveButtonDotColors(_ faveButton: FaveButton) -> [DotColors]?{
-        return dotColors
-    }
+
     
     func likeAnimation(_ heartPopup: UIImageView) {
         UIView.animate(withDuration: 0.4, delay: 0, options: .allowUserInteraction, animations: {() -> Void in
@@ -365,7 +352,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     func didTapProfilePicture(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         let layout = UICollectionViewFlowLayout()
-        let userProfileController = UserProfileController(collectionViewLayout: layout)
+        let userProfileController = UserProfileController()
         let post = self.homeDatasource.posts[indexPath.item]
         let user = post.user
         userProfileController.user = user
@@ -382,12 +369,26 @@ class HomeController: DatasourceController, FaveButtonDelegate {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.setupLeftNavItem(user)
+            self.loadPosts(user)
+        }
+    }
+    
+    func loadPosts(_ user: User) {
+        Api.feed.observeFeedRemoved(user: user, withId: Api.user.currentUser!.uid) { (post) in
+            self.homeDatasource.posts = self.homeDatasource.posts.filter { $0.id != post.id }
+            self.collectionView?.reloadData()
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.row + 1 == self.homeDatasource.posts.count && !isFinishedPaging {
             fetchAllPosts()
+        }
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.isAtBottom && isFinishedPaging {
+            self.fetchAllPosts()
         }
     }
     

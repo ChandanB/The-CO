@@ -50,8 +50,7 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         
         let user = self.searchDatasource.filteredUsers[indexPath.item]
         
-        let layout = UICollectionViewFlowLayout()
-        let userProfileController = UserProfileController(collectionViewLayout: layout)
+        let userProfileController = UserProfileController()
         userProfileController.userId = user.uid
         userProfileController.user = user
         navigationController?.pushViewController(userProfileController, animated: true)
@@ -65,6 +64,7 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -10,7 +10,7 @@ import LBTAComponents
 
 struct Post {
     var id: String?
-
+    
     let user: User
     let timestamp: NSNumber
     let caption: String
@@ -20,7 +20,7 @@ struct Post {
     let imageHeight: NSNumber
     let votes: NSNumber
     let creationDate: Date
-    
+    let likeCount: NSNumber
     var hasLiked = false
     var hasText: String
     var hasImage: String
@@ -34,6 +34,7 @@ struct Post {
         self.hasText = dictionary["hasText"] as? String ?? "false"
         self.hasImage = dictionary["hasImage"] as? String ?? "false"
         self.timestamp = dictionary["timestamp"] as? NSNumber ?? 0
+        self.likeCount = dictionary["likeCount"] as? NSNumber ?? 0
         self.imageWidth = dictionary["imageWidth"] as? NSNumber ?? 0
         self.imageHeight = dictionary["imageHeight"] as? NSNumber ?? 0
         let secondsFrom1970 = dictionary["creationDate"] as? Double ?? 0

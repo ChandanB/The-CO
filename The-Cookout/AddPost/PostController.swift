@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import PKHUD
 
 class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate {
     
@@ -120,8 +121,8 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     @objc func sharePost() {
-        print("Share clicked")
         dismissKeyboard()
+        
         if selectedImage != nil {
             shareImagePost()
         } else {
@@ -198,12 +199,14 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 self.navigationItem.rightBarButtonItem?.isEnabled = false
                 print("Failed to save post to DB", err)
                 return
+            } else {
+                HUD.flash(.success)
             }
             
-            print("Successfully saved post to DB")
+            NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
+            
             self.dismiss(animated: true, completion: nil)
             
-            NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
         }
     }
     
@@ -235,10 +238,12 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 print("Failed to save post to DB", err)
                 return
             }
-            print("Successfully saved post to DB")
-            self.dismiss(animated: true, completion: nil)
             
             NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
+            
+            print("Successfully saved post to DB")
+            self.dismiss(animated: true, completion: nil)
+    
         }
     }
     

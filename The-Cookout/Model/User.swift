@@ -17,6 +17,7 @@ struct User {
     let profileImage: UIImage
     let profileImageUrl: String
     let bannerImageUrl: String
+    var isFollowing = false
     
     init(uid: String, dictionary: [String: AnyObject]) {
         self.uid = uid

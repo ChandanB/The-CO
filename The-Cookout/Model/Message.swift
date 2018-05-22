@@ -29,6 +29,7 @@ struct Message {
         self.timestamp = dictionary["timestamp"] as? NSNumber
         self.imageWidth = dictionary["imageWidth"] as? NSNumber
         self.imageHeight = dictionary["imageHeight"] as? NSNumber
+
     }
     
     func chatPartnerId() -> String? {

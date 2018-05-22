@@ -54,12 +54,22 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>KILabel.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Kingfisher.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 		<key>LBTAComponents.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>PKHUD.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -75,6 +85,11 @@
 			<false/>
 		</dict>
 		<key>SCLAlertView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

@@ -63,6 +63,7 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.1.4)
   - GSKStretchyHeaderView (1.0.4)
   - GTMSessionFetcher/Core (1.1.15)
+  - KILabel (1.0.0)
   - Kingfisher (4.7.0)
   - LBTAComponents (1.0.2)
   - leveldb-library (1.20)
@@ -71,8 +72,12 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
+  - PKHUD (5.0.0)
   - Protobuf (3.5.0)
   - SCLAlertView (0.8)
+  - SDWebImage (4.3.3):
+    - SDWebImage/Core (= 4.3.3)
+  - SDWebImage/Core (4.3.3)
   - SkeletonView (1.2)
   - Spring (1.0.5)
   - UIFontComplete (3.0.0)
@@ -90,9 +95,12 @@ DEPENDENCIES:
   - Firebase/Performance
   - Firebase/Storage
   - GSKStretchyHeaderView
+  - KILabel (= 1.0.0)
   - Kingfisher (~> 4.0)
   - LBTAComponents
+  - PKHUD (~> 5.0)
   - SCLAlertView
+  - SDWebImage (~> 4.0)
   - SkeletonView
   - Spring
   - UIFontComplete
@@ -116,12 +124,15 @@ SPEC REPOS:
     - GoogleToolboxForMac
     - GSKStretchyHeaderView
     - GTMSessionFetcher
+    - KILabel
     - Kingfisher
     - LBTAComponents
     - leveldb-library
     - nanopb
+    - PKHUD
     - Protobuf
     - SCLAlertView
+    - SDWebImage
     - SkeletonView
     - Spring
     - UIFontComplete
@@ -144,17 +155,20 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   GSKStretchyHeaderView: 9743704c12bdc9cf7c7947bad3af8bf24f7061e3
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
+  KILabel: 84049969642d4ac1061ebe38ad4c0da37fed108b
   Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
   LBTAComponents: c4c8863e0ef6715e378300db148b96a09df656f7
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
+  SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
   SkeletonView: d68962d45d1af038f6a110d2274b183df8f82752
   Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
   UIFontComplete: 5b0f59a83308816c610164b79a2540b3520f9b72
   VegaScrollFlowLayout: 9158061f29179147755f937c2b21693fc5dbbac3
 
-PODFILE CHECKSUM: 835a3423638f15e9e1c4f00ecf9a62073ffd4b16
+PODFILE CHECKSUM: 398477f9a9fdce335cedc08904e03216ea77f33a
 
 COCOAPODS: 1.5.2

@@ -10,18 +10,16 @@ import Firebase
 import LBTAComponents
 
 
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserProfileTextDelegate {
+class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
     
     let refreshControl = UIRefreshControl()
-
+    
     var userId: String?
     var cellId = "cellId"
     var postCellId = "postCellId"
     
     var isGridView = true
     
-    var gridArray = [Post]()
-    var listArray = [Post]()
     var postCount = 0
     var followingCount = 0
     var followersCount = 0
@@ -36,12 +34,19 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.reloadData()
     }
     
+    let profileDatasource = ProfileDatasource()
+    
     var isFinishedPaging = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
+        collectionView?.isPagingEnabled = true
+        layout?.scrollDirection = .horizontal
+        
+        self.datasource = profileDatasource
+    
+        NotificationCenter.default.addObserver(self, selector: #selector(handlePageRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
@@ -56,16 +61,16 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     fileprivate func setupRefresherControl() {
-        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(handlePageRefresh), for: .valueChanged)
         refreshControl.layer.zPosition = -1
         collectionView?.refreshControl = refreshControl
     }
     
-    @objc fileprivate func handleRefresh() {
+    @objc func handlePageRefresh() {
         self.refreshControl.beginRefreshing()
         self.isFinishedPaging = false
-        self.gridArray = []
-        self.listArray = []
+        self.profileDatasource.gridArray = []
+        self.profileDatasource.listArray = []
         paginatePosts()
     }
     
@@ -75,12 +80,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         var query = ref.queryOrdered(byChild: "creationDate")
         self.refreshControl.endRefreshing()
         
-        if isGridView && gridArray.count > 0 {
-            let value = self.gridArray.last?.creationDate.timeIntervalSince1970
+        if isGridView && profileDatasource.gridArray.count > 0 {
+            let value = self.profileDatasource.gridArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
             
-        } else if !isGridView && listArray.count > 0 {
-            let value = self.listArray.last?.creationDate.timeIntervalSince1970
+        } else if !isGridView && profileDatasource.listArray.count > 0 {
+            let value = self.profileDatasource.listArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
         }
         
@@ -93,7 +98,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.isFinishedPaging = true
             }
             
-            if self.gridArray.count > 0 && allObjects.count > 0 || self.listArray.count > 0 && allObjects.count > 0 {
+            if self.profileDatasource.gridArray.count > 0 && allObjects.count > 0 || self.profileDatasource.listArray.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
             }
             
@@ -106,11 +111,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 post.id = snapshot.key
                 
                 if post.hasImage == "true" {
-                    self.gridArray.append(post)
+                    self.profileDatasource.gridArray.append(post)
                 }
                 
                 if post.hasText == "true" && post.hasImage == "false" {
-                    self.listArray.append(post)
+                    self.profileDatasource.listArray.append(post)
                 }
             })
             
@@ -143,7 +148,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
     }
     
-   
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
@@ -153,10 +158,10 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         return 1
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if isGridView {
-            let post = self.gridArray[indexPath.item]
+        if isGridView || indexPath.section == 1 {
+            let post = self.profileDatasource.gridArray[indexPath.item]
             if post.hasText == "true" && post.hasImage == "false" {
                 return .zero
             }
@@ -164,137 +169,143 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             return CGSize(width: width, height: width)
         }
         
-        let post = self.listArray[indexPath.item] 
+        let post = self.profileDatasource.listArray[indexPath.item]
         let estimatedHeight = estimatedHeightForListText(post.caption)
-    
+        
         if post.hasImage == "true" {
             var height: CGFloat = 50 + 8 + 8 + estimatedHeight
             height += view.frame.width
             return CGSize(width: view.frame.width, height: height + 72)
         }
-            
+        
         return CGSize(width: view.frame.width, height: estimatedHeight + 130)
-            
+        
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            
-            if isGridView {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
-                cell.datasourceItem = self.gridArray[indexPath.item]
-                return cell
-            }
-            
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
-            cell.datasourceItem = self.listArray[indexPath.item]
+        if isGridView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
+            cell.datasourceItem = self.profileDatasource.gridArray[indexPath.item]
             return cell
-            
         }
         
-        override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! UserProfileHeader
-            header.user = self.user
-            header.delegate = self
-            header.postCount = self.postCount
-            header.followersCount = self.followersCount
-            header.followingCount = self.followingCount
-            
-            return header
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
+        cell.datasourceItem = self.profileDatasource.listArray[indexPath.item]
+        return cell
+        
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! UserProfileHeader
+        header.user = self.user
+        header.delegate = self
+        header.postCount = self.postCount
+        header.followersCount = self.followersCount
+        header.followingCount = self.followingCount
+        
+        return header
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        if section == 1 || section == 2 {
+            return .zero
         }
         
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        guard let user = self.user else { return .zero }
+        let estimatedHeight = estimatedHeightForBioText(user.bio)
+        return CGSize(width: view.frame.width, height: estimatedHeight + 420)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if isGridView || section == 1 {
+            return profileDatasource.gridArray.count
+        }
+        
+        return profileDatasource.listArray.count
+    }
+    
+    private func estimatedHeightForListText(_ text: String) -> CGFloat {
+        if text == "" {
+            return -15
+        }
+        let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
+        let size = CGSize(width: approximateWidthOfTextView, height: 1000)
+        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 17.0)!]
+        
+        let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
+        
+        return estimatedFrame.height
+    }
+    
+    private func estimatedHeightForBioText(_ text: String) -> CGFloat {
+        
+        if text == "" {
+            return 0
+        }
+        
+        let approximateWidthOfTextView = view.frame.width - 12 - 40 - 12 - 2
+        let size = CGSize(width: approximateWidthOfTextView, height: 1000)
+        let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
+        
+        let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
+        
+        return estimatedFrame.height
+    }
+    
+    var user: User?
+    fileprivate func fetchUser() {
+        let uid = userId ?? Auth.auth().currentUser?.uid ?? ""
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            self.user = user
+            self.navigationItem.title = self.user?.name
+            self.collectionView?.reloadData()
+            self.fetchStatsCount()
+            self.handleRefresh()
+        }
+    }
+    
+    func didTapComment(post: Post) {
+        let commentsController = CommentsController()
+        commentsController.post = post
+        navigationController?.pushViewController(commentsController, animated: true)
+    }
+    
+    func didLike(for cell: PostCell) {
+        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+        
+        var post = self.profileDatasource.listArray[indexPath.item]
+        
+        guard let postId = post.id else { return }
+        
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let values = [uid: post.hasLiked == true ? 0 : 1]
+        Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, _) in
             
-            if section == 1 {
-                return .zero
+            if let err = err {
+                print("Failed to like post:", err)
+                return
             }
             
-            guard let user = self.user else { return .zero }
-            let estimatedHeight = estimatedHeightForBioText(user.bio)
-            return CGSize(width: view.frame.width, height: estimatedHeight + 420)
+            print("Successfully liked post.")
+            
+            post.hasLiked = !post.hasLiked
+            
+            self.profileDatasource.listArray[indexPath.item] = post
+            
+            self.collectionView?.reloadItems(at: [indexPath])
         }
-        
-        override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            if isGridView {
-                return gridArray.count
-            }
-            
-            return listArray.count
-        }
-        
-        private func estimatedHeightForListText(_ text: String) -> CGFloat {
-            if text == "" {
-                return -15
-            }
-            let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
-            let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-            let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 17.0)!]
-            
-            let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
-            
-            return estimatedFrame.height
-        }
-        
-        private func estimatedHeightForBioText(_ text: String) -> CGFloat {
-            
-            if text == "" {
-                return 0
-            }
-            
-            let approximateWidthOfTextView = view.frame.width - 12 - 40 - 12 - 2
-            let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-            let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
-            
-            let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
-            
-            return estimatedFrame.height
-        }
-        
-        var user: User?
-        fileprivate func fetchUser() {
-            let uid = userId ?? Auth.auth().currentUser?.uid ?? ""
-            Database.fetchUserWithUID(uid: uid) { (user) in
-                self.user = user
-                self.navigationItem.title = self.user?.name
-                self.collectionView?.reloadData()
-                self.fetchStatsCount()
-                self.handleRefresh()
-            }
-        }
-        
-        func didLike(for cell: UserProfileTextCell) {
-            guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-            
-            var post = self.listArray[indexPath.item]
-            
-            guard let postId = post.id else { return }
-            
-            guard let uid = Auth.auth().currentUser?.uid else { return }
-            
-            let values = [uid: post.hasLiked == true ? 0 : 1]
-            Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, _) in
-                
-                if let err = err {
-                    print("Failed to like post:", err)
-                    return
-                }
-                
-                print("Successfully liked post.")
-                
-                post.hasLiked = !post.hasLiked
-                
-                self.listArray[indexPath.item] = post
-                
-                self.collectionView?.reloadItems(at: [indexPath])
-            }
-        }
+    }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if isGridView {
-            if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
+        if isGridView || indexPath.section == 1 {
+            if indexPath.row + 1 == self.profileDatasource.gridArray.count && !isFinishedPaging {
                 self.paginatePosts()
             }
         } else if !isGridView {
-            if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
+            if indexPath.row + 1 == self.profileDatasource.listArray.count && !isFinishedPaging {
                 self.paginatePosts()
             }
         }
@@ -303,6 +314,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     @objc func dismissView() {
         dismiss(animated: true, completion: nil)
     }
-        
+    
 }
 

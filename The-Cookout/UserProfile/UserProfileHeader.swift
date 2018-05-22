@@ -211,13 +211,13 @@ class UserProfileHeader: DatasourceCell {
         print("Changing to list view")
         listButton.tintColor = twitterBlue
         gridButton.tintColor = UIColor(white: 0, alpha: 0.4)
-        delegate?.didChangeToListView()
+        (self.controller as? UserProfileController)?.didChangeToListView()
     }
     
     @objc func handleChangeToGridView() {
         gridButton.tintColor = twitterBlue
         listButton.tintColor = UIColor(white: 0, alpha: 0.2)
-        delegate?.didChangeToGridView()
+        (self.controller as? UserProfileController)?.didChangeToGridView()
     }
     
     let nameLabel: UILabel = {

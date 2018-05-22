@@ -9,6 +9,7 @@
 import Firebase
 import LBTAComponents
 import Spring
+import PKHUD
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -113,6 +114,13 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         if self.view.frame.origin.y != 0 {
             self.view.frame.origin.y += 70
         }
+        HUD.show(.progress)
+        HUD.dimsBackground = true
+        
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y += 70
+        }
+        
         guard let name = nameTextField.text else { return }
         guard let email = emailTextField.text else { return }
         guard let username = usernameTextField.text else { return }
@@ -126,6 +134,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
                 self.signUpButton.curve = "spring"
                 self.signUpButton.duration = 1.2
                 self.signUpButton.animate()
+                HUD.hide()
                 return
             }
             
@@ -175,6 +184,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
                         
                         guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
                         mainTabBarController.setupViewControllers()
+                        HUD.hide()
                         self.handleAnimations()
                     })
                 })

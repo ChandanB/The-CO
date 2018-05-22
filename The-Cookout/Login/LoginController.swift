@@ -9,6 +9,7 @@
 import Firebase
 import LBTAComponents
 import Spring
+import PKHUD
 
 class LoginController: UIViewController {
     
@@ -74,6 +75,9 @@ class LoginController: UIViewController {
     }()
     
     @objc func handleLogin() {
+        HUD.show(.progress)
+        HUD.dimsBackground = true
+        
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         
@@ -85,6 +89,7 @@ class LoginController: UIViewController {
                 self.loginButton.curve = "spring"
                 self.loginButton.duration = 1.2
                 self.loginButton.animate()
+                HUD.hide()
                 return
             }
             //successfully logged in our user
@@ -96,6 +101,7 @@ class LoginController: UIViewController {
                 print(snapshot.value ?? "")
                 
                 mainTabBarController.setupViewControllers()
+                HUD.hide()
                 self.handleAnimations()
                 
             }) { (err) in

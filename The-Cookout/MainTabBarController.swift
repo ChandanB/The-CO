@@ -51,8 +51,9 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         let likeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "like_unselected"), selectedImage: #imageLiteral(resourceName: "like_selected"))
         
         // user profile
-        let layout = UICollectionViewFlowLayout()
-        let userProfileController = UserProfileController(collectionViewLayout: layout)
+      //   let layout = UICollectionViewFlowLayout()
+      //  layout.scrollDirection = .horizontal
+        let userProfileController = UserProfileController()
         
         let userProfileNavController = UINavigationController(rootViewController: userProfileController)
         

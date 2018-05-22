@@ -125,9 +125,6 @@ extension UIImage {
 
 extension UIViewController {
     func hideKeyboardWhenTapped() {
-        if self.view.frame.origin.y != 0 {
-            self.view.frame.origin.y += 70
-        }
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false

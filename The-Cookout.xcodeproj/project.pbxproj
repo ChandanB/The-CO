@@ -66,6 +66,19 @@
 		1FF5078320B280040092F462 /* MessageDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5078220B280040092F462 /* MessageDatasource.swift */; };
 		1FF5078620B39D550092F462 /* heart.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FF5078520B39D540092F462 /* heart.png */; };
 		1FF5078820B39EB90092F462 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5078720B39EB90092F462 /* Color.swift */; };
+		1FF5083520B3EAFA0092F462 /* PostApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083420B3EAFA0092F462 /* PostApi.swift */; };
+		1FF5083720B3EDB20092F462 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083620B3EDB20092F462 /* Api.swift */; };
+		1FF5083920B3EE6F0092F462 /* UserApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083820B3EE6F0092F462 /* UserApi.swift */; };
+		1FF5083B20B3F0360092F462 /* FollowApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083A20B3F0360092F462 /* FollowApi.swift */; };
+		1FF5083D20B3F0860092F462 /* MyPostsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083C20B3F0860092F462 /* MyPostsApi.swift */; };
+		1FF5083F20B3F15D0092F462 /* CommentApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083E20B3F15D0092F462 /* CommentApi.swift */; };
+		1FF5084120B3F1D10092F462 /* HashTagApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084020B3F1D10092F462 /* HashTagApi.swift */; };
+		1FF5084320B3F23F0092F462 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084220B3F23F0092F462 /* AuthService.swift */; };
+		1FF5084520B3F3AF0092F462 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084420B3F3AF0092F462 /* Config.swift */; };
+		1FF5084720B3F4500092F462 /* HelperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084620B3F4500092F462 /* HelperService.swift */; };
+		1FF5084920B3F69B0092F462 /* FeedApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084820B3F69B0092F462 /* FeedApi.swift */; };
+		1FF5084B20B3F6FB0092F462 /* PostCommentsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */; };
+		1FF5084E20B4216A0092F462 /* ProfileDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */; };
 		FEF96D87CFE0CA30E256AC54 /* Pods_The_Cookout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */; };
 /* End PBXBuildFile section */
 
@@ -131,6 +144,19 @@
 		1FF5078220B280040092F462 /* MessageDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDatasource.swift; sourceTree = "<group>"; };
 		1FF5078520B39D540092F462 /* heart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heart.png; sourceTree = "<group>"; };
 		1FF5078720B39EB90092F462 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		1FF5083420B3EAFA0092F462 /* PostApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostApi.swift; sourceTree = "<group>"; };
+		1FF5083620B3EDB20092F462 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		1FF5083820B3EE6F0092F462 /* UserApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApi.swift; sourceTree = "<group>"; };
+		1FF5083A20B3F0360092F462 /* FollowApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowApi.swift; sourceTree = "<group>"; };
+		1FF5083C20B3F0860092F462 /* MyPostsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPostsApi.swift; sourceTree = "<group>"; };
+		1FF5083E20B3F15D0092F462 /* CommentApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentApi.swift; sourceTree = "<group>"; };
+		1FF5084020B3F1D10092F462 /* HashTagApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashTagApi.swift; sourceTree = "<group>"; };
+		1FF5084220B3F23F0092F462 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		1FF5084420B3F3AF0092F462 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		1FF5084620B3F4500092F462 /* HelperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperService.swift; sourceTree = "<group>"; };
+		1FF5084820B3F69B0092F462 /* FeedApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedApi.swift; sourceTree = "<group>"; };
+		1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCommentsApi.swift; sourceTree = "<group>"; };
+		1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDatasource.swift; sourceTree = "<group>"; };
 		390C881A38F3B95586CB0671 /* Pods-The-Cookout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.debug.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.debug.xcconfig"; sourceTree = "<group>"; };
 		41062D1ADD562626DE736A1C /* Pods-The-Cookout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.release.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.release.xcconfig"; sourceTree = "<group>"; };
 		A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_The_Cookout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -178,6 +204,7 @@
 				1F4FD35C20A9F7E600AB73C1 /* UserProfileHeader.swift */,
 				1FF5076520AF5B5D0092F462 /* UserProfileTextCell.swift */,
 				1F4FD37120AAFA5200AB73C1 /* UserProfilePhotoCell.swift */,
+				1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */,
 			);
 			path = UserProfile;
 			sourceTree = "<group>";
@@ -289,6 +316,7 @@
 		1FAB5B4120A7B10A003F9943 /* The-Cookout */ = {
 			isa = PBXGroup;
 			children = (
+				1FF5083320B3EAC60092F462 /* API */,
 				1FF5077220B2564A0092F462 /* Message */,
 				1FF5076D20B15C4F0092F462 /* Comment */,
 				1F5661A620AEA7B200F8E1B7 /* CustomAnimationPresenter */,
@@ -335,6 +363,25 @@
 				1FF5078220B280040092F462 /* MessageDatasource.swift */,
 			);
 			path = Message;
+			sourceTree = "<group>";
+		};
+		1FF5083320B3EAC60092F462 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				1FF5083620B3EDB20092F462 /* Api.swift */,
+				1FF5083420B3EAFA0092F462 /* PostApi.swift */,
+				1FF5083C20B3F0860092F462 /* MyPostsApi.swift */,
+				1FF5083A20B3F0360092F462 /* FollowApi.swift */,
+				1FF5083820B3EE6F0092F462 /* UserApi.swift */,
+				1FF5083E20B3F15D0092F462 /* CommentApi.swift */,
+				1FF5084020B3F1D10092F462 /* HashTagApi.swift */,
+				1FF5084220B3F23F0092F462 /* AuthService.swift */,
+				1FF5084420B3F3AF0092F462 /* Config.swift */,
+				1FF5084620B3F4500092F462 /* HelperService.swift */,
+				1FF5084820B3F69B0092F462 /* FeedApi.swift */,
+				1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 		E24918EF2D0D08D964B871C1 /* Frameworks */ = {
@@ -463,10 +510,13 @@
 				"${BUILT_PRODUCTS_DIR}/GSKStretchyHeaderView/GSKStretchyHeaderView.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/KILabel/KILabel.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/LBTAComponents/LBTAComponents.framework",
+				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SCLAlertView/SCLAlertView.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
 				"${BUILT_PRODUCTS_DIR}/UIFontComplete/UIFontComplete.framework",
@@ -482,10 +532,13 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GSKStretchyHeaderView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KILabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LBTAComponents.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCLAlertView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIFontComplete.framework",
@@ -506,6 +559,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F4FD36320AA1EE200AB73C1 /* LoginController.swift in Sources */,
+				1FF5084B20B3F6FB0092F462 /* PostCommentsApi.swift in Sources */,
 				1F4FD35D20A9F7E600AB73C1 /* UserProfileHeader.swift in Sources */,
 				1F5661B820AF086C00F8E1B7 /* CommentsController.swift in Sources */,
 				1FF5077F20B25D320092F462 /* MessagesController.swift in Sources */,
@@ -513,6 +567,7 @@
 				1F56619F20AEA19800F8E1B7 /* SideMenu.swift in Sources */,
 				1F4FD35820A9ED4600AB73C1 /* MainTabBarController.swift in Sources */,
 				1F2BAA4120A8145B00350CEC /* RegisterController.swift in Sources */,
+				1FF5083520B3EAFA0092F462 /* PostApi.swift in Sources */,
 				1F4FD36E20AA838E00AB73C1 /* PhotoSelectorHeader.swift in Sources */,
 				1FF5077620B2568A0092F462 /* UserMessageCell.swift in Sources */,
 				1FAB5B4320A7B10A003F9943 /* AppDelegate.swift in Sources */,
@@ -526,9 +581,12 @@
 				1F75BEC720AC312600BA7AF2 /* UserSearchCell.swift in Sources */,
 				1F4FD35A20A9EE7500AB73C1 /* UserProfileController.swift in Sources */,
 				1F2BAA2320A7BF0200350CEC /* HomeController.swift in Sources */,
+				1FF5083F20B3F15D0092F462 /* CommentApi.swift in Sources */,
 				1FF5076620AF5B5D0092F462 /* UserProfileTextCell.swift in Sources */,
+				1FF5083920B3EE6F0092F462 /* UserApi.swift in Sources */,
 				1F4FD36A20AA62A900AB73C1 /* PostHeader.swift in Sources */,
 				1FF5077820B257B90092F462 /* ChatMessageCell.swift in Sources */,
+				1FF5084320B3F23F0092F462 /* AuthService.swift in Sources */,
 				1F8DF92620AF2B8B00AEB43B /* Comment.swift in Sources */,
 				1F5661A120AEA4EE00F8E1B7 /* CustomAnimationPresenter.swift in Sources */,
 				1F75BECA20AC323400BA7AF2 /* SearchDatasource.swift in Sources */,
@@ -537,17 +595,25 @@
 				1F75BEC220AC277B00BA7AF2 /* FirebaseUtils.swift in Sources */,
 				1FF5077120B164CC0092F462 /* CommentInputTextView.swift in Sources */,
 				1FF5077A20B25A0B0092F462 /* MessageInputContainerView.swift in Sources */,
+				1FF5084920B3F69B0092F462 /* FeedApi.swift in Sources */,
 				1F8DF92420AF2B5300AEB43B /* CommentCell.swift in Sources */,
 				1F2BAA2E20A7D8F500350CEC /* UserCell.swift in Sources */,
+				1FF5084120B3F1D10092F462 /* HashTagApi.swift in Sources */,
 				1F2BAA3220A7EF5700350CEC /* PostCell.swift in Sources */,
 				1F75BEF220AD5B0200BA7AF2 /* StickyLayout.swift in Sources */,
 				1F8DF92C20AF2EE700AEB43B /* CommentsDatasource.swift in Sources */,
 				1F5661A520AEA6C100F8E1B7 /* CustomAnimationDismisser.swift in Sources */,
 				1F4FD36820AA5CE400AB73C1 /* PhotoSelectorController.swift in Sources */,
+				1FF5083720B3EDB20092F462 /* Api.swift in Sources */,
+				1FF5084520B3F3AF0092F462 /* Config.swift in Sources */,
 				1F56619A20ADF07D00F8E1B7 /* CameraController.swift in Sources */,
 				1F2BAA3620A7F38D00350CEC /* Post.swift in Sources */,
+				1FF5084E20B4216A0092F462 /* ProfileDatasource.swift in Sources */,
+				1FF5083D20B3F0860092F462 /* MyPostsApi.swift in Sources */,
+				1FF5083B20B3F0360092F462 /* FollowApi.swift in Sources */,
 				1F4FD36620AA5CA900AB73C1 /* PostController.swift in Sources */,
 				1FF5077C20B25BF50092F462 /* ChatLogController.swift in Sources */,
+				1FF5084720B3F4500092F462 /* HelperService.swift in Sources */,
 				1F75BEC520AC287900BA7AF2 /* UserSearchController.swift in Sources */,
 				1F56619C20AE759800F8E1B7 /* PreviewPhotoContainerView.swift in Sources */,
 				1F4FD37220AAFA5200AB73C1 /* UserProfilePhotoCell.swift in Sources */,

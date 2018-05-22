@@ -17,7 +17,8 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     
     let homeDatasource = HomeDatasource()
     let refreshControl = UIRefreshControl()
-
+    var postLikesCount = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -42,8 +43,11 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     
     @objc override func handleRefresh() {
         refreshControl.beginRefreshing()
-        self.homeDatasource.posts.removeAll()
-        fetchAllPosts()
+        self.isFinishedPaging = false
+        UIView.performWithoutAnimation {
+            self.homeDatasource.posts.removeAll()
+            fetchAllPosts()
+        }
     }
     
     func fetchAllPosts() {
@@ -82,9 +86,9 @@ class HomeController: DatasourceController, FaveButtonDelegate {
         
         let ref = Database.database().reference().child("posts").child(user.uid)
         self.refreshControl.endRefreshing()
-
+        
         ref.observeSingleEvent(of: .childAdded, with: { (snapshot) in
-
+            
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
             
             dictionaries.forEach({ (key, value) in
@@ -98,6 +102,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
                     
                     if let value = snapshot.value as? Int, value == 1 {
                         post.hasLiked = true
+                        self.postLikesCount += 1
                     } else {
                         post.hasLiked = false
                     }
@@ -109,20 +114,18 @@ class HomeController: DatasourceController, FaveButtonDelegate {
                     })
                     
                     self.collectionView?.reloadData()
-                    self.isFinishedPaging = false
                     self.fetchPostsWithUser(user)
 
                 }, withCancel: { (err) in
                     print("Failed to fetch like info for post:", err)
                 })
             })
-            
         }) { (err) in
             print("Failed to fetch posts:", err)
         }
     }
     
- 
+    
     fileprivate func fetchPostsWithUser(_ user: User) {
         
         let uid = user.uid
@@ -134,13 +137,13 @@ class HomeController: DatasourceController, FaveButtonDelegate {
             query = query.queryEnding(atValue: value)
         }
         
-        query.queryLimited(toLast: 20).observe(.value) { (snapshot) in
+        query.queryLimited(toLast: 15).observe(.value) { (snapshot) in
             
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()
             
-            if allObjects.count < 20 {
+            if allObjects.count < 12 {
                 self.isFinishedPaging = true
             } else {
                 self.isFinishedPaging = false
@@ -158,8 +161,14 @@ class HomeController: DatasourceController, FaveButtonDelegate {
                 
                 ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
                     
-                    self.homeDatasource.posts.append(post)
+                    if let value = snapshot.value as? Int, value == 1 {
+                        post.hasLiked = true
+                        self.postLikesCount += 1
+                    } else {
+                        post.hasLiked = false
+                    }
                     
+                    self.homeDatasource.posts.append(post)
                     self.collectionView?.reloadData()
                 }
             })
@@ -171,7 +180,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     func setupNavigationBarItems() {
@@ -205,7 +214,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
         let navBarSeparatorView = UIView()
         navBarSeparatorView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         view.addSubview(navBarSeparatorView)
-        navBarSeparatorView.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0.5)
+        navBarSeparatorView.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0.8)
     }
     
     func setupLeftNavItem(_ user: User) {
@@ -267,7 +276,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
             return CGSize(width: view.frame.width, height: height + 72)
         }
         
-        return CGSize(width: view.frame.width, height: estimatedHeight + 130)
+        return CGSize(width: view.frame.width, height: estimatedHeight + 126)
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
@@ -335,7 +344,6 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     }
     
     func likeAnimation(_ heartPopup: UIImageView) {
-        print("Like tapped")
         UIView.animate(withDuration: 0.4, delay: 0, options: .allowUserInteraction, animations: {() -> Void in
             heartPopup.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
             heartPopup.alpha = 1.0
@@ -352,7 +360,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
             })
         })
     }
-
+    
     
     func didTapProfilePicture(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
@@ -366,7 +374,7 @@ class HomeController: DatasourceController, FaveButtonDelegate {
     }
     
     func didLike(for cell: PostCell) {
-    
+        
     }
     
     var user: User?
@@ -382,4 +390,5 @@ class HomeController: DatasourceController, FaveButtonDelegate {
             fetchAllPosts()
         }
     }
+    
 }

@@ -12,6 +12,8 @@ import LBTAComponents
 
 class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserProfileTextDelegate {
     
+    let refreshControl = UIRefreshControl()
+
     var userId: String?
     var cellId = "cellId"
     var postCellId = "postCellId"
@@ -39,7 +41,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(paginatePosts), name: PostController.updateFeedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
@@ -49,18 +51,29 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         collectionView?.backgroundColor = .white
         
+        setupRefresherControl()
         fetchUser()
     }
     
-    @objc func dismissView() {
-        dismiss(animated: true, completion: nil)
+    fileprivate func setupRefresherControl() {
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        refreshControl.layer.zPosition = -1
+        collectionView?.refreshControl = refreshControl
     }
     
+    @objc fileprivate func handleRefresh() {
+        self.refreshControl.beginRefreshing()
+        self.isFinishedPaging = false
+        self.gridArray = []
+        self.listArray = []
+        paginatePosts()
+    }
     
     @objc func paginatePosts() {
         guard let uid = self.user?.uid else { return }
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
+        self.refreshControl.endRefreshing()
         
         if isGridView && gridArray.count > 0 {
             let value = self.gridArray.last?.creationDate.timeIntervalSince1970
@@ -71,18 +84,16 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             query = query.queryEnding(atValue: value)
         }
         
-        query.queryLimited(toLast: 12).observe(.childAdded) { (snapshot) in
+        query.queryLimited(toLast: 12).observe(.value) { (snapshot) in
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()
             
-            if allObjects.count < 12 {
-                self.isFinishedPaging = false
+            if allObjects.count < 10 {
+                self.isFinishedPaging = true
             }
             
-            if self.isGridView && self.gridArray.count > 0 && allObjects.count > 0 {
-                allObjects.removeFirst()
-            } else if self.isGridView == false && self.listArray.count > 0 && allObjects.count > 0 {
+            if self.gridArray.count > 0 && allObjects.count > 0 || self.listArray.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
             }
             
@@ -102,6 +113,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                     self.listArray.append(post)
                 }
             })
+            
             self.collectionView?.reloadData()
         }
     }
@@ -245,7 +257,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.navigationItem.title = self.user?.name
                 self.collectionView?.reloadData()
                 self.fetchStatsCount()
-                self.paginatePosts()
+                self.handleRefresh()
             }
         }
         
@@ -281,7 +293,15 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
                 self.paginatePosts()
             }
-        } 
+        } else if !isGridView {
+            if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
+                self.paginatePosts()
+            }
+        }
+    }
+    
+    @objc func dismissView() {
+        dismiss(animated: true, completion: nil)
     }
         
 }

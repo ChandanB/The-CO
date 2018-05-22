@@ -31,13 +31,15 @@ class PostCell: DatasourceCell {
             }
             
             let fetchImage = FetchImage()
-            
-            fetchImage.fetch(with: post.user.profileImageUrl) { (image) in
-                self.profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
-            }
-        
             let imageUrl = URL(string: post.imageUrl)
-            photoImageView.kf.setImage(with: imageUrl)
+
+            DispatchQueue.main.async {
+                fetchImage.fetch(with: post.user.profileImageUrl) { (image) in
+                    self.profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }
+            }
+            
+            self.photoImageView.kf.setImage(with: imageUrl)
         }
     }
     
@@ -242,11 +244,11 @@ class PostCell: DatasourceCell {
     @objc func imageTapped()
     {
         let tappedImage = self.heartPopup
-         (self.controller as? HomeController)?.faveButtonSelected(self.loveButton, didSelected: true, for: self)
         (self.controller as? HomeController)?.likeAnimation(tappedImage)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+            (self.controller as? HomeController)?.faveButtonSelected(self.loveButton, didSelected: true, for: self)
+        })
     }
-    
-    
     
 }
 

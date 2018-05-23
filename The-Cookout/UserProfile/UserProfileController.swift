@@ -10,7 +10,7 @@ import Firebase
 import LBTAComponents
 
 
-class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
+class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate {
     
     let refreshControl = UIRefreshControl()
     
@@ -20,6 +20,8 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
     
     var isGridView = true
     
+    var gridArray = [Post]()
+    var listArray = [Post]()
     var postCount = 0
     var followingCount = 0
     var followersCount = 0
@@ -34,19 +36,14 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
         collectionView?.reloadData()
     }
     
-    let profileDatasource = ProfileDatasource()
-    
     var isFinishedPaging = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView?.isPagingEnabled = true
-        layout?.scrollDirection = .horizontal
+        //  collectionView?.isPagingEnabled = true
         
-        self.datasource = profileDatasource
-    
-        NotificationCenter.default.addObserver(self, selector: #selector(handlePageRefresh), name: PostController.updateFeedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
@@ -61,16 +58,16 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
     }
     
     fileprivate func setupRefresherControl() {
-        refreshControl.addTarget(self, action: #selector(handlePageRefresh), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         refreshControl.layer.zPosition = -1
         collectionView?.refreshControl = refreshControl
     }
     
-    @objc func handlePageRefresh() {
+    @objc fileprivate func handleRefresh() {
         self.refreshControl.beginRefreshing()
         self.isFinishedPaging = false
-        self.profileDatasource.gridArray = []
-        self.profileDatasource.listArray = []
+        self.gridArray.removeAll()
+        self.listArray.removeAll()
         paginatePosts()
     }
     
@@ -80,12 +77,12 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
         var query = ref.queryOrdered(byChild: "creationDate")
         self.refreshControl.endRefreshing()
         
-        if isGridView && profileDatasource.gridArray.count > 0 {
-            let value = self.profileDatasource.gridArray.last?.creationDate.timeIntervalSince1970
+        if isGridView && gridArray.count > 0 {
+            let value = self.gridArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
             
-        } else if !isGridView && profileDatasource.listArray.count > 0 {
-            let value = self.profileDatasource.listArray.last?.creationDate.timeIntervalSince1970
+        } else if !isGridView && listArray.count > 0 {
+            let value = self.listArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
         }
         
@@ -98,7 +95,7 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
                 self.isFinishedPaging = true
             }
             
-            if self.profileDatasource.gridArray.count > 0 && allObjects.count > 0 || self.profileDatasource.listArray.count > 0 && allObjects.count > 0 {
+            if self.gridArray.count > 0 && allObjects.count > 0 || self.listArray.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
             }
             
@@ -111,11 +108,11 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
                 post.id = snapshot.key
                 
                 if post.hasImage == "true" {
-                    self.profileDatasource.gridArray.append(post)
+                    self.gridArray.append(post)
                 }
                 
                 if post.hasText == "true" && post.hasImage == "false" {
-                    self.profileDatasource.listArray.append(post)
+                    self.listArray.append(post)
                 }
             })
             
@@ -158,10 +155,10 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
         return 1
     }
     
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if isGridView || indexPath.section == 1 {
-            let post = self.profileDatasource.gridArray[indexPath.item]
+        if isGridView {
+            let post = self.gridArray[indexPath.item]
             if post.hasText == "true" && post.hasImage == "false" {
                 return .zero
             }
@@ -169,7 +166,7 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
             return CGSize(width: width, height: width)
         }
         
-        let post = self.profileDatasource.listArray[indexPath.item]
+        let post = self.listArray[indexPath.item] 
         let estimatedHeight = estimatedHeightForListText(post.caption)
         
         if post.hasImage == "true" {
@@ -186,12 +183,12 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
         
         if isGridView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
-            cell.datasourceItem = self.profileDatasource.gridArray[indexPath.item]
+            cell.datasourceItem = self.gridArray[indexPath.item]
             return cell
         }
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
-        cell.datasourceItem = self.profileDatasource.listArray[indexPath.item]
+        cell.datasourceItem = self.listArray[indexPath.item]
         return cell
         
     }
@@ -209,7 +206,7 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        if section == 1 || section == 2 {
+        if section == 1 {
             return .zero
         }
         
@@ -219,11 +216,11 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if isGridView || section == 1 {
-            return profileDatasource.gridArray.count
+        if isGridView {
+            return gridArray.count
         }
         
-        return profileDatasource.listArray.count
+        return listArray.count
     }
     
     private func estimatedHeightForListText(_ text: String) -> CGFloat {
@@ -275,7 +272,7 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
     func didLike(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         
-        var post = self.profileDatasource.listArray[indexPath.item]
+        var post = self.listArray[indexPath.item]
         
         guard let postId = post.id else { return }
         
@@ -293,19 +290,19 @@ class UserProfileController: DatasourceController, UserProfileHeaderDelegate {
             
             post.hasLiked = !post.hasLiked
             
-            self.profileDatasource.listArray[indexPath.item] = post
+            self.listArray[indexPath.item] = post
             
             self.collectionView?.reloadItems(at: [indexPath])
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if isGridView || indexPath.section == 1 {
-            if indexPath.row + 1 == self.profileDatasource.gridArray.count && !isFinishedPaging {
+        if isGridView {
+            if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
                 self.paginatePosts()
             }
         } else if !isGridView {
-            if indexPath.row + 1 == self.profileDatasource.listArray.count && !isFinishedPaging {
+            if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
                 self.paginatePosts()
             }
         }

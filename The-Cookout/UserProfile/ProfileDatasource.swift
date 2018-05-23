@@ -20,25 +20,10 @@ class ProfileDatasource: Datasource {
     override func cellClasses() -> [DatasourceCell.Type] {
         return [UserProfilePhotoCell.self, PostCell.self]
     }
-    
-    override func item(_ indexPath: IndexPath) -> Any? {
-        if indexPath.section == 1 {
-           return gridArray[indexPath.item]
-        } else {
-            return listArray[indexPath.item]
-        }
-    }
-    
-    override func numberOfItems(_ section: Int) -> Int {
-        if section == 1 {
-            return gridArray.count
-        } else {
-            return listArray.count
-        }
-    }
+
     
     override func numberOfSections() -> Int {
-        return 2
+        return 1
     }
     
 }

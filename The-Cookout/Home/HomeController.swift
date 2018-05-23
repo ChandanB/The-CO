@@ -10,7 +10,6 @@ import LBTAComponents
 import Firebase
 import Kingfisher
 import UIFontComplete
-import FaveButton
 
 
 class HomeController: DatasourceController {
@@ -42,8 +41,8 @@ class HomeController: DatasourceController {
     }
     
     @objc override func handleRefresh() {
-        self.homeDatasource.posts.removeAll()
         refreshControl.beginRefreshing()
+        self.homeDatasource.posts.removeAll()
         self.isFinishedPaging = false
         fetchAllPosts()
     }
@@ -80,6 +79,34 @@ class HomeController: DatasourceController {
         }
     }
     
+//    fileprivate func refreshPage(_ user: User) {
+//        
+//        let ref = Database.database().reference().child("posts").child(user.uid)
+//        let query = ref.queryOrdered(byChild: "creationDate")
+//        
+//        self.refreshControl.endRefreshing()
+//        
+//        query.queryLimited(toFirst: 1).observeSingleEvent(of: .childAdded) { (snapshot) in
+//            guard let dictionaries = snapshot.value as? [String: Any] else { return }
+//            
+//            dictionaries.forEach({ (key, value) in
+//                guard let dictionary = value as? [String: Any] else { return }
+//                
+//                var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+//                post.id = key
+//                
+//                self.homeDatasource.posts.append(post)
+//                
+//                self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
+//                    return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+//                })
+//                
+//                self.fetchPostsWithUser(user)
+//            })
+//        }
+//    }
+
+    
     fileprivate func refreshPage(_ user: User) {
         
         let ref = Database.database().reference().child("posts").child(user.uid)
@@ -106,7 +133,6 @@ class HomeController: DatasourceController {
                     }
                     
                     self.homeDatasource.posts.append(post)
-                    
                     self.fetchPostsWithUser(user)
 
                 }, withCancel: { (err) in
@@ -267,8 +293,12 @@ class HomeController: DatasourceController {
         
         let estimatedHeight = estimatedHeightForText(post.caption)
         
-        if post.hasImage == "true" {
+        if post.hasImage == "true" && post.hasText == "true" {
             var height: CGFloat = 50 + 8 + 8 + estimatedHeight
+            height += view.frame.width
+            return CGSize(width: view.frame.width, height: height + 72)
+        } else if post.hasImage == "true" && post.hasText == "false" {
+            var height: CGFloat = 50 + 8 + 8
             height += view.frame.width
             return CGSize(width: view.frame.width, height: height + 72)
         }
@@ -282,9 +312,9 @@ class HomeController: DatasourceController {
             return -15
         }
         
-        let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
+        let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 4
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 16.0)!]
+        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 15.0)!]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
@@ -301,7 +331,7 @@ class HomeController: DatasourceController {
         navigationController?.pushViewController(commentsController, animated: true)
     }
     
-    func faveButtonSelected(_ faveButton: FaveButton, didSelected selected: Bool, for cell: PostCell) {
+    func likeButtonSelected(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         
         var post = self.homeDatasource.posts[indexPath.item]
@@ -348,11 +378,10 @@ class HomeController: DatasourceController {
         })
     }
     
-    
     func didTapProfilePicture(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         let layout = UICollectionViewFlowLayout()
-        let userProfileController = UserProfileController()
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
         let post = self.homeDatasource.posts[indexPath.item]
         let user = post.user
         userProfileController.user = user
@@ -386,10 +415,10 @@ class HomeController: DatasourceController {
         }
     }
     
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.isAtBottom && isFinishedPaging {
-            self.fetchAllPosts()
-        }
-    }
+//    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        if scrollView.isAtBottom && !isFinishedPaging {
+//            fetchAllPosts()
+//        }
+//    }
     
 }

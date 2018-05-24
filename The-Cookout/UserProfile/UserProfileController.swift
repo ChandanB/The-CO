@@ -28,21 +28,19 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     func didChangeToGridView() {
         isGridView = true
-        collectionView?.reloadData()
+        handleRefresh()
     }
     
     func didChangeToListView() {
         isGridView = false
-        collectionView?.reloadData()
+        handleRefresh()
     }
     
     var isFinishedPaging = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //  collectionView?.isPagingEnabled = true
-        
+                
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
@@ -65,13 +63,14 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     @objc fileprivate func handleRefresh() {
         self.refreshControl.beginRefreshing()
-        self.isFinishedPaging = false
         self.gridArray.removeAll()
         self.listArray.removeAll()
         paginatePosts()
     }
     
     @objc func paginatePosts() {
+        
+        var count = 10
         guard let uid = self.user?.uid else { return }
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
@@ -80,13 +79,14 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         if isGridView && gridArray.count > 0 {
             let value = self.gridArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
-            
+            count = 12
         } else if !isGridView && listArray.count > 0 {
             let value = self.listArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
+            count = 12
         }
         
-        query.queryLimited(toLast: 12).observe(.value) { (snapshot) in
+        query.queryLimited(toLast: UInt(count)).observe(.value) { (snapshot) in
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()
@@ -95,8 +95,14 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.isFinishedPaging = true
             }
             
-            if self.gridArray.count > 0 && allObjects.count > 0 || self.listArray.count > 0 && allObjects.count > 0 {
-                allObjects.removeFirst()
+            if self.isGridView {
+                if self.gridArray.count > 0 && allObjects.count > 0 {
+                    allObjects.removeFirst()
+                }
+            } else {
+                if self.listArray.count > 0 && allObjects.count > 0 {
+                    allObjects.removeFirst()
+                }
             }
             
             guard let user = self.user else { return }
@@ -106,6 +112,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
                 var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 post.id = snapshot.key
+                
                 
                 if post.hasImage == "true" {
                     self.gridArray.append(post)
@@ -300,6 +307,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         if isGridView {
             if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
                 self.paginatePosts()
+                return
             }
         } else if !isGridView {
             if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {

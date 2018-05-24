@@ -11,11 +11,11 @@ import Firebase
 import Kingfisher
 import UIFontComplete
 
-
 class HomeController: DatasourceController {
     
     let homeDatasource = HomeDatasource()
     let refreshControl = UIRefreshControl()
+    var isFinishedPaging = false
     var postLikesCount = 0
     
     override func viewDidLoad() {
@@ -23,16 +23,17 @@ class HomeController: DatasourceController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: UserProfileHeader.updateFeedNotificationName, object: nil)
+        
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         self.datasource = homeDatasource
         
-        setupRefresherControl()
         setupNavigationBarItems()
+        setupRefresherControl()
         fetchAllPosts()
     }
     
-    var isFinishedPaging = false
     
     fileprivate func setupRefresherControl() {
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
@@ -43,110 +44,65 @@ class HomeController: DatasourceController {
     @objc override func handleRefresh() {
         refreshControl.beginRefreshing()
         self.homeDatasource.posts.removeAll()
-        self.isFinishedPaging = false
         fetchAllPosts()
     }
     
     func fetchAllPosts() {
-        fetchPostFeed()
         fetchFollowingUserIds()
+        fetchCurrentUserId()
     }
     
     fileprivate func fetchFollowingUserIds() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value) { (snapshot) in
-            
+        let ref = Database.database().reference().child("following").child(uid)
+        
+        // Followers
+        ref.observeSingleEvent(of: .value) { (snapshot) in
+    
             guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
             
             userIdsDictionary.forEach({ (key, value) in
                 Database.fetchUserWithUID(uid: key, completion: { (user) in
-                    self.fetchPostsWithUser(user)
                     if self.refreshControl.isRefreshing {
                         self.refreshPage(user)
                     }
+                    self.fetchPostsWithUser(user)
                 })
             })
         }
     }
     
-    func fetchPostFeed() {
+    func fetchCurrentUserId() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        // Current User
         Database.fetchUserWithUID(uid: uid) { (user) in
-            self.fetchPostsWithUser(user)
             if self.refreshControl.isRefreshing {
                 self.refreshPage(user)
             }
+            self.fetchPostsWithUser(user)
         }
     }
     
-//    fileprivate func refreshPage(_ user: User) {
-//        
-//        let ref = Database.database().reference().child("posts").child(user.uid)
-//        let query = ref.queryOrdered(byChild: "creationDate")
-//        
-//        self.refreshControl.endRefreshing()
-//        
-//        query.queryLimited(toFirst: 1).observeSingleEvent(of: .childAdded) { (snapshot) in
-//            guard let dictionaries = snapshot.value as? [String: Any] else { return }
-//            
-//            dictionaries.forEach({ (key, value) in
-//                guard let dictionary = value as? [String: Any] else { return }
-//                
-//                var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-//                post.id = key
-//                
-//                self.homeDatasource.posts.append(post)
-//                
-//                self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
-//                    return p1.creationDate.compare(p2.creationDate) == .orderedDescending
-//                })
-//                
-//                self.fetchPostsWithUser(user)
-//            })
-//        }
-//    }
-
-    
+    var newPost: Post?
     fileprivate func refreshPage(_ user: User) {
-        
-        let ref = Database.database().reference().child("posts").child(user.uid)
         self.refreshControl.endRefreshing()
-        
-        ref.observeSingleEvent(of: .childAdded, with: { (snapshot) in
-            
-            guard let dictionaries = snapshot.value as? [String: Any] else { return }
-            
-            dictionaries.forEach({ (key, value) in
-                guard let dictionary = value as? [String: Any] else { return }
-                
-                var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                post.id = key
-                
-                guard let uid = Auth.auth().currentUser?.uid else { return }
-                Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                    
-                    if let value = snapshot.value as? Int, value == 1 {
-                        post.hasLiked = true
-                        self.postLikesCount += 1
-                    } else {
-                        post.hasLiked = false
-                    }
-                    
-                    self.homeDatasource.posts.append(post)
-                    self.fetchPostsWithUser(user)
 
-                }, withCancel: { (err) in
-                    print("Failed to fetch like info for post:", err)
-                })
-            })
-        }) { (err) in
-            print("Failed to fetch posts:", err)
+        let uid = user.uid
+        let ref = Database.database().reference().child("posts").child(uid)
+        
+        ref.observeSingleEvent(of: .childAdded) { (snapshot) in
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+            post.id = snapshot.key
+            self.newPost = post
         }
     }
-    
-    
+
+
     fileprivate func fetchPostsWithUser(_ user: User) {
-        
+
+        var count = 15
         let uid = user.uid
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
@@ -154,21 +110,16 @@ class HomeController: DatasourceController {
         if self.homeDatasource.posts.count > 0 {
             let value = self.homeDatasource.posts.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
+            count = 16
         }
         
-        query.queryLimited(toLast: 15).observe(.value) { (snapshot) in
+        query.queryLimited(toLast: UInt(count)).observe(.value) { (snapshot) in
             
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()
             
-            if allObjects.count < 15 {
-                self.isFinishedPaging = true
-            } else {
-                self.isFinishedPaging = false
-            }
-            
-            if  self.homeDatasource.posts.count > 0 && allObjects.count > 0 {
+            if self.homeDatasource.posts.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
             }
             
@@ -176,9 +127,9 @@ class HomeController: DatasourceController {
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
                 var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 post.id = snapshot.key
-                let ref = Database.database().reference().child(post.id!)
                 
-                ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
+                let ref = Database.database().reference().child("posts").child(post.id!)
+                ref.observeSingleEvent(of: .value) { (snapshot) in
                     
                     if let value = snapshot.value as? Int, value == 1 {
                         post.hasLiked = true
@@ -187,11 +138,18 @@ class HomeController: DatasourceController {
                         post.hasLiked = false
                     }
                     
+                    if self.newPost != nil {
+                        self.homeDatasource.posts.append(self.newPost!)
+                        self.newPost = nil
+                    }
+                    
+                    print(post)
+                    self.homeDatasource.posts.append(post)
+                    
                     self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
                         return p1.creationDate.compare(p2.creationDate) == .orderedDescending
                     })
                     
-                    self.homeDatasource.posts.append(post)
                     self.collectionView?.reloadData()
                 }
             })
@@ -203,7 +161,7 @@ class HomeController: DatasourceController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
+        return UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
     }
     
     func setupNavigationBarItems() {
@@ -219,12 +177,6 @@ class HomeController: DatasourceController {
         messageButton.heightAnchor.constraint(equalToConstant: 28).isActive = true
         messageButton.addTarget(self, action: #selector(handleMessagesTapped), for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: messageButton)
-    }
-    
-    @objc func handleMessagesTapped() {
-        let messagesController = MessagesController()
-        let navigationController = UINavigationController(rootViewController: messagesController)
-        present(navigationController, animated: true, completion: nil)
     }
     
     private func setupMiddleNavItems() {
@@ -259,30 +211,6 @@ class HomeController: DatasourceController {
         navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleLogout)))
     }
     
-    @objc func handleShowSideMenu() {
-        let sideMenu = SideMenu()
-        present(sideMenu, animated: true, completion: nil)
-    }
-    
-    @objc func handleLogout() {
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        alertController.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (_) in
-            
-            do {
-                try Auth.auth().signOut()
-                let loginController = LoginController()
-                let navController = UINavigationController(rootViewController: loginController)
-                self.present(navController, animated: true, completion: nil)
-            } catch let signOutErr {
-                print("Failed to sign out:", signOutErr)
-            }
-        }))
-        
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(alertController, animated: true, completion: nil)
-    }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
@@ -307,10 +235,6 @@ class HomeController: DatasourceController {
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
-        
-        if text == "" {
-            return -15
-        }
         
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 4
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
@@ -358,7 +282,7 @@ class HomeController: DatasourceController {
             
         }
     }
-
+    
     
     func likeAnimation(_ heartPopup: UIImageView) {
         UIView.animate(withDuration: 0.4, delay: 0, options: .allowUserInteraction, animations: {() -> Void in
@@ -376,6 +300,12 @@ class HomeController: DatasourceController {
                 })
             })
         })
+    }
+    
+    @objc func handleMessagesTapped() {
+        let messagesController = MessagesController()
+        let navigationController = UINavigationController(rootViewController: messagesController)
+        present(navigationController, animated: true, completion: nil)
     }
     
     func didTapProfilePicture(for cell: PostCell) {
@@ -409,16 +339,36 @@ class HomeController: DatasourceController {
         }
     }
     
+    @objc func handleShowSideMenu() {
+        let sideMenu = SideMenu()
+        present(sideMenu, animated: true, completion: nil)
+    }
+    
+    @objc func handleLogout() {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        alertController.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (_) in
+            
+            do {
+                try Auth.auth().signOut()
+                let loginController = LoginController()
+                let navController = UINavigationController(rootViewController: loginController)
+                self.present(navController, animated: true, completion: nil)
+            } catch let signOutErr {
+                print("Failed to sign out:", signOutErr)
+            }
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alertController, animated: true, completion: nil)
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row + 1 == self.homeDatasource.posts.count && !isFinishedPaging {
+        if indexPath.row == self.homeDatasource.posts.count - 1 {
+//            let user = self.homeDatasource.posts[indexPath.row].user
+//            fetchPostsWithUser(user)
             fetchAllPosts()
         }
     }
-    
-//    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        if scrollView.isAtBottom && !isFinishedPaging {
-//            fetchAllPosts()
-//        }
-//    }
     
 }

@@ -167,10 +167,14 @@ class UserProfileHeader: DatasourceCell {
                         return
                     }
                     
+                NotificationCenter.default.post(name: UserProfileHeader.updateFeedNotificationName, object: nil)
                 }
             }
         }
     }
+    
+    static let updateFeedNotificationName = NSNotification.Name(rawValue: "FollowedUser")
+
     
     fileprivate func setupFollowStyle() {
         UIView.performWithoutAnimation {

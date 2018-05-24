@@ -15,7 +15,7 @@ extension UIScrollView {
     }
     
     var isAtBottom: Bool {
-        return contentOffset.y >= verticalOffsetForBottom
+        return contentOffset.y >= verticalOffsetForBottom - 200
     }
     
     var verticalOffsetForTop: CGFloat {

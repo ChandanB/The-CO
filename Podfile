@@ -26,7 +26,7 @@ target 'The-Cookout' do
   pod 'SCLAlertView'
   pod 'FaveButton', '~> 2.0.3'
   pod 'PKHUD', '~> 5.0'
-  pod 'SDWebImage', '~> 4.0'
   pod 'KILabel', '1.0.0'
+
 	
 end

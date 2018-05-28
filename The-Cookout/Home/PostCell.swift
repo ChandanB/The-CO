@@ -13,7 +13,6 @@
 
 import LBTAComponents
 import UIFontComplete
-import FaveButton
 import Spring
 import AVFoundation
 
@@ -34,7 +33,7 @@ class PostCell: DatasourceCell {
         didSet {
             guard let post = datasourceItem as? Post else { return }
             self.post = post
-            
+
             updateView(post)
             setupAttibutedCaption(post)
             
@@ -105,11 +104,14 @@ class PostCell: DatasourceCell {
         return iv
     }()
     
-    let messageTextView: UITextView = {
+    lazy var messageTextView: UITextView = {
         let tv = UITextView()
         tv.isUserInteractionEnabled = false
         tv.backgroundColor = .clear
         tv.isScrollEnabled = false
+        let tg = UITapGestureRecognizer(target: self, action: #selector(handleComment))
+        tv.addGestureRecognizer(tg)
+        tv.isUserInteractionEnabled = true
         return tv
     }()
     
@@ -159,7 +161,7 @@ class PostCell: DatasourceCell {
         let label = UILabel()
         let regular = CustomFont.proximaNovaAlt.of(size: 10.0)
         label.font = regular
-        label.text = "0"
+        label.text = "Like"
         return label
     }()
     
@@ -202,14 +204,18 @@ class PostCell: DatasourceCell {
         //   (self.controller as? HomeController)?.didLike(for: self)
     }
     
-    var nameLabel: UILabel = {
+    lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 2
+        let tg = UITapGestureRecognizer(target: self, action: #selector(handleUserProfile))
+        label.addGestureRecognizer(tg)
+        label.isUserInteractionEnabled = true
         return label
     }()
     
     func updateView(_ post: Post) {
+        
         let imageUrl = URL(string: post.imageUrl)
         self.photoImageView.kf.setImage(with: imageUrl)
         
@@ -218,11 +224,13 @@ class PostCell: DatasourceCell {
         setupBottomButtons(post)
         
         likeButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+        self.likesCount.text = String(post.likeCount)
         
     }
     
     override func setupViews() {
         super.setupViews()
+        
         
         backgroundColor = .white
         
@@ -293,15 +301,15 @@ class PostCell: DatasourceCell {
         addSubview(likeButton)
         addSubview(likesCount)
         
-        replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
-        repliesCount.anchor(replyButtonContainerView.topAnchor, left: replyButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        repliesCount.anchor(replyButtonContainerView.topAnchor, left: replyButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 70, heightConstant: 20)
         
-        upvoteButton.anchor(upvoteButtonContainerView.topAnchor, left: upvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 8, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
-        downvoteButton.anchor(downvoteButtonContainerView.topAnchor, left: downvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 8, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
-        votesCount.anchor(upvoteButtonContainerView.topAnchor, left: nil, bottom: nil, right: upvoteButtonContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 7, widthConstant: 20, heightConstant: 20)
+        upvoteButton.anchor(upvoteButtonContainerView.topAnchor, left: nil, bottom: nil, right: upvoteButtonContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 30, widthConstant: 20, heightConstant: 20)
+        downvoteButton.anchor(downvoteButtonContainerView.topAnchor, left: downvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        votesCount.anchor(upvoteButtonContainerView.topAnchor, left: nil, bottom: nil, right: upvoteButtonContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
-        likeButton.anchor(likeButtonContainerView.topAnchor, left: likeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
-        likesCount.anchor(likeButtonContainerView.topAnchor, left: likeButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        likeButton.anchor(likeButtonContainerView.topAnchor, left: likeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
+        likesCount.anchor(likeButtonContainerView.topAnchor, left: likeButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 40, heightConstant: 20)
     }
     
     @objc func imageTapped()

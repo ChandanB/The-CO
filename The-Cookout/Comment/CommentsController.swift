@@ -11,6 +11,13 @@ import Firebase
 
 class CommentsController: DatasourceController, CommentInputAccessoryViewDelegate {
     
+    func didTapComment(post: Post) {
+        
+    }
+    
+    func didLike(for cell: CommentPostCell) {
+        
+    }
     
     func didSubmit(for comment: String) {
         print("Trying to insert comment into Firebase")
@@ -19,6 +26,7 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         print("post id:", self.post?.id ?? "")
         
         print("Inserting comment:", comment)
+        
         
         let postId = self.post?.id ?? ""
         let values = ["text": comment, "creationDate": Date().timeIntervalSince1970, "uid": uid] as [String : Any]
@@ -33,6 +41,7 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
             print("Successfully inserted comment.")
             
             self.containerView.clearCommentTextField()
+            self.dismissKeyboard()
         }
     }
     
@@ -48,8 +57,10 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .interactive
         
-        collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
-        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
+        collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
+        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -80, right: 0)
+        
+         collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
         
         fetchComments()
         
@@ -72,6 +83,44 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
             })
         }
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! CommentPostCell
+        header.post = self.post
+        header.datasourceItem = self.post
+        return header
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        guard let post =  self.post else {
+            return .zero
+        }
+        
+        let estimatedHeight = estimatedHeightForText(post.caption)
+        
+        if post.hasImage == "true" && post.hasText == "true" {
+            var height: CGFloat = 50 + 8 + 8 + estimatedHeight
+            height += view.frame.width
+            return CGSize(width: view.frame.width, height: height + 72)
+        } else if post.hasImage == "true" && post.hasText == "false" {
+            var height: CGFloat = 50 + 8 + 8
+            height += view.frame.width
+            return CGSize(width: view.frame.width, height: height + 72)
+        }
+        return CGSize(width: view.frame.width, height: estimatedHeight + 128)
+    }
+    
+    private func estimatedHeightForText(_ text: String) -> CGFloat {
+        
+        let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 4
+        let size = CGSize(width: approximateWidthOfTextView, height: 1000)
+        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 15.0)!]
+        
+        let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
+        
+        return estimatedFrame.height
+    }
+    
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         

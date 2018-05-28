@@ -87,7 +87,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
     }()
     
     @objc func handleOpenPhotoSelector() {
-        self.postController?.handleOpenPhotoSelector()
+        self.postController?.handleOpenGallery()
     }
     
     let messageTextView: UITextView = {

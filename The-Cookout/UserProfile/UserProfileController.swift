@@ -195,6 +195,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         }
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
+        cell.delegate = self
         cell.datasourceItem = self.listArray[indexPath.item]
         return cell
         

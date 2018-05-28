@@ -23,8 +23,6 @@ class HomeController: DatasourceController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: UserProfileHeader.updateFeedNotificationName, object: nil)
-        
         collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         self.datasource = homeDatasource
@@ -58,7 +56,7 @@ class HomeController: DatasourceController {
         
         // Followers
         ref.observeSingleEvent(of: .value) { (snapshot) in
-    
+            
             guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
             
             userIdsDictionary.forEach({ (key, value) in
@@ -74,7 +72,7 @@ class HomeController: DatasourceController {
     
     func fetchCurrentUserId() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-
+        
         // Current User
         Database.fetchUserWithUID(uid: uid) { (user) in
             if self.refreshControl.isRefreshing {
@@ -87,7 +85,7 @@ class HomeController: DatasourceController {
     var newPost: Post?
     fileprivate func refreshPage(_ user: User) {
         self.refreshControl.endRefreshing()
-
+        
         let uid = user.uid
         let ref = Database.database().reference().child("posts").child(uid)
         
@@ -98,10 +96,10 @@ class HomeController: DatasourceController {
             self.newPost = post
         }
     }
-
-
+    
+    
     fileprivate func fetchPostsWithUser(_ user: User) {
-
+        
         var count = 15
         let uid = user.uid
         let ref = Database.database().reference().child("posts").child(uid)
@@ -128,8 +126,14 @@ class HomeController: DatasourceController {
                 var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 post.id = snapshot.key
                 
-                let ref = Database.database().reference().child("posts").child(post.id!)
-                ref.observeSingleEvent(of: .value) { (snapshot) in
+                let ref = Database.database().reference().child("likes").child(post.id!)
+                
+                ref.observe(.value) { (snapshot) in
+                   // guard let dictionary = snapshot.value as? [String: Any] else { return }
+                    post.likeCount = Int(snapshot.childrenCount)
+                }
+                
+                ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
                     
                     if let value = snapshot.value as? Int, value == 1 {
                         post.hasLiked = true
@@ -212,7 +216,7 @@ class HomeController: DatasourceController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
+        return 1.5
     }
     
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -231,7 +235,7 @@ class HomeController: DatasourceController {
             return CGSize(width: view.frame.width, height: height + 72)
         }
         
-        return CGSize(width: view.frame.width, height: estimatedHeight + 126)
+        return CGSize(width: view.frame.width, height: estimatedHeight + 128)
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
@@ -251,21 +255,20 @@ class HomeController: DatasourceController {
     
     func didTapComment(post: Post) {
         let commentsController = CommentsController()
-        commentsController.post = post
+        commentsController.post = post        
         navigationController?.pushViewController(commentsController, animated: true)
     }
     
     func likeButtonSelected(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        
         var post = self.homeDatasource.posts[indexPath.item]
         
         guard let postId = post.id else { return }
-        
         guard let uid = Auth.auth().currentUser?.uid else { return }
+        let ref = Database.database().reference().child("likes").child(postId)
         
         let values = [uid: post.hasLiked == true ? 0 : 1]
-        Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, _) in
+        ref.updateChildValues(values) { (err, _) in
             
             if let err = err {
                 print("Failed to like post:", err)
@@ -275,11 +278,10 @@ class HomeController: DatasourceController {
             print("Successfully liked post.")
             
             post.hasLiked = !post.hasLiked
-            
+     
             self.homeDatasource.posts[indexPath.item] = post
             
             self.collectionView?.reloadItems(at: [indexPath])
-            
         }
     }
     
@@ -328,12 +330,13 @@ class HomeController: DatasourceController {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.setupLeftNavItem(user)
-            self.loadPosts(user)
+          //  self.loadPosts(user)
         }
     }
     
     func loadPosts(_ user: User) {
-        Api.feed.observeFeedRemoved(user: user, withId: Api.user.currentUser!.uid) { (post) in
+        
+        Api.posts.observePostsRemoved(user: user, withId: user.uid) { (post) in
             self.homeDatasource.posts = self.homeDatasource.posts.filter { $0.id != post.id }
             self.collectionView?.reloadData()
         }
@@ -365,8 +368,8 @@ class HomeController: DatasourceController {
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.row == self.homeDatasource.posts.count - 1 {
-//            let user = self.homeDatasource.posts[indexPath.row].user
-//            fetchPostsWithUser(user)
+            //            let user = self.homeDatasource.posts[indexPath.row].user
+            //            fetchPostsWithUser(user)
             fetchAllPosts()
         }
     }

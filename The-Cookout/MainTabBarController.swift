@@ -11,7 +11,6 @@ import LBTAComponents
 import Kingfisher
 import Firebase
 
-
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     

@@ -11,7 +11,7 @@ import Firebase
 import MobileCoreServices
 import AVFoundation
 
-class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, MessageCellDelegate {
     
     var user: User? {
         didSet {
@@ -242,6 +242,7 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ChatMessageCell
         
         cell.chatLogController = self
+        cell.delegate = self
         
         let message = messages[indexPath.item]
         cell.message = message
@@ -404,6 +405,13 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
             })
             
         }
+    }
+    
+    func handleShowVideoController(_ url: URL) {
+        print("HANDLE SHOW VIDEO CONTROLLER")
+        let videoPlayerController = VideoPlayerViewController()
+        videoPlayerController.url = url
+        self.navigationController?.pushViewController(videoPlayerController, animated: true)
     }
     
     @objc func handleZoomOut(_ tapGesture: UITapGestureRecognizer) {

@@ -16,17 +16,18 @@ target 'The-Cookout' do
   pod 'Firebase/Performance'
   pod 'Firebase/Storage'
   pod 'Kingfisher', '~> 4.0'
-  pod 'GSKStretchyHeaderView'
   pod 'Bolts-Swift'
   pod 'Spring'
   pod 'BonMot'
   pod 'UIFontComplete'
-  pod 'VegaScrollFlowLayout'
   pod 'SkeletonView'
   pod 'SCLAlertView'
-  pod 'FaveButton', '~> 2.0.3'
   pod 'PKHUD', '~> 5.0'
   pod 'KILabel', '1.0.0'
+  pod 'Gallery'
+  pod 'BMPlayer', '~> 1.0.0'
+  pod 'SnapKit', '~> 4.0.0'
+  pod 'GiphyCoreSDK'
 
 	
 end

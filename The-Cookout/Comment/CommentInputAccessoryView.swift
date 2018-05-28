@@ -49,6 +49,7 @@ class CommentInputAccessoryView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        self.backgroundColor = .white
         autoresizingMask = .flexibleHeight
         
         addSubview(submitButton)

@@ -9,6 +9,7 @@
 import Foundation
 import Foundation
 import FirebaseDatabase
+
 class FollowApi {
     var refFollowers = Database.database().reference().child("followers")
     var refFollowingG = Database.database().reference().child("following")
@@ -18,7 +19,7 @@ class FollowApi {
             snapshot in
             if let dict = snapshot.value as? [String: Any] {
                 for key in dict.keys {
-                    Database.database().reference().child("feed").child((Api.user.currentUser?.uid)!).child(key).setValue(true)
+                    Database.database().reference().child("posts").child((Api.user.currentUser?.uid)!).child(key).setValue(true)
                 }
             }
         })
@@ -27,12 +28,11 @@ class FollowApi {
     }
     
     func unFollowAction(withUser id: String) {
-        
         Api.myPosts.myPostsRef.child(id).observeSingleEvent(of: .value, with: {
             snapshot in
             if let dict = snapshot.value as? [String: Any] {
                 for key in dict.keys {
-                    Database.database().reference().child("feed").child(Api.user.currentUser!.uid).child(key).removeValue()
+                    Database.database().reference().child("posts").child(Api.user.currentUser!.uid).child(key).removeValue()
                 }
             }
         })

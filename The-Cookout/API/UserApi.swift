@@ -60,7 +60,7 @@ class UserApi {
     }
     
     func queryUsers(withText text: String, completion: @escaping (User) -> Void) {
-        usersRef.queryOrdered(byChild: "username_lowercase").queryStarting(atValue: text).queryEnding(atValue: text+"\u{f8ff}").queryLimited(toFirst: 10).observeSingleEvent(of: .value, with: {
+        usersRef.queryOrdered(byChild: "username").queryStarting(atValue: text).queryEnding(atValue: text+"\u{f8ff}").queryLimited(toFirst: 10).observeSingleEvent(of: .value, with: {
             snapshot in
             snapshot.children.forEach({ (s) in
                 let child = s as! DataSnapshot

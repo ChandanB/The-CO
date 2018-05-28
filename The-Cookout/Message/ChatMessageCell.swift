@@ -8,8 +8,17 @@
 
 import LBTAComponents
 import AVFoundation
+import BMPlayer
+import SnapKit
+import NVActivityIndicatorView
+
+protocol MessageCellDelegate {
+    func handleShowVideoController(_ url: URL)
+}
 
 class ChatMessageCell: DatasourceCell {
+    
+    var delegate: MessageCellDelegate?
     
     override var datasourceItem: Any? {
         didSet {
@@ -42,26 +51,35 @@ class ChatMessageCell: DatasourceCell {
     }()
     
     var playerLayer: AVPlayerLayer?
-    var player: AVPlayer?
+//    var player: AVPlayer?
+    
+    var player = BMPlayer()
+    var count = 0
     
     @objc func handlePlay() {
+        
         if let videoUrlString = message?.videoUrl, let url = URL(string: videoUrlString) {
-            player = AVPlayer(url: url)
-            
-            playerLayer = AVPlayerLayer(player: player)
-            playerLayer?.frame = bubbleView.bounds
-            bubbleView.layer.addSublayer(playerLayer!)
-            
-            player?.play()
-            activityIndicatorView.startAnimating()
-            playButton.isHidden = true
+            count += 1
+            print(count)
+            delegate?.handleShowVideoController(url)
+           // (self.controller as? ChatLogController)?.handleShowVideoController(url)
         }
+        
+//        player = AVPlayer(url: url)
+//
+//        playerLayer = AVPlayerLayer(player: player)
+//        playerLayer?.frame = bubbleView.bounds
+//        bubbleView.layer.addSublayer(playerLayer!)
+//
+//        player?.play()
+//        activityIndicatorView.startAnimating()
+//        playButton.isHidden = true
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         playerLayer?.removeFromSuperlayer()
-        player?.pause()
+        player.pause()
         activityIndicatorView.stopAnimating()
     }
     
@@ -128,6 +146,7 @@ class ChatMessageCell: DatasourceCell {
         addSubview(bubbleView)
         addSubview(textView)
         addSubview(profileImageView)
+        addSubview(player)
         
         bubbleView.addSubview(messageImageView)
         messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true

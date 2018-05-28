@@ -9,7 +9,6 @@
 import LBTAComponents
 import Firebase
 import BoltsSwift
-import VegaScrollFlowLayout
 
 class UserSearchController : DatasourceController, UISearchBarDelegate {
     
@@ -69,8 +68,6 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        let vegaLayout = VegaScrollFlowLayout()
-//        self.collectionView?.collectionViewLayout = vegaLayout
         
         guard let navBar = navigationController?.navigationBar else { return }
         

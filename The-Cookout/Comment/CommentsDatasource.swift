@@ -21,7 +21,6 @@ class CommentsDatasource: Datasource {
     }
     
     override func numberOfItems(_ section: Int) -> Int {
-        
         return comments.count
     }
     

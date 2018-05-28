@@ -7,6 +7,6 @@
 //
 
 import Foundation
-struct Config {
-    static var storageRoofRef = "google.cloud platform"
+struct Configuration {
+    static var storageRoofRef = "gs://the-cookout.appspot.com/"
 }

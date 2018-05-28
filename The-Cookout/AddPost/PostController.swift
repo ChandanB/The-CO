@@ -9,8 +9,44 @@
 import UIKit
 import Firebase
 import PKHUD
+import Gallery
+import AVKit
 
-class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate {
+class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate, GalleryControllerDelegate {
+    
+    
+    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+        let image = images[0]
+        image.resolve { (image) in
+            self.selectedImage = image
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+        dismiss(animated: true, completion: nil)
+        
+        let editor = AdvancedVideoEditor()
+        editor.edit(video: video) { (editedVideo: Video?, tempPath: URL?) in
+            DispatchQueue.main.async {
+                if let tempPath = tempPath {
+                    let controller = AVPlayerViewController()
+                    controller.player = AVPlayer(url: tempPath)
+                    
+                    self.present(controller, animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
+    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
+        
+    }
+    
+    func galleryControllerDidCancel(_ controller: GalleryController) {
+          dismiss(animated: true, completion: nil)
+    }
+    
     
     let cellId = "cellId"
     let headerId = "headerId"
@@ -40,14 +76,27 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         self.present(navController, animated: true, completion: nil)
     }
     
+    func handleOpenGallery() {
+        Config.tabsToShow = [.imageTab, .videoTab]
+        Config.Camera.imageLimit = 1
+        let cameraController = GalleryController()
+        cameraController.delegate = self
+        self.present(cameraController, animated: true, completion: nil)
+    }
+    
     func handleShowCamera() {
-        let cameraController = CameraController()
+        Config.tabsToShow = [.cameraTab]
+        Config.Camera.imageLimit = 1
+        Config.VideoEditor.maximumDuration = 30
+        Config.VideoEditor.savesEditedVideoToLibrary = true
+        let cameraController = GalleryController()
         cameraController.delegate = self
         self.present(cameraController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.hideKeyboardWhenTapped()
 
         self.postHeader?.textdelegate = self
@@ -63,8 +112,8 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         fetchUser()
         
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
-        
         collectionView?.register(PostHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
+        
     }
     
     func returnPostImage(image: UIImage) {
@@ -271,6 +320,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             })
         }
     }
+    
     
 }
 

@@ -28,7 +28,7 @@ class HelperService {
     
     static func uploadVideoToFirebaseStorage(videoUrl: URL, onSuccess: @escaping (_ videoUrl: String) -> Void) {
         let videoIdString = NSUUID().uuidString
-        let storageRef = Storage.storage().reference(forURL: Config.storageRoofRef).child("posts").child(videoIdString)
+        let storageRef = Storage.storage().reference(forURL: Configuration.storageRoofRef).child("posts").child(videoIdString)
         storageRef.putFile(from: videoUrl, metadata: nil) { (metadata, error) in
             if error != nil {
                 HUD.show(.error)
@@ -42,7 +42,7 @@ class HelperService {
     
     static func uploadImageToFirebaseStorage(data: Data, onSuccess: @escaping (_ imageUrl: String) -> Void) {
         let photoIdString = NSUUID().uuidString
-        let storageRef = Storage.storage().reference(forURL: Config.storageRoofRef).child("posts").child(photoIdString)
+        let storageRef = Storage.storage().reference(forURL: Configuration.storageRoofRef).child("posts").child(photoIdString)
         storageRef.putData(data, metadata: nil) { (metadata, error) in
             if error != nil {
                 HUD.show(.error)
@@ -83,7 +83,7 @@ class HelperService {
                 return
             }
             
-            Api.feed.feedRef.child(Api.user.currentUser!.uid).child(newPostId).setValue(true)
+            Api.posts.postsRef.child(Api.user.currentUser!.uid).child(newPostId).setValue(true)
             
             let myPostRef = Api.myPosts.myPostsRef.child(currentUserId).child(newPostId)
             myPostRef.setValue(true, withCompletionBlock: { (error, ref) in

@@ -9,11 +9,11 @@
 import Foundation
 import FirebaseDatabase
 
-class FeedApi {
-    var feedRef = Database.database().reference().child("feed")
+class PostsApi {
+    var postsRef = Database.database().reference().child("posts")
     
-    func observeFeed(user: User, withId id: String, completion: @escaping (Post) -> Void) {
-        feedRef.child(id).observe(.childAdded, with: {
+    func observePosts(user: User, withId id: String, completion: @escaping (Post) -> Void) {
+        postsRef.child(id).observe(.childAdded, with: {
             snapshot in
             let key = snapshot.key
             Api.post.observePost(user: user, withId: key, completion: { (post) in
@@ -22,8 +22,8 @@ class FeedApi {
         })
     }
     
-    func observeFeedRemoved(user: User, withId id: String, completion: @escaping (Post) -> Void) {
-        feedRef.child(id).observe(.childRemoved, with: {
+    func observePostsRemoved(user: User, withId id: String, completion: @escaping (Post) -> Void) {
+        postsRef.child(id).observe(.childRemoved, with: {
             snapshot in
             let key = snapshot.key
             Api.post.observePost(user: user, withId: key, completion: { (post) in

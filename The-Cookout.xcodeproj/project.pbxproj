@@ -54,6 +54,8 @@
 		1FAB5B4320A7B10A003F9943 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */; };
 		1FAB5B4A20A7B10F003F9943 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4920A7B10F003F9943 /* Assets.xcassets */; };
 		1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */; };
+		1FCF385020BBDDB3008841B0 /* CommentPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCF384F20BBDDB3008841B0 /* CommentPostCell.swift */; };
+		1FCF385420BC0085008841B0 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCF385320BC0085008841B0 /* VideoPlayerViewController.swift */; };
 		1FF5076F20B15D2F0092F462 /* CommentInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5076E20B15D2F0092F462 /* CommentInputAccessoryView.swift */; };
 		1FF5077120B164CC0092F462 /* CommentInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5077020B164CB0092F462 /* CommentInputTextView.swift */; };
 		1FF5077620B2568A0092F462 /* UserMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5077520B2568A0092F462 /* UserMessageCell.swift */; };
@@ -131,6 +133,8 @@
 		1FAB5B4920A7B10F003F9943 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1FAB5B4C20A7B10F003F9943 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1FAB5B4E20A7B10F003F9943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1FCF384F20BBDDB3008841B0 /* CommentPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentPostCell.swift; sourceTree = "<group>"; };
+		1FCF385320BC0085008841B0 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		1FF5076E20B15D2F0092F462 /* CommentInputAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputAccessoryView.swift; sourceTree = "<group>"; };
 		1FF5077020B164CB0092F462 /* CommentInputTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentInputTextView.swift; sourceTree = "<group>"; };
 		1FF5077520B2568A0092F462 /* UserMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMessageCell.swift; sourceTree = "<group>"; };
@@ -327,11 +331,11 @@
 				1F2BAA3920A80B9900350CEC /* Utils */,
 				1FF5083320B3EAC60092F462 /* API */,
 				1F4FD35720A9ED4600AB73C1 /* MainTabBarController.swift */,
+				1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */,
 				1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */,
 				1FAB5B4920A7B10F003F9943 /* Assets.xcassets */,
 				1FF5078520B39D540092F462 /* heart.png */,
 				1FAB5B4E20A7B10F003F9943 /* Info.plist */,
-				1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */,
 			);
 			path = "The-Cookout";
 			sourceTree = "<group>";
@@ -344,6 +348,7 @@
 				1F8DF92B20AF2EE700AEB43B /* CommentsDatasource.swift */,
 				1FF5076E20B15D2F0092F462 /* CommentInputAccessoryView.swift */,
 				1FF5077020B164CB0092F462 /* CommentInputTextView.swift */,
+				1FCF384F20BBDDB3008841B0 /* CommentPostCell.swift */,
 			);
 			path = Comment;
 			sourceTree = "<group>";
@@ -358,6 +363,7 @@
 				1FF5077520B2568A0092F462 /* UserMessageCell.swift */,
 				1FF5077920B25A0B0092F462 /* MessageInputContainerView.swift */,
 				1FF5078220B280040092F462 /* MessageDatasource.swift */,
+				1FCF385320BC0085008841B0 /* VideoPlayerViewController.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -501,43 +507,47 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BMPlayer/BMPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/Bolts-Swift/BoltsSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework",
-				"${BUILT_PRODUCTS_DIR}/FaveButton/FaveButton.framework",
-				"${BUILT_PRODUCTS_DIR}/GSKStretchyHeaderView/GSKStretchyHeaderView.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/Gallery/Gallery.framework",
+				"${BUILT_PRODUCTS_DIR}/GiphyCoreSDK/GiphyCoreSDK.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/KILabel/KILabel.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/LBTAComponents/LBTAComponents.framework",
+				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
 				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SCLAlertView/SCLAlertView.framework",
 				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
+				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
 				"${BUILT_PRODUCTS_DIR}/UIFontComplete/UIFontComplete.framework",
-				"${BUILT_PRODUCTS_DIR}/VegaScrollFlowLayout/VegaScrollFlowLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BMPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BoltsSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BonMot.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaveButton.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GSKStretchyHeaderView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Gallery.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GiphyCoreSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KILabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LBTAComponents.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCLAlertView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIFontComplete.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/VegaScrollFlowLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -558,6 +568,7 @@
 				1F4FD35D20A9F7E600AB73C1 /* UserProfileHeader.swift in Sources */,
 				1F5661B820AF086C00F8E1B7 /* CommentsController.swift in Sources */,
 				1FF5077F20B25D320092F462 /* MessagesController.swift in Sources */,
+				1FCF385020BBDDB3008841B0 /* CommentPostCell.swift in Sources */,
 				1F2BAA2A20A7C57D00350CEC /* HomeDatasource.swift in Sources */,
 				1F56619F20AEA19800F8E1B7 /* SideMenu.swift in Sources */,
 				1F4FD35820A9ED4600AB73C1 /* MainTabBarController.swift in Sources */,
@@ -576,6 +587,7 @@
 				1F75BEC720AC312600BA7AF2 /* UserSearchCell.swift in Sources */,
 				1F4FD35A20A9EE7500AB73C1 /* UserProfileController.swift in Sources */,
 				1F2BAA2320A7BF0200350CEC /* HomeController.swift in Sources */,
+				1FCF385420BC0085008841B0 /* VideoPlayerViewController.swift in Sources */,
 				1FF5083F20B3F15D0092F462 /* CommentApi.swift in Sources */,
 				1FF5083920B3EE6F0092F462 /* UserApi.swift in Sources */,
 				1F4FD36A20AA62A900AB73C1 /* PostHeader.swift in Sources */,

@@ -20,7 +20,7 @@ class AuthService {
                 onError(error!.localizedDescription)
             }else {
                 let uid = Api.user.currentUser?.uid
-                let storageRef = Storage.storage().reference(forURL: Config.storageRoofRef).child("profile_image").child(uid!)
+                let storageRef = Storage.storage().reference(forURL: Configuration.storageRoofRef).child("profile_image").child(uid!)
                 
                 storageRef.putData(imageData, metadata: nil, completion: { (metadata, error) in
                     if error != nil {

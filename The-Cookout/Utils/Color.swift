@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FaveButton
 
 let twitterBlue = UIColor(r: 55, g: 115, b: 210)
 
@@ -19,11 +18,3 @@ func color(_ rgbColor: Int) -> UIColor{
         alpha: CGFloat(1.0)
     )
 }
-
-let dotColors = [
-    DotColors(first: color(0x7DC2F4), second: color(0xE2264D)),
-    DotColors(first: color(0xF8CC61), second: color(0x9BDFBA)),
-    DotColors(first: color(0xAF90F4), second: color(0x90D1F9)),
-    DotColors(first: color(0xE9A966), second: color(0xF8C852)),
-    DotColors(first: color(0xF68FA7), second: color(0xF6A2B8))
-]

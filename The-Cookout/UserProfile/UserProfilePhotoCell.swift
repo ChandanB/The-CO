@@ -9,7 +9,13 @@
 import Kingfisher
 import LBTAComponents
 
+protocol PhotoCellDelegate {
+    func presentLightBox(for cell: UserProfilePhotoCell)
+}
+
 class UserProfilePhotoCell: DatasourceCell {
+    
+    var delegate: PhotoCellDelegate?
     
     override var datasourceItem: Any? {
         didSet {
@@ -19,12 +25,19 @@ class UserProfilePhotoCell: DatasourceCell {
         }
     }
     
-    let photoImageView: CachedImageView = {
+    lazy var photoImageView: CachedImageView = {
         let iv = CachedImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
+        iv.isUserInteractionEnabled = true
+        let tg = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+        iv.addGestureRecognizer(tg)
         return iv
     }()
+    
+    @objc func imageTapped() {
+        self.delegate?.presentLightBox(for: self)
+    }
     
     override func setupViews() {
         super.setupViews()

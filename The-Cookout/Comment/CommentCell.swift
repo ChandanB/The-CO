@@ -22,6 +22,7 @@ class CommentCell: DatasourceCell {
         let textView = UITextView()
         textView.font = UIFont.systemFont(ofSize: 14)
         textView.isScrollEnabled = false
+        textView.isUserInteractionEnabled = false
         return textView
     }()
     

@@ -279,9 +279,12 @@ class PostCell: DatasourceCell {
             heartPopup.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true
             heartPopup.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor).isActive = true
             
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
-            tapGestureRecognizer.numberOfTapsRequired = 2
             photoImageView.isUserInteractionEnabled = true
+            
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+            let doubleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageDoubleTapped))
+            doubleTapGestureRecognizer.numberOfTapsRequired = 2
+            photoImageView.addGestureRecognizer(doubleTapGestureRecognizer)
             photoImageView.addGestureRecognizer(tapGestureRecognizer)
         }
         
@@ -304,7 +307,7 @@ class PostCell: DatasourceCell {
         replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         repliesCount.anchor(replyButtonContainerView.topAnchor, left: replyButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 70, heightConstant: 20)
         
-        upvoteButton.anchor(upvoteButtonContainerView.topAnchor, left: nil, bottom: nil, right: upvoteButtonContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 30, widthConstant: 20, heightConstant: 20)
+        upvoteButton.anchor(upvoteButtonContainerView.topAnchor, left: nil, bottom: nil, right: upvoteButtonContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 35, widthConstant: 20, heightConstant: 20)
         downvoteButton.anchor(downvoteButtonContainerView.topAnchor, left: downvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         votesCount.anchor(upvoteButtonContainerView.topAnchor, left: nil, bottom: nil, right: upvoteButtonContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 20, heightConstant: 20)
         
@@ -313,6 +316,13 @@ class PostCell: DatasourceCell {
     }
     
     @objc func imageTapped()
+    {
+    
+        
+        
+    }
+    
+    @objc func imageDoubleTapped()
     {
         let tappedImage = self.heartPopup
         (self.controller as? HomeController)?.likeAnimation(tappedImage)

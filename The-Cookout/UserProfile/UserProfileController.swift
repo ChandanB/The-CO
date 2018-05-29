@@ -8,9 +8,18 @@
 
 import Firebase
 import LBTAComponents
+import Lightbox
 
 
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate {
+class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, PhotoCellDelegate {
+    
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        
+    }
+    
+    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
+        
+    }
     
     let refreshControl = UIRefreshControl()
     
@@ -19,12 +28,16 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     var postCellId = "postCellId"
     
     var isGridView = true
-    
     var gridArray = [Post]()
     var listArray = [Post]()
+    
     var postCount = 0
     var followingCount = 0
     var followersCount = 0
+    
+    var images = [LightboxImage]()
+    var indexes = [Int: Int]()
+    var currentIndex = 0
     
     func didChangeToGridView() {
         isGridView = true
@@ -86,7 +99,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             count = 12
         }
         
-        query.queryLimited(toLast: UInt(count)).observe(.value) { (snapshot) in
+        query.queryLimited(toLast: UInt(count)).observeSingleEvent(of: .value) { (snapshot) in
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObjects.reverse()
@@ -110,11 +123,21 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             allObjects.forEach({ (snapshot) in
                 
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
-                var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                post.id = snapshot.key
+                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 
+                if post.imageUrl != "" {
+                    self.indexes[self.currentIndex] = self.images.count
+                    let imageUrl = post.imageUrl
+                    let image = LightboxImage(imageURL: URL(string: imageUrl)!)
+                    self.images.append(image)
+                }
+                
+                if isGridView {
+                    self.currentIndex += 1
+                }
                 
                 if post.hasImage == "true" {
+                    print(post)
                     self.gridArray.append(post)
                 }
                 
@@ -153,7 +176,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
@@ -190,6 +212,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         if isGridView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
+            cell.delegate = self
             cell.datasourceItem = self.gridArray[indexPath.item]
             return cell
         }
@@ -268,6 +291,17 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             self.collectionView?.reloadData()
             self.fetchStatsCount()
             self.handleRefresh()
+        }
+    }
+    
+    func presentLightBox(for cell: UserProfilePhotoCell) {
+        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+        let lightboxController = LightboxController(images: images)
+        lightboxController.pageDelegate = self
+        lightboxController.dismissalDelegate = self
+        lightboxController.dynamicBackground = true
+        DispatchQueue.main.async {
+            self.present(lightboxController, animated: true, completion: nil)
         }
     }
     

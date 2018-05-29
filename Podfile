@@ -27,7 +27,7 @@ target 'The-Cookout' do
   pod 'Gallery'
   pod 'BMPlayer', '~> 1.0.0'
   pod 'SnapKit', '~> 4.0.0'
-  pod 'GiphyCoreSDK'
+  pod 'Lightbox'
 
 	
 end

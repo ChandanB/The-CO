@@ -226,7 +226,7 @@ class UserProfileHeader: DatasourceCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.font = UIFont.boldSystemFont(ofSize: 18)
         return label
     }()
     
@@ -303,7 +303,7 @@ class UserProfileHeader: DatasourceCell {
         
         addSubview(bannerImageView)
         addSubview(profileImageView)
-        addSubview(usernameLabel)
+        addSubview(nameLabel)
         addSubview(bioTextView)
         addSubview(editProfileFollowButton)
         
@@ -312,11 +312,11 @@ class UserProfileHeader: DatasourceCell {
         profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 90, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: 120)
         profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
-        usernameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
+        nameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        nameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
         
-        bioTextView.anchor(usernameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
-        bioTextView.centerXAnchor.constraint(equalTo: usernameLabel.centerXAnchor).isActive = true
+        bioTextView.anchor(nameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
+        bioTextView.centerXAnchor.constraint(equalTo: nameLabel.centerXAnchor).isActive = true
 
         setupUserStatsView()
         

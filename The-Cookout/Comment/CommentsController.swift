@@ -96,18 +96,18 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
             return .zero
         }
         
-        let estimatedHeight = estimatedHeightForText(post.caption)
+        let estimatedTextHeight = estimatedHeightForText(post.caption)
+        let estimatedImageHeight = estimatedHeightForImage(post.imageHeight, width: post.imageWidth)
         
         if post.hasImage == "true" && post.hasText == "true" {
-            var height: CGFloat = 50 + 8 + 8 + estimatedHeight
-            height += view.frame.width
-            return CGSize(width: view.frame.width, height: height + 72)
+            let height: CGFloat = estimatedImageHeight + estimatedTextHeight
+            return CGSize(width: view.frame.width, height: height + 128)
         } else if post.hasImage == "true" && post.hasText == "false" {
-            var height: CGFloat = 50 + 8 + 8
-            height += view.frame.width
-            return CGSize(width: view.frame.width, height: height + 72)
+            let height: CGFloat = estimatedImageHeight
+            return CGSize(width: view.frame.width, height: height + 128)
+        } else {
+            return CGSize(width: view.frame.width, height: estimatedTextHeight + 128)
         }
-        return CGSize(width: view.frame.width, height: estimatedHeight + 128)
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
@@ -119,6 +119,13 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
         return estimatedFrame.height
+    }
+    
+    private func estimatedHeightForImage(_ height: NSNumber, width: NSNumber) -> CGFloat {
+        let h = CGFloat(truncating: height)
+        let w = CGFloat(truncating: width)
+        let size = h * view.frame.width / w
+        return size
     }
     
     

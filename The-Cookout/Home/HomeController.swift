@@ -12,12 +12,13 @@ import Kingfisher
 import UIFontComplete
 
 class HomeController: DatasourceController {
-
     
     let homeDatasource = HomeDatasource()
     let refreshControl = UIRefreshControl()
     var isUpdating = false
     var postLikesCount = 0
+    var user: User?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,57 +49,9 @@ class HomeController: DatasourceController {
     
     @objc override func handleRefresh() {
         refreshControl.beginRefreshing()
-        if newPost != nil {
-            self.fetchAllPosts()
-        }
+        self.homeDatasource.posts.removeAll()
+        self.fetchAllPosts()
         refreshControl.endRefreshing()
-    }
-    
-    func fetchAllPosts() {
-        fetchFollowingUserIds()
-        fetchCurrentUserId()
-    }
-    
-    
-    fileprivate func fetchFollowingUserIds() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("following").child(uid)
-        
-        // Followers
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            
-            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
-            
-            userIdsDictionary.forEach({ (key, value) in
-                Database.fetchUserWithUID(uid: key, completion: { (user) in
-                    if self.isUpdating {
-                       self.updatePage(user)
-                    }
-                    if self.refreshControl.isRefreshing {
-                       self.refreshPostsWithUser(user)
-                    }
-                    
-                    self.fetchPostsWithUser(user)
-                    
-                })
-            })
-        }
-    }
-    
-    func fetchCurrentUserId() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        // Current User
-        Database.fetchUserWithUID(uid: uid) { (user) in
-            if self.isUpdating {
-                self.updatePage(user)
-            }
-            if self.refreshControl.isRefreshing {
-                self.refreshPostsWithUser(user)
-            }
-            
-            self.fetchPostsWithUser(user)
-        }
     }
     
     var newPost: Post?
@@ -128,6 +81,56 @@ class HomeController: DatasourceController {
         }
     }
     
+    func fetchAllPosts() {
+        fetchFollowingUserIds()
+        fetchCurrentUserId()
+    }
+    
+    
+    fileprivate func fetchFollowingUserIds() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let ref = Database.database().reference().child("following").child(uid)
+        
+        // Followers
+        ref.observeSingleEvent(of: .value) { (snapshot) in
+            
+            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
+            
+            userIdsDictionary.forEach({ (key, value) in
+                Database.fetchUserWithUID(uid: key, completion: { (user) in
+                    if self.isUpdating {
+                       self.updatePage(user)
+                    }
+                    
+                    if self.refreshControl.isRefreshing {
+                       self.refreshPostsWithUser(user)
+                       return
+                    }
+                    
+                    self.fetchPostsWithUser(user)
+                    
+                })
+            })
+        }
+    }
+    
+    func fetchCurrentUserId() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        // Current User
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            if self.isUpdating {
+                self.updatePage(user)
+            }
+            if self.refreshControl.isRefreshing {
+                self.refreshPostsWithUser(user)
+                return
+            }
+            
+            self.fetchPostsWithUser(user)
+        }
+    }
+    
     fileprivate func refreshPostsWithUser(_ user: User) {
         refreshControl.endRefreshing()
         
@@ -143,9 +146,7 @@ class HomeController: DatasourceController {
             allObjects.forEach({ (snapshot) in
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
                 let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                
-                self.homeDatasource.posts.append(post)
-
+            
             })
         }
     }
@@ -153,7 +154,7 @@ class HomeController: DatasourceController {
     
     fileprivate func fetchPostsWithUser(_ user: User) {
         
-        var limit = 20
+        var limit = 9
         let uid = user.uid
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
@@ -161,7 +162,7 @@ class HomeController: DatasourceController {
         if self.homeDatasource.posts.last != nil {
             let value = self.homeDatasource.posts.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
-            limit = 21
+            limit = 10
         }
         
         query.queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value) { (snapshot) in
@@ -197,10 +198,11 @@ class HomeController: DatasourceController {
                     }
                     
                     if self.newPost != nil {
-                        self.homeDatasource.posts.append(self.newPost!)
-                        self.newPost = nil
+                       self.homeDatasource.posts.append(self.newPost!)
                     }
                     
+                    self.newPost = nil
+
                     self.homeDatasource.posts.append(post)
                     
                     self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
@@ -222,9 +224,10 @@ class HomeController: DatasourceController {
     }
     
     func setupNavigationBarItems() {
+        guard let user = self.user else { return }
+        setupLeftNavItem(user)
         setupRightNavItem()
         setupMiddleNavItems()
-        fetchUser()
     }
     
     private func setupRightNavItem() {
@@ -256,6 +259,7 @@ class HomeController: DatasourceController {
         
         fetchImage.fetch(with: url) { (image) in
             profileButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+         //   self.user?.profileImage = image
         }
         
         profileButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
@@ -276,19 +280,18 @@ class HomeController: DatasourceController {
         let posts = self.homeDatasource.posts
         let post = posts[indexPath.item]
         
-        let estimatedHeight = estimatedHeightForText(post.caption)
+        let estimatedTextHeight = estimatedHeightForText(post.caption)
+        let estimatedImageHeight = estimatedHeightForImage(post.imageHeight, width: post.imageWidth)
         
         if post.hasImage == "true" && post.hasText == "true" {
-            var height: CGFloat = 50 + 8 + 8 + estimatedHeight
-            height += view.frame.width
-            return CGSize(width: view.frame.width, height: height + 72)
+            let height: CGFloat = estimatedImageHeight + estimatedTextHeight
+            return CGSize(width: view.frame.width, height: height + 128)
         } else if post.hasImage == "true" && post.hasText == "false" {
-            var height: CGFloat = 50 + 8 + 8
-            height += view.frame.width
-            return CGSize(width: view.frame.width, height: height + 72)
+            let height: CGFloat = estimatedImageHeight
+            return CGSize(width: view.frame.width, height: height + 128)
+        } else {
+            return CGSize(width: view.frame.width, height: estimatedTextHeight + 128)
         }
-        
-        return CGSize(width: view.frame.width, height: estimatedHeight + 128)
     }
     
     private func estimatedHeightForText(_ text: String) -> CGFloat {
@@ -300,6 +303,13 @@ class HomeController: DatasourceController {
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
         return estimatedFrame.height
+    }
+    
+    private func estimatedHeightForImage(_ height: NSNumber, width: NSNumber) -> CGFloat {
+        let h = CGFloat(truncating: height)
+        let w = CGFloat(truncating: width)
+        let size = h * view.frame.width / w
+        return size
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -382,20 +392,9 @@ class HomeController: DatasourceController {
         
     }
     
-    var user: User?
-    fileprivate func fetchUser() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.fetchUserWithUID(uid: uid) { (user) in
-            self.setupLeftNavItem(user)
-            //  self.loadPosts(user)
-        }
-    }
-    
     func loadPosts(_ user: User) {
-        
         Api.posts.observePostsRemoved(user: user, withId: user.uid) { (post) in
             self.homeDatasource.posts = self.homeDatasource.posts.filter { $0.id != post.id }
-            self.collectionView?.reloadData()
         }
     }
     
@@ -420,8 +419,8 @@ class HomeController: DatasourceController {
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.row == self.homeDatasource.posts.count - 1 {
-            //            let user = self.homeDatasource.posts[indexPath.row].user
-            //            fetchPostsWithUser(user)
+//            let user = self.homeDatasource.posts[indexPath.row].user
+//            fetchPostsWithUser(user)
             fetchAllPosts()
         }
     }

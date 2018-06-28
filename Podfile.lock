@@ -90,11 +90,16 @@ PODS:
   - NVActivityIndicatorView/Presenter (4.0.1)
   - PKHUD (5.0.0)
   - Protobuf (3.5.0)
+  - PryntTrimmerView (2.0.1)
   - SCLAlertView (0.8)
   - SkeletonView (1.2)
   - SnapKit (4.0.0)
   - Spring (1.0.5)
+  - SteviaLayout (4.2.0)
   - UIFontComplete (3.0.0)
+  - YPImagePicker (3.0.0):
+    - PryntTrimmerView (~> 2.0)
+    - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
   - BMPlayer (~> 1.0.0)
@@ -118,6 +123,7 @@ DEPENDENCIES:
   - SnapKit (~> 4.0.0)
   - Spring
   - UIFontComplete
+  - YPImagePicker
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -149,11 +155,14 @@ SPEC REPOS:
     - NVActivityIndicatorView
     - PKHUD
     - Protobuf
+    - PryntTrimmerView
     - SCLAlertView
     - SkeletonView
     - SnapKit
     - Spring
+    - SteviaLayout
     - UIFontComplete
+    - YPImagePicker
 
 SPEC CHECKSUMS:
   BMPlayer: 44eebf06eb01450dd14ea74b27d07c5222f0eed1
@@ -184,12 +193,15 @@ SPEC CHECKSUMS:
   NVActivityIndicatorView: 77ed6d7b571643e24899e7858bf9ae2ee4c21f31
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  PryntTrimmerView: 4260ae497a2f3e1bbfc0b71247eb74ab92bf0490
   SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
   SkeletonView: d68962d45d1af038f6a110d2274b183df8f82752
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
+  SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
   UIFontComplete: 5b0f59a83308816c610164b79a2540b3520f9b72
+  YPImagePicker: 817ae068f084a6f132312e66255347d1ce82782d
 
-PODFILE CHECKSUM: 796ab97b390eaec07856923cc11c852132ae3bc2
+PODFILE CHECKSUM: fd4b4c6d7628dfcbe0a30cee24195ed187d73634
 
 COCOAPODS: 1.5.2

@@ -13,6 +13,7 @@ import Lightbox
 
 class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, PhotoCellDelegate {
     
+    
     func lightboxControllerWillDismiss(_ controller: LightboxController) {
         
     }
@@ -23,6 +24,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     let refreshControl = UIRefreshControl()
     
+    var user: User?
     var userId: String?
     var cellId = "cellId"
     var postCellId = "postCellId"
@@ -78,6 +80,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.refreshControl.beginRefreshing()
         self.gridArray.removeAll()
         self.listArray.removeAll()
+        self.images.removeAll()
         paginatePosts()
     }
     
@@ -132,7 +135,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                     self.images.append(image)
                 }
                 
-                if isGridView {
+                if self.isGridView {
                     self.currentIndex += 1
                 }
                 
@@ -282,16 +285,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         return estimatedFrame.height
     }
     
-    var user: User?
     fileprivate func fetchUser() {
-        let uid = userId ?? Auth.auth().currentUser?.uid ?? ""
-        Database.fetchUserWithUID(uid: uid) { (user) in
-            self.user = user
-            self.navigationItem.title = self.user?.name
-            self.collectionView?.reloadData()
-            self.fetchStatsCount()
-            self.handleRefresh()
-        }
+        self.navigationItem.title = self.user?.username
+        self.collectionView?.reloadData()
+        self.fetchStatsCount()
+        self.handleRefresh()
     }
     
     func presentLightBox(for cell: UserProfilePhotoCell) {
@@ -300,6 +298,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         lightboxController.pageDelegate = self
         lightboxController.dismissalDelegate = self
         lightboxController.dynamicBackground = true
+        lightboxController.goTo(indexPath.item)
         DispatchQueue.main.async {
             self.present(lightboxController, animated: true, completion: nil)
         }

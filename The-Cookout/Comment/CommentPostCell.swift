@@ -259,8 +259,7 @@ class CommentPostCell: DatasourceCell {
             addSubview(photoImageView)
             photoImageView.addSubview(heartPopup)
             
-            photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-            photoImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1).isActive = true
+            photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: seperatorView.topAnchor, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
             
             heartPopup.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
             heartPopup.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true

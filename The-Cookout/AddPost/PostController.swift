@@ -9,44 +9,10 @@
 import UIKit
 import Firebase
 import PKHUD
-import Gallery
 import AVKit
+import YPImagePicker
 
-class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate, GalleryControllerDelegate {
-    
-    
-    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
-        let image = images[0]
-        image.resolve { (image) in
-            self.selectedImage = image
-        }
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
-        dismiss(animated: true, completion: nil)
-        
-        let editor = AdvancedVideoEditor()
-        editor.edit(video: video) { (editedVideo: Video?, tempPath: URL?) in
-            DispatchQueue.main.async {
-                if let tempPath = tempPath {
-                    let controller = AVPlayerViewController()
-                    controller.player = AVPlayer(url: tempPath)
-                    
-                    self.present(controller, animated: true, completion: nil)
-                }
-            }
-        }
-    }
-    
-    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
-        
-    }
-    
-    func galleryControllerDidCancel(_ controller: GalleryController) {
-          dismiss(animated: true, completion: nil)
-    }
-    
+class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate {
     
     let cellId = "cellId"
     let headerId = "headerId"
@@ -56,6 +22,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     var messageTextView: UITextView?
     var photoSelectorController: PhotoSelectorController?
     var postHeader: PostHeader?
+    var config = YPImagePickerConfiguration()
     
     lazy var shareButton: UIButton = {
         let button = UIButton(type: .system)
@@ -67,31 +34,51 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         button.addTarget(self, action: #selector(sharePost), for: .touchUpInside)
         return button
     }()
-    
-    func handleOpenPhotoSelector() {
-        let layout = UICollectionViewFlowLayout()
-        self.photoSelectorController = PhotoSelectorController(collectionViewLayout: layout)
-        self.photoSelectorController?.delegate = self
-        let navController = UINavigationController(rootViewController: photoSelectorController!)
-        self.present(navController, animated: true, completion: nil)
-    }
+   
+//    func handleOpenPhotoSelector() {
+//        let layout = UICollectionViewFlowLayout()
+//        self.photoSelectorController = PhotoSelectorController(collectionViewLayout: layout)
+//        self.photoSelectorController?.delegate = self
+//        let navController = UINavigationController(rootViewController: photoSelectorController!)
+//        self.present(navController, animated: true, completion: nil)
+//    }
     
     func handleOpenGallery() {
-        Config.tabsToShow = [.imageTab, .videoTab]
-        Config.Camera.imageLimit = 1
-        let cameraController = GalleryController()
-        cameraController.delegate = self
-        self.present(cameraController, animated: true, completion: nil)
+        
+        config.libraryMediaType = .photoAndVideo
+        config.libraryTargetImageSize = .original
+        config.onlySquareImagesFromCamera = true
+        config.libraryTargetImageSize = .cappedTo(size: 1080)
+        config.shouldSaveNewPicturesToAlbum = true
+        config.videoCompression = AVAssetExportPresetHighestQuality
+        config.albumName = "Social Point"
+        config.screens = [.library]
+        config.videoFromLibraryTimeLimit = 600
+        config.wordings.libraryTitle = "Gallery"
+        config.hidesStatusBar = true
+        
+        YPImagePickerConfiguration.shared = config
+        let picker = YPImagePicker()
+        
+        picker.didFinishPicking { [unowned picker] items, _ in
+            if let photo = items.singlePhoto {
+                print(photo.fromCamera) // Image source (camera or library)
+                print(photo.image) // Final image selected by the user
+                print(photo.originalImage) // original image selected by the user, unfiltered
+                print(photo.modifiedImage ?? "") // Transformed image, can be nil
+                self.selectedImage = photo.image
+            }
+            picker.dismiss(animated: true, completion: nil)
+        }
+        
+        DispatchQueue.main.async {
+            self.present(picker, animated: true, completion: nil)
+        }
     }
     
+    
     func handleShowCamera() {
-        Config.tabsToShow = [.cameraTab]
-        Config.Camera.imageLimit = 1
-        Config.VideoEditor.maximumDuration = 30
-        Config.VideoEditor.savesEditedVideoToLibrary = true
-        let cameraController = GalleryController()
-        cameraController.delegate = self
-        self.present(cameraController, animated: true, completion: nil)
+        
     }
     
     override func viewDidLoad() {
@@ -108,8 +95,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         navigationController?.navigationBar.shadowImage = UIImage()
         
         setupNavigationButtons()
-        
-        fetchUser()
         
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(PostHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
@@ -300,16 +285,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         self.dismiss(animated: false, completion: nil)
     }
     
-    fileprivate func fetchUser() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            self.user = User(uid: uid, dictionary: dictionary as [String : AnyObject])
-            
-            self.collectionView?.reloadData()
-        }
-    }
     
     private var lastContentOffset: CGFloat = 0
     
@@ -320,6 +295,57 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             })
         }
     }
+    
+//    func handleShowCamera() {
+//        Config.tabsToShow = [.cameraTab]
+//        Config.Camera.imageLimit = 1
+//        Config.VideoEditor.maximumDuration = 30
+//        Config.VideoEditor.savesEditedVideoToLibrary = true
+//        let cameraController = GalleryController()
+//        cameraController.delegate = self
+//        self.present(cameraController, animated: true, completion: nil)
+//    }
+    
+//    func handleOpenGallery() {
+//        Config.tabsToShow = [.imageTab, .videoTab]
+//        Config.Camera.imageLimit = 1
+//        let cameraController = GalleryController()
+//        cameraController.delegate = self
+//        self.present(cameraController, animated: true, completion: nil)
+//    }
+    
+    //    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+    //        let image = images[0]
+    //        image.resolve { (image) in
+    //            self.selectedImage = image
+    //        }
+    //        dismiss(animated: true, completion: nil)
+    //    }
+    //
+    //    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+    //        dismiss(animated: true, completion: nil)
+    //
+    //        let editor = AdvancedVideoEditor()
+    //        editor.edit(video: video) { (editedVideo: Video?, tempPath: URL?) in
+    //            DispatchQueue.main.async {
+    //                if let tempPath = tempPath {
+    //                    let controller = AVPlayerViewController()
+    //                    controller.player = AVPlayer(url: tempPath)
+    //
+    //                    self.present(controller, animated: true, completion: nil)
+    //                }
+    //            }
+    //        }
+    //    }
+    //
+    //    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
+    //
+    //    }
+    //
+    //    func galleryControllerDidCancel(_ controller: GalleryController) {
+    //          dismiss(animated: true, completion: nil)
+    //    }
+
     
     
 }

@@ -13,7 +13,6 @@ import Firebase
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,16 +26,27 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
                 self.present(navController, animated: true, completion: nil)
             }
             return
+        } else {
+            fetchUser()
         }
         
-        setupViewControllers()
+    }
+    
+    var user: User?
+    fileprivate func fetchUser() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            self.user = user
+            self.setupViewControllers()
+        }
     }
     
     func setupViewControllers() {
         
        //home
-      //  let homeLayout = UICollectionViewFlowLayout()
+       //  let homeLayout = UICollectionViewFlowLayout()
         let homeController = HomeController()
+        homeController.user = self.user
         let homeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "home_unselected"), selectedImage: #imageLiteral(resourceName: "home_selected"), rootViewController: homeController)
         
         //search
@@ -45,15 +55,12 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         
         //post
         let plusNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "plus_unselected"), selectedImage: #imageLiteral(resourceName: "plus_unselected"))
-        
-        
         let likeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "like_unselected"), selectedImage: #imageLiteral(resourceName: "like_selected"))
         
         // user profile
         let layout = UICollectionViewFlowLayout()
-      //  layout.scrollDirection = .horizontal
         let userProfileController = UserProfileController(collectionViewLayout: layout)
-        
+        userProfileController.user = self.user
         let userProfileNavController = UINavigationController(rootViewController: userProfileController)
         
         userProfileNavController.tabBarItem.image = #imageLiteral(resourceName: "profile_unselected")
@@ -80,6 +87,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
             
             let layout = UICollectionViewFlowLayout()
             let postController = PostController(collectionViewLayout: layout)
+            postController.user = self.user
             let navController = UINavigationController(rootViewController: postController)
             
             present(navController, animated: true, completion: nil)

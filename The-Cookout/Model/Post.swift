@@ -12,20 +12,24 @@ struct Post {
     var id: String?
     
     let user: User
-    let timestamp: NSNumber
+    
     let caption: String
+    var hasText: String
+    var hasImage: String
     let imageUrl: String
     let videoUrl: String
+    
+    
+    let votes: NSNumber
+    let timestamp: NSNumber
     let imageWidth: NSNumber
     let imageHeight: NSNumber
-    let votes: NSNumber
+    
     let creationDate: Date
     
     var likeCount = 0
     var hasLiked = false
-    var hasText: String
-    var hasImage: String
-    
+
     init(user: User, dictionary: [String: AnyObject]) {
         self.user = user
         self.votes = dictionary["votes"] as? NSNumber ?? 0

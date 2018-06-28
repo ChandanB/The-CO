@@ -15,6 +15,7 @@ import LBTAComponents
 import UIFontComplete
 import Spring
 import AVFoundation
+import SkeletonView
 
 
 protocol UserPostCellDelegate {
@@ -57,7 +58,7 @@ class PostCell: DatasourceCell {
         
         let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedStringKey.font: font!])
         
-        let usernameString = " @\(post.user.username)"
+        let usernameString = "  @\(post.user.username)"
         
         nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
@@ -97,10 +98,10 @@ class PostCell: DatasourceCell {
     
     let heartPopup: UIImageView = {
         let iv = UIImageView()
-        iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.image = #imageLiteral(resourceName: "heart.png")
         iv.alpha = 0
+        iv.isSkeletonable = true
         return iv
     }()
     
@@ -112,6 +113,7 @@ class PostCell: DatasourceCell {
         let tg = UITapGestureRecognizer(target: self, action: #selector(handleComment))
         tv.addGestureRecognizer(tg)
         tv.isUserInteractionEnabled = true
+        tv.isSkeletonable = true
         return tv
     }()
     
@@ -211,6 +213,7 @@ class PostCell: DatasourceCell {
         let tg = UITapGestureRecognizer(target: self, action: #selector(handleUserProfile))
         label.addGestureRecognizer(tg)
         label.isUserInteractionEnabled = true
+        label.isSkeletonable = true
         return label
     }()
     
@@ -231,7 +234,6 @@ class PostCell: DatasourceCell {
     override func setupViews() {
         super.setupViews()
         
-        
         backgroundColor = .white
         
         separatorLineView.isHidden = false
@@ -241,7 +243,7 @@ class PostCell: DatasourceCell {
         addSubview(messageTextView)
         addSubview(optionsButton)
         addSubview(nameLabel)
-        
+                
         optionsButton.anchor(self.topAnchor, left: nil, bottom: nil, right: self.rightAnchor, topConstant: 12, leftConstant: 0, bottomConstant: 4, rightConstant: 12, widthConstant: 44, heightConstant: 0)
         
         nameLabel.anchor(profileImageButton.topAnchor, left: profileImageButton.rightAnchor, bottom: nil, right: nil, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
@@ -272,8 +274,8 @@ class PostCell: DatasourceCell {
             addSubview(photoImageView)
             photoImageView.addSubview(heartPopup)
             
-            photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-            photoImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1).isActive = true
+            photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: seperatorView.topAnchor, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+    
             
             heartPopup.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
             heartPopup.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true
@@ -315,11 +317,8 @@ class PostCell: DatasourceCell {
         likesCount.anchor(likeButtonContainerView.topAnchor, left: likeButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 40, heightConstant: 20)
     }
     
-    @objc func imageTapped()
-    {
-    
-        
-        
+    @objc func imageTapped() {
+        handleComment()
     }
     
     @objc func imageDoubleTapped()

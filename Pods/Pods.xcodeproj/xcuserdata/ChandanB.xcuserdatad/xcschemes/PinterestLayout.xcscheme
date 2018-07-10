@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FDD93330A67990D360D81E5B9259C194"
-               BlueprintName = "UIFontComplete"
+               BlueprintIdentifier = "195807B725D0D6FAC04C664C00BCD858"
+               BlueprintName = "PinterestLayout"
                ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "UIFontComplete.framework">
+               BuildableName = "PinterestLayout.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

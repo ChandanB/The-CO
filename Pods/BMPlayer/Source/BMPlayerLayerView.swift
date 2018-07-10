@@ -128,7 +128,7 @@ open class BMPlayerLayerView: UIView {
     // playbackBufferEmpty会反复进入，因此在bufferingOneSecond延时播放执行完之前再调用bufferingSomeSecond都忽略
     // 仅在bufferingSomeSecond里面使用
     fileprivate var isBuffering     = false
-    fileprivate var hasReadyToPlay  = false
+    fileprivate var hasReadyToPlay  = true
     fileprivate var shouldSeekTo: TimeInterval = 0
     
     // MARK: - Actions
@@ -384,6 +384,7 @@ open class BMPlayerLayerView: UIView {
                         self.state = .buffering
                         self.bufferingSomeSecond()
                     }
+                    
                 case "playbackLikelyToKeepUp":
                     if item.isPlaybackBufferEmpty {
                         if state != .bufferFinished && hasReadyToPlay {
@@ -432,7 +433,7 @@ open class BMPlayerLayerView: UIView {
         isBuffering = true
         // 需要先暂停一小会之后再播放，否则网络状况不好的时候时间在走，声音播放不出来
         player?.pause()
-        let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * 1.0 )) / Double(NSEC_PER_SEC)
+        let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
         
         DispatchQueue.main.asyncAfter(deadline: popTime) {
             

@@ -8,18 +8,30 @@
 
 import Kingfisher
 import LBTAComponents
+import PinterestLayout
 
 protocol PhotoCellDelegate {
     func presentLightBox(for cell: UserProfilePhotoCell)
+    func didTapImage(_ post: Post)
 }
 
 class UserProfilePhotoCell: DatasourceCell {
     
     var delegate: PhotoCellDelegate?
     
+    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+        super.apply(layoutAttributes)
+        if let attributes = layoutAttributes as? PinterestLayoutAttributes {
+            //change image view height by changing its constraint
+            photoImageView.heightAnchor.constraint(equalToConstant: attributes.imageHeight).isActive = true
+        }
+    }
+    
+    var post: Post?
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
+            self.post = post
             let url = URL(string: post.imageUrl)
             photoImageView.kf.setImage(with: url)
         }
@@ -36,7 +48,8 @@ class UserProfilePhotoCell: DatasourceCell {
     }()
     
     @objc func imageTapped() {
-        self.delegate?.presentLightBox(for: self)
+      guard let image = self.post else {return}
+      delegate?.didTapImage(image)
     }
     
     override func setupViews() {

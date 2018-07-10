@@ -9,10 +9,16 @@
 import Firebase
 import LBTAComponents
 import Lightbox
+import PinterestLayout
 
-
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, PhotoCellDelegate {
+class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, PhotoCellDelegate, PinterestLayoutDelegate {
     
+    let lightboxHeaderTitle: UILabel = {
+        let label = UILabel()
+        label.text = "Loading..."
+        label.textColor = .white
+        return label
+    }()
     
     func lightboxControllerWillDismiss(_ controller: LightboxController) {
         
@@ -20,6 +26,30 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
         
+    }
+    
+    func presentLightBox(for cell: UserProfilePhotoCell) {
+        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+        var post = self.gridArray[indexPath.item]
+        
+        LightboxConfig.InfoLabel.ellipsisText = "Show more"
+        LightboxConfig.hideStatusBar = true
+        
+        let lightboxController = LightboxController(images: images)
+        lightboxController.pageDelegate = self
+        lightboxController.dismissalDelegate = self
+        lightboxController.dynamicBackground = true
+        lightboxController.goTo(indexPath.item)
+        
+        lightboxHeaderTitle.text = post.user.name
+        
+        let header = lightboxController.headerView
+        header.addSubview(lightboxHeaderTitle)
+        lightboxHeaderTitle.anchor(header.topAnchor, left: header.leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 100, heightConstant: 20)
+        
+        DispatchQueue.main.async {
+            self.present(lightboxController, animated: true, completion: nil)
+        }
     }
     
     let refreshControl = UIRefreshControl()
@@ -41,21 +71,28 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     var indexes = [Int: Int]()
     var currentIndex = 0
     
+    let layout: PinterestLayout? = {
+        let layout = PinterestLayout()
+        layout.cellPadding = 5
+        layout.numberOfColumns = 2
+        return layout
+    }()
+    
     func didChangeToGridView() {
         isGridView = true
-        handleRefresh()
+        paginateGrid()
     }
     
     func didChangeToListView() {
         isGridView = false
-        handleRefresh()
+        paginateList()
     }
     
     var isFinishedPaging = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
@@ -78,25 +115,104 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     @objc fileprivate func handleRefresh() {
         self.refreshControl.beginRefreshing()
-        self.gridArray.removeAll()
-        self.listArray.removeAll()
+        self.isFinishedPaging = false
+        
         self.images.removeAll()
-        paginatePosts()
+        self.currentIndex = 0
+        
+        if isGridView {
+            self.gridArray.removeAll()
+            paginateGrid()
+        } else {
+            self.listArray.removeAll()
+            paginateList()
+        }
+        
+        self.refreshControl.endRefreshing()
     }
     
-    @objc func paginatePosts() {
+    
+    fileprivate func refreshPosts() {
+        refreshControl.endRefreshing()
         
+        guard let user = self.user else {return}
+        
+        let uid = user.uid
+        
+        let ref = Database.database().reference().child("posts").child(uid)
+        let query = ref.queryOrdered(byChild: "creationDate")
+        
+        query.queryLimited(toFirst: 1).observe( .value) { (snapshot) in
+            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+            
+            allObjects.reverse()
+            
+            allObjects.forEach({ (snapshot) in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                
+            })
+        }
+    }
+    
+    fileprivate func paginateGrid() {
+        
+        var count = 6
+        guard let uid = self.user?.uid else { return }
+        let ref = Database.database().reference().child("posts").child(uid)
+        var query = ref.queryOrdered(byChild: "creationDate")
+        self.refreshControl.endRefreshing()
+        
+        if gridArray.count > 0 {
+            let value = self.gridArray.last?.creationDate.timeIntervalSince1970
+            query = query.queryEnding(atValue: value)
+            count = 8
+        }
+        
+        query.queryLimited(toLast: UInt(count)).observeSingleEvent(of: .value) { (snapshot) in
+            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+            
+            allObjects.reverse()
+            
+            if allObjects.count < 6 {
+                self.isFinishedPaging = true
+            }
+            
+            if self.gridArray.count > 0 && allObjects.count > 0 {
+                allObjects.removeFirst()
+            }
+            
+            guard let user = self.user else { return }
+            
+            allObjects.forEach({ (snapshot) in
+                
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                
+                if post.hasImage == "true" {
+                    self.gridArray.append(post)
+                    self.indexes[self.currentIndex] = self.images.count
+                    let imageUrl = post.imageUrl
+                    let image = LightboxImage(imageURL: URL(string: imageUrl)!, text: post.caption)
+                    self.images.append(image)
+                    self.currentIndex += 1
+                }
+                
+            })
+            
+            self.collectionView?.collectionViewLayout.invalidateLayout()
+            self.collectionView?.reloadData()
+        }
+    }
+    
+    fileprivate func paginateList() {
         var count = 10
         guard let uid = self.user?.uid else { return }
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
         self.refreshControl.endRefreshing()
         
-        if isGridView && gridArray.count > 0 {
-            let value = self.gridArray.last?.creationDate.timeIntervalSince1970
-            query = query.queryEnding(atValue: value)
-            count = 12
-        } else if !isGridView && listArray.count > 0 {
+        if listArray.count > 0 {
             let value = self.listArray.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
             count = 12
@@ -111,14 +227,8 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.isFinishedPaging = true
             }
             
-            if self.isGridView {
-                if self.gridArray.count > 0 && allObjects.count > 0 {
-                    allObjects.removeFirst()
-                }
-            } else {
-                if self.listArray.count > 0 && allObjects.count > 0 {
-                    allObjects.removeFirst()
-                }
+            if self.listArray.count > 0 && allObjects.count > 0 {
+                allObjects.removeFirst()
             }
             
             guard let user = self.user else { return }
@@ -127,23 +237,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
                 let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                
-                if post.imageUrl != "" {
-                    self.indexes[self.currentIndex] = self.images.count
-                    let imageUrl = post.imageUrl
-                    let image = LightboxImage(imageURL: URL(string: imageUrl)!)
-                    self.images.append(image)
-                }
-                
-                if self.isGridView {
-                    self.currentIndex += 1
-                }
-                
-                if post.hasImage == "true" {
-                    print(post)
-                    self.gridArray.append(post)
-                }
-                
+            
                 if post.hasText == "true" && post.hasImage == "false" {
                     self.listArray.append(post)
                 }
@@ -191,10 +285,17 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         if isGridView {
             let post = self.gridArray[indexPath.item]
+            
+            let h = CGFloat(truncating: post.imageHeight)
+            let w = CGFloat(truncating: post.imageWidth)
+            
             if post.hasText == "true" && post.hasImage == "false" {
                 return .zero
             }
             let width = (view.frame.width - 2) / 3
+            
+            let height = h * width / w
+
             return CGSize(width: width, height: width)
         }
         
@@ -292,19 +393,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.handleRefresh()
     }
     
-    func presentLightBox(for cell: UserProfilePhotoCell) {
-        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        let lightboxController = LightboxController(images: images)
-        lightboxController.pageDelegate = self
-        lightboxController.dismissalDelegate = self
-        lightboxController.dynamicBackground = true
-        lightboxController.goTo(indexPath.item)
-        DispatchQueue.main.async {
-            self.present(lightboxController, animated: true, completion: nil)
-        }
+    func didTapComment(post: Post) {
+        let commentsController = CommentsController()
+        commentsController.post = post
+        navigationController?.pushViewController(commentsController, animated: true)
     }
     
-    func didTapComment(post: Post) {
+    func didTapImage(_ post: Post) {
         let commentsController = CommentsController()
         commentsController.post = post
         navigationController?.pushViewController(commentsController, animated: true)
@@ -340,14 +435,32 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if isGridView {
             if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
-                self.paginatePosts()
+                self.paginateGrid()
                 return
             }
         } else if !isGridView {
             if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
-                self.paginatePosts()
+                self.paginateList()
             }
         }
+    }
+    
+    func collectionView(collectionView: UICollectionView,
+                        heightForImageAtIndexPath indexPath: IndexPath,
+                        withWidth: CGFloat) -> CGFloat {
+        let post = gridArray[indexPath.item]
+        
+        let h = CGFloat(truncating: post.imageHeight)
+        let w = CGFloat(truncating: post.imageWidth)
+        let size = h * view.frame.width / w
+        
+        return size
+    }
+    
+    func collectionView(collectionView: UICollectionView,
+                        heightForAnnotationAtIndexPath indexPath: IndexPath,
+                        withWidth: CGFloat) -> CGFloat {
+        return 0
     }
     
     @objc func dismissView() {

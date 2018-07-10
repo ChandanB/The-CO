@@ -59,6 +59,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         
         // user profile
         let layout = UICollectionViewFlowLayout()
+            
         let userProfileController = UserProfileController(collectionViewLayout: layout)
         userProfileController.user = self.user
         let userProfileNavController = UINavigationController(rootViewController: userProfileController)

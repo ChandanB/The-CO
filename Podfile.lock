@@ -88,6 +88,7 @@ PODS:
   - NVActivityIndicatorView (4.0.1):
     - NVActivityIndicatorView/Presenter (= 4.0.1)
   - NVActivityIndicatorView/Presenter (4.0.1)
+  - PinterestLayout (1.0.3)
   - PKHUD (5.0.0)
   - Protobuf (3.5.0)
   - PryntTrimmerView (2.0.1)
@@ -117,6 +118,7 @@ DEPENDENCIES:
   - Kingfisher (~> 4.0)
   - LBTAComponents
   - Lightbox
+  - PinterestLayout
   - PKHUD (~> 5.0)
   - SCLAlertView
   - SkeletonView
@@ -153,6 +155,7 @@ SPEC REPOS:
     - Lightbox
     - nanopb
     - NVActivityIndicatorView
+    - PinterestLayout
     - PKHUD
     - Protobuf
     - PryntTrimmerView
@@ -191,6 +194,7 @@ SPEC CHECKSUMS:
   Lightbox: 2dc267df8be2285bc7724cb11cbbf4aaaf59dced
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   NVActivityIndicatorView: 77ed6d7b571643e24899e7858bf9ae2ee4c21f31
+  PinterestLayout: f1c7ec0254ffa842d69f1b43e4436c8ded4359b9
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   PryntTrimmerView: 4260ae497a2f3e1bbfc0b71247eb74ab92bf0490
@@ -202,6 +206,6 @@ SPEC CHECKSUMS:
   UIFontComplete: 5b0f59a83308816c610164b79a2540b3520f9b72
   YPImagePicker: 817ae068f084a6f132312e66255347d1ce82782d
 
-PODFILE CHECKSUM: fd4b4c6d7628dfcbe0a30cee24195ed187d73634
+PODFILE CHECKSUM: 7efa3a88cce615762963d5a9c5ece2db2b9bb701
 
 COCOAPODS: 1.5.2

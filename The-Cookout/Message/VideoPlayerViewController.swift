@@ -39,7 +39,6 @@ class VideoPlayerViewController: UIViewController, UIGestureRecognizerDelegate {
         view.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         view.addSubview(player)
-//        player.anchor(self.view.topAnchor, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 320, heightConstant: 240)
         
         player.snp.makeConstraints { (make) in
             make.top.equalTo(self.view)
@@ -47,16 +46,16 @@ class VideoPlayerViewController: UIViewController, UIGestureRecognizerDelegate {
             make.height.equalTo(player.snp.width).multipliedBy(9.0/16.0).priority(750)
         }
         
+        let asset = BMPlayerResource(url: self.url!, name: "")
+        player.setVideo(resource: asset)
         // Back button event
         player.backBlock = { [unowned self] (isFullScreen) in
             if isFullScreen == true { return }
             let _ = self.navigationController?.popViewController(animated: true)
         }
         
-        let asset = BMPlayerResource(url: self.url!, name: "")
-        player.setVideo(resource: asset)
+        player.avPlayer?.automaticallyWaitsToMinimizeStalling = false
         player.play()
-        
     }
     
     override var prefersStatusBarHidden: Bool {

@@ -23,7 +23,6 @@ protocol UserPostCellDelegate {
     func didTapComment(post: Post)
 }
 
-
 class PostCell: DatasourceCell {
     
     var delegate: UserPostCellDelegate?
@@ -283,11 +282,16 @@ class PostCell: DatasourceCell {
             
             photoImageView.isUserInteractionEnabled = true
             
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
-            let doubleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageDoubleTapped))
-            doubleTapGestureRecognizer.numberOfTapsRequired = 2
-            photoImageView.addGestureRecognizer(doubleTapGestureRecognizer)
-            photoImageView.addGestureRecognizer(tapGestureRecognizer)
+            let singleTap = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+            singleTap.numberOfTapsRequired = 1
+            
+            let doubleTap = UITapGestureRecognizer(target: self, action: #selector(imageDoubleTapped))
+            doubleTap.numberOfTapsRequired = 2
+            
+            singleTap.require(toFail: doubleTap)
+            photoImageView.addGestureRecognizer(singleTap)
+
+            photoImageView.addGestureRecognizer(doubleTap)
         }
         
         seperatorView.anchor(nil, left: self.leftAnchor, bottom: buttonStackView.topAnchor, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 12, widthConstant: 0, heightConstant: 1)

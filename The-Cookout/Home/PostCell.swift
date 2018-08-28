@@ -17,7 +17,6 @@ import Spring
 import AVFoundation
 import SkeletonView
 
-
 protocol UserPostCellDelegate {
     func didLike(for cell: PostCell)
     func didTapComment(post: Post)
@@ -26,9 +25,10 @@ protocol UserPostCellDelegate {
 class PostCell: DatasourceCell {
     
     var delegate: UserPostCellDelegate?
-    var player: AVPlayer?
     var playerLayer: AVPlayerLayer?
-    
+    var player: AVPlayer?
+    var post: Post?
+
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
@@ -47,7 +47,6 @@ class PostCell: DatasourceCell {
         }
     }
     
-    var post: Post?
     
     fileprivate func setupAttibutedCaption(_ post: Post) {
         

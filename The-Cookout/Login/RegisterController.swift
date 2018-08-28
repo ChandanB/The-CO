@@ -13,14 +13,14 @@ import PKHUD
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    lazy var plusPhotoButton: SpringButton = {
+    lazy var addPhotoButton: SpringButton = {
         let button = SpringButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
-        button.addTarget(self, action: #selector(handlePlusPhoto), for: .touchUpInside)
+        button.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
         return button
     }()
     
-    @objc func handlePlusPhoto() {
+    @objc func openImagePicker() {
         let picker = UIImagePickerController()
         picker.allowsEditing = true
         picker.delegate = self
@@ -32,15 +32,15 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
-            plusPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
+            addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
         } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
-            plusPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
+            addPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
         }
         
-        plusPhotoButton.layer.cornerRadius = plusPhotoButton.frame.width/2
-        plusPhotoButton.layer.masksToBounds = true
-        plusPhotoButton.layer.borderColor = UIColor.black.cgColor
-        plusPhotoButton.layer.borderWidth = 3
+        addPhotoButton.layer.cornerRadius = addPhotoButton.frame.width/2
+        addPhotoButton.layer.masksToBounds = true
+        addPhotoButton.layer.borderColor = UIColor.black.cgColor
+        addPhotoButton.layer.borderWidth = 3
         dismiss(animated: true, completion: nil)
     }
     
@@ -140,7 +140,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
             
             print("Successfully created user:", user?.user.uid ?? "")
             
-            guard let image = self.plusPhotoButton.imageView?.image else { return }
+            guard let image = self.addPhotoButton.imageView?.image else { return }
             
             guard let uploadData = UIImageJPEGRepresentation(image, 0.3) else { return }
             
@@ -193,11 +193,11 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     fileprivate func handleAnimations() {
-        plusPhotoButton.animation = "zoomOut"
-        plusPhotoButton.curve = "easeOut"
-        plusPhotoButton.duration = 0.2
-        plusPhotoButton.animate()
-        plusPhotoButton.animateNext {
+        addPhotoButton.animation = "zoomOut"
+        addPhotoButton.curve = "easeOut"
+        addPhotoButton.duration = 0.2
+        addPhotoButton.animate()
+        addPhotoButton.animateNext {
             self.nameTextField.animation = "zoomOut"
             self.nameTextField.curve = "easeOut"
             self.nameTextField.duration = 0.2
@@ -260,10 +260,10 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
       
         view.backgroundColor = .white
         
-        view.addSubview(plusPhotoButton)
+        view.addSubview(addPhotoButton)
         
-        plusPhotoButton.anchor(view.topAnchor, left: nil, bottom: nil, right: nil, topConstant: 50, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 140, heightConstant: 140)
-        plusPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        addPhotoButton.anchor(view.topAnchor, left: nil, bottom: nil, right: nil, topConstant: 50, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 140, heightConstant: 140)
+        addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         setupInputFields()
     }
@@ -277,7 +277,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         
         view.addSubview(stackView)
         
-        stackView.anchor(plusPhotoButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 18, bottomConstant: 0, rightConstant: 18, widthConstant: 0, heightConstant: 280)
+        stackView.anchor(addPhotoButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 18, bottomConstant: 0, rightConstant: 18, widthConstant: 0, heightConstant: 280)
     }
     
     @objc func handleTextInputChange() {

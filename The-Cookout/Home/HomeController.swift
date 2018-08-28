@@ -13,13 +13,12 @@ import UIFontComplete
 
 class HomeController: DatasourceController {
     
-    let homeDatasource = HomeDatasource()
     let refreshControl = UIRefreshControl()
-    var isUpdating = false
+    let homeDatasource = HomeDatasource()
     var postLikesCount = 0
+    var isUpdating = false
     var user: User?
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

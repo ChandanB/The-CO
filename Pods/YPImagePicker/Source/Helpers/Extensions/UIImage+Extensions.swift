@@ -8,7 +8,14 @@
 
 import UIKit
 
-extension UIImage {
+internal extension UIImage {
+    
+    func resized(to size: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: CGRect(origin: .zero, size: size))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
     
     /// Kudos to Trevor Harmon and his UIImage+Resize category from
     // which this code is heavily inspired.
@@ -72,5 +79,41 @@ extension UIImage {
         
         // In case things go wrong, still return self.
         return self
+    }
+    
+    // Reduce image size further if needed targetImageSize is capped.
+    func resizedImageIfNeeded() -> UIImage {
+        if case let YPImageSize.cappedTo(size: capped) = YPConfig.targetImageSize {
+            let size = cappedSize(for: self.size, cappedAt: capped)
+            if let resizedImage = self.resized(to: size) {
+                return resizedImage
+            }
+        }
+        return self
+    }
+    
+    fileprivate func cappedSize(for size: CGSize, cappedAt: CGFloat) -> CGSize {
+        var cappedWidth: CGFloat = 0
+        var cappedHeight: CGFloat = 0
+        if size.width > size.height {
+            // Landscape
+            let heightRatio = size.height / size.width
+            cappedWidth = min(size.width, cappedAt)
+            cappedHeight = cappedWidth * heightRatio
+        } else if size.height > size.width {
+            // Portrait
+            let widthRatio = size.width / size.height
+            cappedHeight = min(size.height, cappedAt)
+            cappedWidth = cappedHeight * widthRatio
+        } else {
+            // Squared
+            cappedWidth = min(size.width, cappedAt)
+            cappedHeight = min(size.height, cappedAt)
+        }
+        return CGSize(width: cappedWidth, height: cappedHeight)
+    }
+    
+    func toCIImage() -> CIImage? {
+        return self.ciImage ?? CIImage(cgImage: self.cgImage!)
     }
 }

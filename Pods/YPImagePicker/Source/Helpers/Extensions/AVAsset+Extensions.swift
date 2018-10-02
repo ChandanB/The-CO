@@ -13,9 +13,7 @@ import AVFoundation
 extension AVAsset {
     func assetByTrimming(startTime: CMTime, endTime: CMTime) throws -> AVAsset {
         let timeRange = CMTimeRangeFromTimeToTime(startTime, endTime)
-        
         let composition = AVMutableComposition()
-        
         do {
             for track in tracks {
                 let compositionTrack = composition.addMutableTrack(withMediaType: track.mediaType,
@@ -26,6 +24,12 @@ extension AVAsset {
             throw YPTrimError("Error during composition", underlyingError: error)
         }
         
+        // Reaply correct transform to keep original orientation.
+        if let videoTrack = self.tracks(withMediaType: .video).last,
+            let compositionTrack = composition.tracks(withMediaType: .video).last {
+            compositionTrack.preferredTransform = videoTrack.preferredTransform
+        }
+
         return composition
     }
     
@@ -41,12 +45,12 @@ extension AVAsset {
                 videoComposition: AVVideoComposition? = nil,
                 removeOldFile: Bool = false,
                 completion: @escaping () -> Void) throws {
-        guard let exportSession = AVAssetExportSession(asset: self, presetName: AVAssetExportPresetPassthrough) else {
+        guard let exportSession = AVAssetExportSession(asset: self, presetName: YPConfig.video.compression) else {
             throw YPTrimError("Could not create an export session")
         }
         
         exportSession.outputURL = destination
-        exportSession.outputFileType = YPConfig.videoExtension
+        exportSession.outputFileType = YPConfig.video.fileType
         exportSession.shouldOptimizeForNetworkUse = true
         exportSession.videoComposition = videoComposition
         

@@ -1,47 +1,43 @@
+<h1 align="center"> <br><img src="Images/logo/logotype_horizontal.png?raw=true" alt="ypimagepicker" width="512"> <br>
+
 <img src="https://raw.githubusercontent.com/Yummypets/YPImagePicker/master/Images/visual.jpg" width="400px" >
 
 ## YPImagePicker
 
-YPImagePicker is an instagram-like photo/video picker for iOS written in pure Swift.
-It comes with adjustable square crop and filters.
+YPImagePicker is an instagram-like photo/video picker for iOS written in pure Swift. It is feature-rich and highly customizable to match your App's requirements.
 
+[![Language: Swift 4](https://img.shields.io/badge/language-swift%204-f48041.svg?style=flat)](https://developer.apple.com/swift)
 [![Version](https://img.shields.io/cocoapods/v/YPImagePicker.svg?style=flat)](http://cocoapods.org/pods/YPImagePicker)
 [![Platform](https://img.shields.io/cocoapods/p/YPImagePicker.svg?style=flat)](http://cocoapods.org/pods/YPImagePicker)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![codebeat badge](https://codebeat.co/badges/9710a89d-b1e2-4e55-a4a2-3ae1f98f4c53)](https://codebeat.co/projects/github-com-yummypets-ypimagepicker-master)
+[![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/Yummypets/YPImagePicker/blob/master/LICENSE)
 [![GitHub tag](https://img.shields.io/github/release/Yummypets/YPImagePicker.svg)]()
+
+
+[Installation](#installation) - [Configuration](#configuration) - [Usage](#usage) - [Languages](#languages) - [UI Customization](#ui-customization)
+
 
 Give it a quick try :
 `pod repo update` then `pod try YPImagePicker`
-
-🌅 Library - 📷 Photo - 🎥 Video - ✂️ Crop - ⚡️ Flash - 🖼 Filters
 
 <img src="https://raw.githubusercontent.com/Yummypets/YPImagePicker/master/Images/library.PNG" width="200px" > <img src="https://raw.githubusercontent.com/Yummypets/YPImagePicker/master/Images/photo.PNG" width="200px" > <img src="https://raw.githubusercontent.com/Yummypets/YPImagePicker/master/Images/video.PNG" width="200px" > <img src="https://raw.githubusercontent.com/Yummypets/YPImagePicker/master/Images/filters.PNG" width="200px" >
 
 Those features are available just with a few lines of code!
 
-## Improvements
-YPImagePicker was built from the great Fusuma library.
+## Notable Features
 
-Here are the improvements we added :
-
-- Albums
-- Filters
-- Videos in the library
-- Both Square and non-square images
-- Permission managenent
-- Pan between tabs which feels smoother
-- Improve Overall Code Quality
-- Simplify API
-- Replaces icons with lighter Text
-- Preselect Front camera (e.g for avatars)
-- Replaces Delegate based with callbacks based api
-- Uses Native Navigation bar over custom View (gotta be a good UIKit citizen)
-- Faster library load
-- Hidden status bar for a more immersive XP
-- Flash Auto mode
-- Video Torch Mode
-- iPhone X support
+🌅 Library  
+📷 Photo  
+🎥 Video  
+✂️ Crop  
+⚡️ Flash  
+🖼 Filters  
+📁 Albums  
+🔢 Multiple Selection  
+📏 Video Trimming & Cover selection  
+📐 Output image size  
+And many more...
 
 ## Installation
 
@@ -90,26 +86,30 @@ you'll need to ad these `plist entries` :
 
 ```swift
 var config = YPImagePickerConfiguration()
-config.libraryMediaType = .photoAndVideo
-config.onlySquareFromLibrary = false
+config.library.mediaType = .photoAndVideo
+config.library.onlySquare  = false
 config.onlySquareImagesFromCamera = true
-config.libraryTargetImageSize = .original
+config.targetImageSize = .original
 config.usesFrontCamera = true
 config.showsFilters = true
 config.filters = [YPFilterDescriptor(name: "Normal", filterName: ""),
                   YPFilterDescriptor(name: "Mono", filterName: "CIPhotoEffectMono")]
 config.shouldSaveNewPicturesToAlbum = true
-config.videoCompression = AVAssetExportPresetHighestQuality
+config.video.compression = AVAssetExportPresetHighestQuality
 config.albumName = "MyGreatAppName"
 config.screens = [.library, .photo, .video]
 config.startOnScreen = .library
-config.videoRecordingTimeLimit = 10
-config.videoFromLibraryTimeLimit = 20
+config.video.recordingTimeLimit = 10
+config.video.libraryTimeLimit = 20
 config.showsCrop = .rectangle(ratio: (16/9))
 config.wordings.libraryTitle = "Gallery"
 config.hidesStatusBar = false
 config.overlayView = myOverlayView
-config.maxNumberOfItems = 5
+config.library.maxNumberOfItems = 5
+config.library.minNumberOfItems = 3
+config.library.numberOfItemsInRow = 3
+config.library.spacingBetweenItems = 2
+config.isScrollToChangeModesEnabled = false
 
 // Build a picker with your configuration
 let picker = YPImagePicker(configuration: config)
@@ -134,12 +134,13 @@ The picker only has one callback `didFinishPicking` enabling you to handle all t
 ### Single Photo
 ```swift
 let picker = YPImagePicker()
-picker.didFinishPicking { items, _ in
+picker.didFinishPicking { [unowned picker] items, _ in
     if let photo = items.singlePhoto {
         print(photo.fromCamera) // Image source (camera or library)
         print(photo.image) // Final image selected by the user
         print(photo.originalImage) // original image selected by the user, unfiltered
         print(photo.modifiedImage) // Transformed image, can be nil
+        print(photo.exifMeta) // Print exif meta data of original image.
     }
     picker.dismiss(animated: true, completion: nil)
 }
@@ -154,7 +155,7 @@ config.screens = [.library, .video]
 config.libraryMediaType = .video
 
 let picker = YPImagePicker(configuration: config)
-picker.didFinishPicking { items, _ in
+picker.didFinishPicking { [unowned picker] items, _ in
     if let video = items.singleVideo {
         print(video.fromCamera)
         print(video.thumbnail)
@@ -168,15 +169,15 @@ present(picker, animated: true, completion: nil)
 As you can see `singlePhoto` and `singleVideo` helpers are here to help you handle single media which are very common, while using the same callback for all your use-cases \o/
 
 ### Multiple selection
-To enable multiple selection make sure to set `maxNumberOfItems` in the configuration like so:
+To enable multiple selection make sure to set `library.maxNumberOfItems` in the configuration like so:
 ```swift
 var config = YPImagePickerConfiguration()
-config.maxNumberOfItems = 3
+config.library.maxNumberOfItems = 3
 let picker = YPImagePicker(configuration: config)
 ```
 Then you can handle multiple selection in the same callback you know and love :
 ```swift
-picker.didFinishPicking { items, cancelled in
+picker.didFinishPicking { [unowned picker] items, cancelled in
     for item in items {
         switch item {
         case .photo(let photo):
@@ -191,7 +192,7 @@ picker.didFinishPicking { items, cancelled in
 
 ### Handle Cancel event (if needed)
 ```swift
-picker.didFinishPicking { items, cancelled in
+picker.didFinishPicking { [unowned picker] items, cancelled in
     if cancelled {
         print("Picker was canceled")
     }
@@ -201,17 +202,7 @@ picker.didFinishPicking { items, cancelled in
 That's it !
 
 ## Languages
-Supported languages out of the box:
-- English
-- Spanish
-- French
-- Russian
-- Dutch
-- Brazilian
-- Turkish
-- Arabic
-- German
-- Italian
+🇺🇸 English, 🇪🇸 Spanish, 🇫🇷 French 🇷🇺 Russian, 🇳🇱 Dutch, 🇧🇷 Brazilian, 🇹🇷 Turkish, 🇸🇾 Arabic, 🇩🇪 German, 🇮🇹 Italian, 🇯🇵 Japanese, 🇨🇳 Chinese, 🇮🇩 Indonesian
 
 If your language is not supported, you can still customize the wordings via the `configuration.wordings` api:
 
@@ -222,10 +213,34 @@ config.wordings.next = "OK"
 ```
 Better yet you can submit an issue or pull request with your `Localizable.strings` file to add a new language !
 
+## UI Customization
+We tried to keep things as native as possible, so this is done mostly through native Apis.
+
+### Navigation bar color
+```swift
+let coloredImage = UIImage(color: .red)
+UINavigationBar.appearance().setBackgroundImage(coloredImage, for: UIBarMetrics.default)
+// UIImage+color helper https://stackoverflow.com/questions/26542035/create-uiimage-with-solid-color-in-swift
+```
+
+### Navigation bar fonts
+```swift
+let attributes = [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 30, weight: .bold) ]
+UINavigationBar.appearance().titleTextAttributes = attributes // Title fonts
+UIBarButtonItem.appearance().setTitleTextAttributes(attributes, for: .normal) // Bar Button fonts
+```
+
+### Navigation bar Text colors
+```swift
+UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor : UIColor.yellow ] // Title color
+UINavigationBar.appearance().tintColor = .red // Left. bar buttons
+config.colors.tintColor = .green // Right bar buttons (actions)
+```
+
 ## Original Project & Author
 
 This project has been first inspired by [Fusuma](https://github.com/ytakzk/Fusuma)
-Considering the big code and design changes, this moved form a fork to a standalone separate repo, also for discoverability purposes.
+Considering the big code, design changes and all the additional features added along the way, this moved form a fork to a standalone separate repo, also for discoverability purposes.
 Original Fusuma author is [ytakz](http://ytakzk.me)
 
 ## Core Team
@@ -245,6 +260,12 @@ Original Fusuma author is [ytakz](http://ytakzk.me)
 [Emil](https://github.com/heitara),
 [Rafael Damasceno](https://github.com/DamascenoRafael),
 [cenkingunlugu](https://github.com/https://github.com/cenkingunlugu)
+[heitara](https://github.com/heitara)
+[portellaa](https://github.com/portellaa)
+[Romixery](https://github.com/romixery)
+[shotat](https://github.com/shotat)
+
+Special thanks to [ihtiht](https://github.com/ihtiht) for the cool looking logo!
 
 ## They helped us one way or another 👏
 [userdar](https://github.com/userdar),
@@ -288,6 +309,14 @@ Original Fusuma author is [ytakz](http://ytakzk.me)
 [devender54321](https://github.com/devender54321),
 [Didar1994](https://github.com/Didar1994),
 [relaxsus](https://github.com/relaxsus)
+[restoflash](https://github.com/restoflash)
+
+## Dependency
+YPImagePicker relies on [prynt/PryntTrimmerView](https://github.com/prynt/PryntTrimmerView) for provide video trimming and cover features. Big thanks to @HHK1 for making this open source :)
+
+## Obj-C support
+Objective-C is not supported and this is not on our roadmap.
+Swift is the future and dropping Obj-C is the price to pay to keep our velocity on this library :)
 
 ## License
 YPImagePicker is released under the MIT license.  
@@ -296,4 +325,4 @@ See [LICENSE](LICENSE) for details.
 ## Swift Version
 
 - Swift 3 -> version [**1.2.1**](https://github.com/Yummypets/YPImagePicker/releases/tag/1.2.1)
-- Swift 4 -> version [**2.7.3**](https://github.com/Yummypets/YPImagePicker/releases/tag/2.8.1)
+- Swift 4.1 -> version [**3.1.0**](https://github.com/Yummypets/YPImagePicker/releases/tag/3.1.0)

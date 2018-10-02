@@ -9,7 +9,7 @@
 import UIKit
 
 extension YPLibraryVC {
-    var isLimitExceeded: Bool { return selection.count >= YPConfig.maxNumberOfItems }
+    var isLimitExceeded: Bool { return selection.count >= YPConfig.library.maxNumberOfItems }
     
     func setupCollectionView() {
         v.collectionView.dataSource = self
@@ -24,7 +24,7 @@ extension YPLibraryVC {
     
     /// When tapping on the cell with long press, clear all previously selected cells.
     @objc func handleLongPress(longPressGR: UILongPressGestureRecognizer) {
-        if multipleSelectionEnabled || isProcessing || YPConfig.maxNumberOfItems <= 1 {
+        if multipleSelectionEnabled || isProcessing || YPConfig.library.maxNumberOfItems <= 1 {
             return
         }
         
@@ -185,11 +185,19 @@ extension YPLibraryVC: UICollectionViewDelegate {
 }
 
 extension YPLibraryVC: UICollectionViewDelegateFlowLayout {
-    
     public func collectionView(_ collectionView: UICollectionView,
                                layout collectionViewLayout: UICollectionViewLayout,
                                sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (collectionView.frame.width - 3) / 4
+        let margins = YPConfig.library.spacingBetweenItems * CGFloat(YPConfig.library.numberOfItemsInRow - 1)
+        let width = (collectionView.frame.width - margins) / CGFloat(YPConfig.library.numberOfItemsInRow)
         return CGSize(width: width, height: width)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return YPConfig.library.spacingBetweenItems
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return YPConfig.library.spacingBetweenItems
     }
 }

@@ -30,7 +30,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     func presentLightBox(for cell: UserProfilePhotoCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        var post = self.gridArray[indexPath.item]
+        let post = self.gridArray[indexPath.item]
         
         LightboxConfig.InfoLabel.ellipsisText = "Show more"
         LightboxConfig.hideStatusBar = true
@@ -149,7 +149,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             
             allObjects.forEach({ (snapshot) in
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
-                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+              //  let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 
             })
         }
@@ -294,7 +294,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             }
             let width = (view.frame.width - 2) / 3
             
-            let height = h * width / w
+          //  let height = h * width / w
 
             return CGSize(width: width, height: width)
         }

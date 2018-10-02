@@ -144,7 +144,7 @@ class HomeController: DatasourceController {
             
             allObjects.forEach({ (snapshot) in
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
-                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+              //  let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
             
             })
         }

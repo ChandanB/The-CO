@@ -211,8 +211,8 @@ class CommentPostCell: DatasourceCell {
         
         setupBottomButtons(post)
         
-        likeButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
-        self.likesCount.text = String(post.likeCount)
+        likeButton.setImage(post.hasRepost == true ? #imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+        self.likesCount.text = String(post.repostCount)
         
     }
     

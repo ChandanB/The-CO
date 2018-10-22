@@ -15,7 +15,7 @@ class HomeController: DatasourceController {
     
     let refreshControl = UIRefreshControl()
     let homeDatasource = HomeDatasource()
-    var postLikesCount = 0
+    var postRepostCount = 0
     var isUpdating = false
     var user: User?
 
@@ -65,14 +65,14 @@ class HomeController: DatasourceController {
             var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
             post.id = snapshot.key
             
-            let ref = Database.database().reference().child("likes").child(post.id!)
+            let ref = Database.database().reference().child("reposts").child(post.id!)
             
             ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
                 
                 if let value = snapshot.value as? Int, value == 1 {
-                    post.hasLiked = true
+                    post.hasRepost = true
                 } else {
-                    post.hasLiked = false
+                    post.hasRepost = false
                 }
                 
                 self.newPost = post
@@ -180,20 +180,20 @@ class HomeController: DatasourceController {
                 post.id = snapshot.key
                 
                 
-                let ref = Database.database().reference().child("likes").child(post.id!)
+                let ref = Database.database().reference().child("reposts").child(post.id!)
                 
                 ref.observe(.value) { (snapshot) in
                     // guard let dictionary = snapshot.value as? [String: Any] else { return }
-                    post.likeCount = Int(snapshot.childrenCount)
-                    self.postLikesCount = post.likeCount
+                    post.repostCount = Int(snapshot.childrenCount)
+                    self.postRepostCount = post.repostCount
                 }
                 
                 ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
                     
                     if let value = snapshot.value as? Int, value == 1 {
-                        post.hasLiked = true
+                        post.hasRepost = true
                     } else {
-                        post.hasLiked = false
+                        post.hasRepost = false
                     }
                     
                     if self.newPost != nil {
@@ -330,25 +330,25 @@ class HomeController: DatasourceController {
         
     }
     
-    func likeButtonSelected(for cell: PostCell) {
+    func repostButtonSelected(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         var post = self.homeDatasource.posts[indexPath.item]
         
         guard let postId = post.id else { return }
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("likes").child(postId)
+        let ref = Database.database().reference().child("reposts").child(postId)
         
-        let values = [uid: post.hasLiked == true ? 0 : 1]
+        let values = [uid: post.hasRepost == true ? 0 : 1]
         ref.updateChildValues(values) { (err, _) in
             
             if let err = err {
-                print("Failed to like post:", err)
+                print("Failed to repost post:", err)
                 return
             }
             
-            print("Successfully liked post.")
+            print("Successfully reposted post.")
             
-            post.hasLiked = !post.hasLiked
+            post.hasRepost = !post.hasRepost
             
             self.homeDatasource.posts[indexPath.item] = post
             
@@ -427,6 +427,22 @@ class HomeController: DatasourceController {
 //            fetchPostsWithUser(user)
             fetchAllPosts()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        AppUtility.lockOrientation(.portrait)
+        // Or to rotate and lock
+        // AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Don't forget to reset when view is being removed
+        AppUtility.lockOrientation(.all)
     }
     
 }

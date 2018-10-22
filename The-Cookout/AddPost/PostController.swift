@@ -45,15 +45,15 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func handleOpenGallery() {
         
-        config.libraryMediaType = .photoAndVideo
-        config.libraryTargetImageSize = .original
+        config.library.mediaType = .photoAndVideo
+        config.targetImageSize = .original
         config.onlySquareImagesFromCamera = true
-        config.libraryTargetImageSize = .cappedTo(size: 1080)
+        config.targetImageSize = .cappedTo(size: 1080)
         config.shouldSaveNewPicturesToAlbum = true
-        config.videoCompression = AVAssetExportPresetHighestQuality
+        config.video.compression = AVAssetExportPresetHighestQuality
         config.albumName = "Social Point"
         config.screens = [.library]
-        config.videoFromLibraryTimeLimit = 600
+        config.video.libraryTimeLimit = 600
         config.wordings.libraryTitle = "Gallery"
         config.hidesStatusBar = true
         
@@ -97,7 +97,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         setupNavigationButtons()
         
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView?.register(PostHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView?.register(PostHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         
     }
     
@@ -167,7 +167,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func shareImagePost() {
         guard let image = self.selectedImage else { return }
-        guard let uploadData = UIImageJPEGRepresentation(image, 0.4) else { return }
+        guard let uploadData = image.jpegData(compressionQuality: 0.4) else { return }
         let filename = NSUUID().uuidString
         
         let storageRef = Storage.storage().reference().child("posts").child("\(filename).jpg")

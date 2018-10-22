@@ -32,7 +32,7 @@ class ChatMessageCell: DatasourceCell {
     var chatLogController: ChatLogController?
     
     let activityIndicatorView: UIActivityIndicatorView = {
-        let aiv = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let aiv = UIActivityIndicatorView(style: .whiteLarge)
         aiv.translatesAutoresizingMaskIntoConstraints = false
         aiv.hidesWhenStopped = true
         return aiv
@@ -43,7 +43,7 @@ class ChatMessageCell: DatasourceCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         let image = UIImage(named: "play")
         button.tintColor = UIColor.white
-        button.setImage(image, for: UIControlState())
+        button.setImage(image, for: UIControl.State())
         
         button.addTarget(self, action: #selector(handlePlay), for: .touchUpInside)
         

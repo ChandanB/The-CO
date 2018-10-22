@@ -57,7 +57,7 @@ class HelperService {
     
     static func sendDataToDatabase(photoUrl: String, videoUrl: String? = nil, ratio: CGFloat, caption: String, onSuccess: @escaping () -> Void) {
         let newPostId = Api.post.postsRef.childByAutoId().key
-        let newPostReference = Api.post.postsRef.child(newPostId)
+        let newPostReference = Api.post.postsRef.child(newPostId ?? "")
         
         guard let currentUser = Api.user.currentUser else { return }
         
@@ -83,9 +83,9 @@ class HelperService {
                 return
             }
             
-            Api.posts.postsRef.child(Api.user.currentUser!.uid).child(newPostId).setValue(true)
+            Api.posts.postsRef.child(Api.user.currentUser!.uid).child(newPostId ?? "").setValue(true)
             
-            let myPostRef = Api.myPosts.myPostsRef.child(currentUserId).child(newPostId)
+            let myPostRef = Api.myPosts.myPostsRef.child(currentUserId).child(newPostId ?? "")
             myPostRef.setValue(true, withCompletionBlock: { (error, ref) in
                 if error != nil {
                     return

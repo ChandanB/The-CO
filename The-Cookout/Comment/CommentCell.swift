@@ -57,19 +57,19 @@ class CommentCell: DatasourceCell {
         let timeAgoDisplay = comment.creationDate.timeAgoDisplay()
         let time = timeAgoDisplay
         
-        let attributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedStringKey.font: font])
+        let attributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedString.Key.font: font])
         
         let usernameString = " @\(username)"
         
-        attributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: regular, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
+        attributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedString.Key.font: regular, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
-        attributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
+        attributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 4)]))
         
-        attributedText.append(NSAttributedString(string: comment.text, attributes: [NSAttributedStringKey.font: regular]))
+        attributedText.append(NSAttributedString(string: comment.text, attributes: [NSAttributedString.Key.font: regular]))
         
-        attributedText.append(NSAttributedString(string: "\n\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
+        attributedText.append(NSAttributedString(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 4)]))
         
-        attributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: timeFont, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
+        attributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedString.Key.font: timeFont, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
         textView.attributedText = attributedText
     }

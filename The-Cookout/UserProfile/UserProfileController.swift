@@ -8,10 +8,9 @@
 
 import Firebase
 import LBTAComponents
-import Lightbox
 import PinterestLayout
 
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, PhotoCellDelegate, PinterestLayoutDelegate {
+class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, PinterestLayoutDelegate {
     
     let lightboxHeaderTitle: UILabel = {
         let label = UILabel()
@@ -19,38 +18,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         label.textColor = .white
         return label
     }()
-    
-    func lightboxControllerWillDismiss(_ controller: LightboxController) {
-        
-    }
-    
-    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
-        
-    }
-    
-    func presentLightBox(for cell: UserProfilePhotoCell) {
-        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        let post = self.gridArray[indexPath.item]
-        
-        LightboxConfig.InfoLabel.ellipsisText = "Show more"
-        LightboxConfig.hideStatusBar = true
-        
-        let lightboxController = LightboxController(images: images)
-        lightboxController.pageDelegate = self
-        lightboxController.dismissalDelegate = self
-        lightboxController.dynamicBackground = true
-        lightboxController.goTo(indexPath.item)
-        
-        lightboxHeaderTitle.text = post.user.name
-        
-        let header = lightboxController.headerView
-        header.addSubview(lightboxHeaderTitle)
-        lightboxHeaderTitle.anchor(header.topAnchor, left: header.leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 100, heightConstant: 20)
-        
-        DispatchQueue.main.async {
-            self.present(lightboxController, animated: true, completion: nil)
-        }
-    }
     
     let refreshControl = UIRefreshControl()
     
@@ -67,7 +34,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     var followingCount = 0
     var followersCount = 0
     
-    var images = [LightboxImage]()
     var indexes = [Int: Int]()
     var currentIndex = 0
     
@@ -95,7 +61,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
         
-        collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
+        collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(PostCell.self, forCellWithReuseIdentifier: postCellId)
         
@@ -117,7 +83,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.refreshControl.beginRefreshing()
         self.isFinishedPaging = false
         
-        self.images.removeAll()
         self.currentIndex = 0
         
         if isGridView {
@@ -191,10 +156,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 
                 if post.hasImage == "true" {
                     self.gridArray.append(post)
-                    self.indexes[self.currentIndex] = self.images.count
                     let imageUrl = post.imageUrl
-                    let image = LightboxImage(imageURL: URL(string: imageUrl)!, text: post.caption)
-                    self.images.append(image)
                     self.currentIndex += 1
                 }
                 
@@ -316,7 +278,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         if isGridView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
-            cell.delegate = self
+            cell.delegate = self as? PhotoCellDelegate
             cell.datasourceItem = self.gridArray[indexPath.item]
             return cell
         }
@@ -364,7 +326,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         }
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 17.0)!]
+        let attributes = [NSAttributedString.Key.font: CustomFont.proximaNovaAlt.of(size: 17.0)!]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
@@ -379,7 +341,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         let approximateWidthOfTextView = view.frame.width - 12 - 40 - 12 - 2
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
+        let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         

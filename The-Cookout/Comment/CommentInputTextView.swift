@@ -26,7 +26,7 @@ class CommentInputTextView: UITextView {
         super.init(frame: frame, textContainer: textContainer)
         self.backgroundColor = .white
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleTextChange), name: .UITextViewTextDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleTextChange), name: UITextView.textDidChangeNotification, object: nil)
         
         addSubview(placeholderLabel)
         placeholderLabel.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 8, leftConstant: 8, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)

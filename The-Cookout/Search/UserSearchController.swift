@@ -187,7 +187,7 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     private func estimatedHeightForText(_ text: String) -> CGFloat {
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 2
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
+        let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         

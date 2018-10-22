@@ -128,7 +128,7 @@ open class BMPlayerLayerView: UIView {
     // playbackBufferEmpty会反复进入，因此在bufferingOneSecond延时播放执行完之前再调用bufferingSomeSecond都忽略
     // 仅在bufferingSomeSecond里面使用
     fileprivate var isBuffering     = false
-    fileprivate var hasReadyToPlay  = true
+    fileprivate var hasReadyToPlay  = false
     fileprivate var shouldSeekTo: TimeInterval = 0
     
     // MARK: - Actions
@@ -208,7 +208,7 @@ open class BMPlayerLayerView: UIView {
     }
     
     open func onTimeSliderBegan() {
-        if self.player?.currentItem?.status == AVPlayerItemStatus.readyToPlay {
+        if self.player?.currentItem?.status == AVPlayerItem.Status.readyToPlay {
             self.timer?.fireDate = Date.distantFuture
         }
     }
@@ -218,9 +218,9 @@ open class BMPlayerLayerView: UIView {
             return
         }
         setupTimer()
-        if self.player?.currentItem?.status == AVPlayerItemStatus.readyToPlay {
-            let draggedTime = CMTimeMake(Int64(secounds), 1)
-            self.player!.seek(to: draggedTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { (finished) in
+        if self.player?.currentItem?.status == AVPlayerItem.Status.readyToPlay {
+            let draggedTime = CMTimeMake(value: Int64(secounds), timescale: 1)
+            self.player!.seek(to: draggedTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero, completionHandler: { (finished) in
                 completion?()
             })
         } else {
@@ -353,7 +353,7 @@ open class BMPlayerLayerView: UIView {
             if item == self.playerItem {
                 switch keyPath {
                 case "status":
-                    if player?.status == AVPlayerStatus.readyToPlay {
+                    if player?.status == AVPlayer.Status.readyToPlay {
                         self.state = .buffering
                         if shouldSeekTo != 0 {
                             print("BMPlayerLayer | Should seek to \(shouldSeekTo)")
@@ -366,7 +366,7 @@ open class BMPlayerLayerView: UIView {
                             self.hasReadyToPlay = true
                             self.state = .readyToPlay
                         }
-                    } else if player?.status == AVPlayerStatus.failed {
+                    } else if player?.status == AVPlayer.Status.failed {
                         self.state = .error
                     }
                     
@@ -384,7 +384,6 @@ open class BMPlayerLayerView: UIView {
                         self.state = .buffering
                         self.bufferingSomeSecond()
                     }
-                    
                 case "playbackLikelyToKeepUp":
                     if item.isPlaybackBufferEmpty {
                         if state != .bufferFinished && hasReadyToPlay {
@@ -433,7 +432,7 @@ open class BMPlayerLayerView: UIView {
         isBuffering = true
         // 需要先暂停一小会之后再播放，否则网络状况不好的时候时间在走，声音播放不出来
         player?.pause()
-        let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * 1.0 )) / Double(NSEC_PER_SEC)
         
         DispatchQueue.main.asyncAfter(deadline: popTime) {
             

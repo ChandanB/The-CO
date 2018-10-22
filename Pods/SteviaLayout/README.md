@@ -33,7 +33,7 @@
 - [x] 🔴 Plug **Live reload** and **boost** your iteration cycles
 
 
-[Reason](#reason) - [Example](#login-view-example) - [Live Reload](#live-reload) - [Installation](#installation) - [Documentation](#documentation)
+[Reason](#-reason) - [Example](#login-view-example) - [Live Reload](#-live-reload) - [Installation](#️-installation) - [Documentation](#-documentation)
 
 
 ### 🖼 Visual Layout Api
@@ -193,6 +193,9 @@ Become a sponsor and get your logo on our README on Github with a link to your s
 <a href="https://opencollective.com/freshos/sponsor/29/website" target="_blank"><img src="https://opencollective.com/freshos/sponsor/29/avatar.svg"></a>
 
 ### Swift Version
-Swift 2 -> v**2.3.0**  
-Swift 3 -> v**3.2.0**  
-Swift 4 -> v**4.1.0**
+
+- Swift 2 -> [v**2.3.0**](https://github.com/freshOS/Stevia/releases/tag/2.3.0)
+- Swift 3 -> [v**3.2.0**](https://github.com/freshOS/Stevia/releases/tag/3.2.0)
+- Swift 4 -> [v**4.2.0**](https://github.com/freshOS/Stevia/releases/tag/4.2.0)
+- Swift 4.1 -> [v**4.3.2**](https://github.com/freshOS/Stevia/releases/tag/4.3.2)
+- Swift 4.2 -> [v**4.4.0**](https://github.com/freshOS/Stevia/releases/tag/4.4.0)

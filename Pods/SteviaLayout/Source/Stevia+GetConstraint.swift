@@ -137,17 +137,55 @@ public extension UIView {
         return constraintForView(self, attribute: .leading)
     }
     
+    /** Gets the centerX constraint if found.
+     
+     Example Usage for changing width property of a label :
+     
+     ```
+     label.centerXConstraint?.constant = 10
+     
+     // Animate if needed
+     UIView.animateWithDuration(0.3, animations:layoutIfNeeded)
+     ```
+     - Returns: The width NSLayoutConstraint if found.
+     */
+    public var centerXConstraint: NSLayoutConstraint? {
+        return constraintForView(self, attribute: .centerX)
+    }
+    
+    /** Gets the centerY constraint if found.
+     
+     Example Usage for changing width property of a label :
+     
+     ```
+     label.centerYConstraint?.constant = 10
+     
+     // Animate if needed
+     UIView.animateWithDuration(0.3, animations:layoutIfNeeded)
+     ```
+     - Returns: The width NSLayoutConstraint if found.
+     */
+    public var centerYConstraint: NSLayoutConstraint? {
+        return constraintForView(self, attribute: .centerY)
+    }
 }
 
-func constraintForView(_ v: UIView, attribute: NSLayoutAttribute) -> NSLayoutConstraint? {
-    let target = v.superview ?? v
-    for c in target.constraints {
-        if let fi = c.firstItem as? NSObject, fi == v && c.firstAttribute == attribute {
-            return c
+func constraintForView(_ v: UIView, attribute: NSLayoutConstraint.Attribute) -> NSLayoutConstraint? {
+    
+    func lookForConstraint(in view: UIView?) -> NSLayoutConstraint? {
+        guard let constraints = view?.constraints else {
+            return nil
         }
-        if let si = c.secondItem as? NSObject, si == v && c.secondAttribute == attribute {
-            return c
+        for c in constraints {
+            if let fi = c.firstItem as? NSObject, fi == v && c.firstAttribute == attribute {
+                return c
+            } else if let si = c.secondItem as? NSObject, si == v && c.secondAttribute == attribute {
+                return c
+            }
         }
+        return nil
     }
-    return nil
+    
+    // First look for constraint on superview.
+    return lookForConstraint(in: v.superview) ?? lookForConstraint(in: v)
 }

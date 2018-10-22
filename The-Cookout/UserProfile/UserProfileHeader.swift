@@ -24,8 +24,8 @@ class UserProfileHeader: DatasourceCell {
     var postCount: Int? {
         didSet {
             let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-            let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedStringKey.font: fontStyle])
-            attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
+            let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
+            attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
             postsLabel.attributedText = attributedText
         }
     }
@@ -33,8 +33,8 @@ class UserProfileHeader: DatasourceCell {
     var followersCount: Int? {
         didSet {
             let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-            let attributedText = NSMutableAttributedString(string: "\(followersCount ?? 0)\n", attributes: [NSAttributedStringKey.font: fontStyle])
-            attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
+            let attributedText = NSMutableAttributedString(string: "\(followersCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
+            attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
             followersLabel.attributedText = attributedText
         }
     }
@@ -42,8 +42,8 @@ class UserProfileHeader: DatasourceCell {
     var followingCount: Int? {
         didSet {
             let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-            let attributedText = NSMutableAttributedString(string: "\(followingCount ?? 0)\n", attributes: [NSAttributedStringKey.font: fontStyle])
-            attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray,  NSAttributedStringKey.font: fontStyle]))
+            let attributedText = NSMutableAttributedString(string: "\(followingCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
+            attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
             followingLabel.attributedText = attributedText
         }
     }

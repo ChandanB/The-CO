@@ -17,13 +17,13 @@ class UserSearchCell: DatasourceCell {
             let url = URL(string: user.profileImageUrl)
             profileImageView.kf.setImage(with: url)
             
-            let nameAttributedText = NSMutableAttributedString(string: (user.name), attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 12)])
+            let nameAttributedText = NSMutableAttributedString(string: (user.name), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)])
             
             let usernameString = "@\(user.username)"
             
-            nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 5)]))
+            nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
             
-            nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 12), .foregroundColor: UIColor.gray]))
+            nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), .foregroundColor: UIColor.gray]))
             
             nameLabel.attributedText = nameAttributedText
             

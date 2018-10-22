@@ -15,14 +15,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let apikey = "7MEDJ1GO832B"
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
         Database.database().isPersistenceEnabled = true
                 
         window = UIWindow()
         window?.makeKeyAndVisible()
-        window?.rootViewController = MainTabBarController()
+        window?.rootViewController = BaseSlidingController()
         
         return true
     }

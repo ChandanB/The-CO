@@ -60,7 +60,7 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -80, right: 0)
         
-         collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
+         collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
         
         fetchComments()
         
@@ -114,7 +114,7 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 4
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 15.0)!]
+        let attributes = [NSAttributedString.Key.font: CustomFont.proximaNovaAlt.of(size: 15.0)!]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         

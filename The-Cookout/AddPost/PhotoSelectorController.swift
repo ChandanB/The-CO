@@ -30,7 +30,7 @@ class PhotoSelectorController: UICollectionViewController, UICollectionViewDeleg
         
         collectionView?.register(PhotoSelectorCell.self, forCellWithReuseIdentifier: cellId)
         
-        collectionView?.register(PhotoSelectorHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView?.register(PhotoSelectorHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         
         fetchPhotos()
     }

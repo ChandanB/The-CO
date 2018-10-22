@@ -64,9 +64,9 @@ class StickyLayout: UICollectionViewFlowLayout {
     
     func adjustAttributesIfNeeded(_ attributes: UICollectionViewLayoutAttributes) {
         switch attributes.representedElementKind {
-        case UICollectionElementKindSectionHeader?:
+        case UICollectionView.elementKindSectionHeader?:
             adjustHeaderAttributesIfNeeded(attributes)
-        case UICollectionElementKindSectionFooter?:
+        case UICollectionView.elementKindSectionFooter?:
             adjustFooterAttributesIfNeeded(attributes)
         default:
             break

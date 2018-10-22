@@ -56,6 +56,19 @@
 		1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */; };
 		1FCF385020BBDDB3008841B0 /* CommentPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCF384F20BBDDB3008841B0 /* CommentPostCell.swift */; };
 		1FCF385420BC0085008841B0 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCF385320BC0085008841B0 /* VideoPlayerViewController.swift */; };
+		1FF152D6217D6973000D5A53 /* ListsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152CD217D695B000D5A53 /* ListsController.swift */; };
+		1FF152D8217D6973000D5A53 /* ChatroomsMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152CF217D6961000D5A53 /* ChatroomsMenuController.swift */; };
+		1FF152DA217D6973000D5A53 /* BookmarksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152D1217D696A000D5A53 /* BookmarksController.swift */; };
+		1FF152DC217D6973000D5A53 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152D4217D6971000D5A53 /* MenuController.swift */; };
+		1FF152DD217D6973000D5A53 /* ChatroomMenuContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152D5217D6973000D5A53 /* ChatroomMenuContainerController.swift */; };
+		1FF152E5217D698D000D5A53 /* MenuItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152DF217D698C000D5A53 /* MenuItemCell.swift */; };
+		1FF152E6217D698D000D5A53 /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152E0217D698C000D5A53 /* ProfileImageView.swift */; };
+		1FF152E7217D698D000D5A53 /* ChatroomMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152E1217D698C000D5A53 /* ChatroomMenuCell.swift */; };
+		1FF152E8217D698D000D5A53 /* Extensions+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152E2217D698C000D5A53 /* Extensions+UIView.swift */; };
+		1FF152E9217D698D000D5A53 /* SpacerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152E3217D698C000D5A53 /* SpacerView.swift */; };
+		1FF152EA217D698D000D5A53 /* CustomMenuHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152E4217D698C000D5A53 /* CustomMenuHeaderView.swift */; };
+		1FF152EC217D71F3000D5A53 /* BaseSlidingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152EB217D71F3000D5A53 /* BaseSlidingController.swift */; };
+		1FF152EE217D8A63000D5A53 /* 20af1994-18b3-4cf6-88de-d6e182fa4941.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1FF152ED217D8A63000D5A53 /* 20af1994-18b3-4cf6-88de-d6e182fa4941.jpg */; };
 		1FF5076F20B15D2F0092F462 /* CommentInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5076E20B15D2F0092F462 /* CommentInputAccessoryView.swift */; };
 		1FF5077120B164CC0092F462 /* CommentInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5077020B164CB0092F462 /* CommentInputTextView.swift */; };
 		1FF5077620B2568A0092F462 /* UserMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5077520B2568A0092F462 /* UserMessageCell.swift */; };
@@ -80,7 +93,7 @@
 		1FF5084920B3F69B0092F462 /* FeedApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084820B3F69B0092F462 /* FeedApi.swift */; };
 		1FF5084B20B3F6FB0092F462 /* PostCommentsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */; };
 		1FF5084E20B4216A0092F462 /* ProfileDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */; };
-		FEF96D87CFE0CA30E256AC54 /* Pods_The_Cookout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */; };
+		78A3DCA0CBF9BAA8550FAE6F /* Pods_The_Cookout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279C9B80BA3C67E5DB339592 /* Pods_The_Cookout.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -135,6 +148,19 @@
 		1FAB5B4E20A7B10F003F9943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FCF384F20BBDDB3008841B0 /* CommentPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentPostCell.swift; sourceTree = "<group>"; };
 		1FCF385320BC0085008841B0 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
+		1FF152CD217D695B000D5A53 /* ListsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListsController.swift; sourceTree = "<group>"; };
+		1FF152CF217D6961000D5A53 /* ChatroomsMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatroomsMenuController.swift; sourceTree = "<group>"; };
+		1FF152D1217D696A000D5A53 /* BookmarksController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookmarksController.swift; sourceTree = "<group>"; };
+		1FF152D4217D6971000D5A53 /* MenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
+		1FF152D5217D6973000D5A53 /* ChatroomMenuContainerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatroomMenuContainerController.swift; sourceTree = "<group>"; };
+		1FF152DF217D698C000D5A53 /* MenuItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuItemCell.swift; sourceTree = "<group>"; };
+		1FF152E0217D698C000D5A53 /* ProfileImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
+		1FF152E1217D698C000D5A53 /* ChatroomMenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatroomMenuCell.swift; sourceTree = "<group>"; };
+		1FF152E2217D698C000D5A53 /* Extensions+UIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extensions+UIView.swift"; sourceTree = "<group>"; };
+		1FF152E3217D698C000D5A53 /* SpacerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpacerView.swift; sourceTree = "<group>"; };
+		1FF152E4217D698C000D5A53 /* CustomMenuHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomMenuHeaderView.swift; sourceTree = "<group>"; };
+		1FF152EB217D71F3000D5A53 /* BaseSlidingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSlidingController.swift; sourceTree = "<group>"; };
+		1FF152ED217D8A63000D5A53 /* 20af1994-18b3-4cf6-88de-d6e182fa4941.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "20af1994-18b3-4cf6-88de-d6e182fa4941.jpg"; sourceTree = "<group>"; };
 		1FF5076E20B15D2F0092F462 /* CommentInputAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputAccessoryView.swift; sourceTree = "<group>"; };
 		1FF5077020B164CB0092F462 /* CommentInputTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentInputTextView.swift; sourceTree = "<group>"; };
 		1FF5077520B2568A0092F462 /* UserMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMessageCell.swift; sourceTree = "<group>"; };
@@ -159,9 +185,9 @@
 		1FF5084820B3F69B0092F462 /* FeedApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedApi.swift; sourceTree = "<group>"; };
 		1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCommentsApi.swift; sourceTree = "<group>"; };
 		1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDatasource.swift; sourceTree = "<group>"; };
-		390C881A38F3B95586CB0671 /* Pods-The-Cookout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.debug.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.debug.xcconfig"; sourceTree = "<group>"; };
-		41062D1ADD562626DE736A1C /* Pods-The-Cookout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.release.xcconfig"; path = "Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout.release.xcconfig"; sourceTree = "<group>"; };
-		A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_The_Cookout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		279C9B80BA3C67E5DB339592 /* Pods_The_Cookout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_The_Cookout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		824BD3194F23848E66D66DBE /* Pods-The-Cookout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.release.xcconfig"; path = "Target Support Files/Pods-The-Cookout/Pods-The-Cookout.release.xcconfig"; sourceTree = "<group>"; };
+		9D6616ED59DB1D79E1E7CA5E /* Pods-The-Cookout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.debug.xcconfig"; path = "Target Support Files/Pods-The-Cookout/Pods-The-Cookout.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,7 +195,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FEF96D87CFE0CA30E256AC54 /* Pods_The_Cookout.framework in Frameworks */,
+				78A3DCA0CBF9BAA8550FAE6F /* Pods_The_Cookout.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +239,7 @@
 		1F4FD35E20A9FA7B00AB73C1 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				1FF152CC217D693B000D5A53 /* SlideOutMenu */,
 				1F2BAA2220A7BF0200350CEC /* HomeController.swift */,
 				1F2BAA3120A7EF5700350CEC /* PostCell.swift */,
 				1F2BAA2920A7C57D00350CEC /* HomeDatasource.swift */,
@@ -301,8 +328,8 @@
 				1F2BAA3720A8058600350CEC /* GoogleService-Info.plist */,
 				1FAB5B4120A7B10A003F9943 /* The-Cookout */,
 				1FAB5B4020A7B10A003F9943 /* Products */,
-				E4BC5B1462880AB2A55CB400 /* Pods */,
-				E24918EF2D0D08D964B871C1 /* Frameworks */,
+				E863D97CA4888B11E5094981 /* Pods */,
+				5E0BD8E21D451AEDC97161D0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -334,10 +361,46 @@
 				1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */,
 				1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */,
 				1FAB5B4920A7B10F003F9943 /* Assets.xcassets */,
+				1FF152ED217D8A63000D5A53 /* 20af1994-18b3-4cf6-88de-d6e182fa4941.jpg */,
 				1FF5078520B39D540092F462 /* heart.png */,
 				1FAB5B4E20A7B10F003F9943 /* Info.plist */,
 			);
 			path = "The-Cookout";
+			sourceTree = "<group>";
+		};
+		1FF152CC217D693B000D5A53 /* SlideOutMenu */ = {
+			isa = PBXGroup;
+			children = (
+				1FF152DE217D698C000D5A53 /* Views */,
+				1FF152D2217D696E000D5A53 /* Base */,
+				1FF152D1217D696A000D5A53 /* BookmarksController.swift */,
+				1FF152D5217D6973000D5A53 /* ChatroomMenuContainerController.swift */,
+				1FF152CF217D6961000D5A53 /* ChatroomsMenuController.swift */,
+				1FF152CD217D695B000D5A53 /* ListsController.swift */,
+				1FF152D4217D6971000D5A53 /* MenuController.swift */,
+			);
+			path = SlideOutMenu;
+			sourceTree = "<group>";
+		};
+		1FF152D2217D696E000D5A53 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				1FF152EB217D71F3000D5A53 /* BaseSlidingController.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		1FF152DE217D698C000D5A53 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1FF152DF217D698C000D5A53 /* MenuItemCell.swift */,
+				1FF152E0217D698C000D5A53 /* ProfileImageView.swift */,
+				1FF152E1217D698C000D5A53 /* ChatroomMenuCell.swift */,
+				1FF152E2217D698C000D5A53 /* Extensions+UIView.swift */,
+				1FF152E3217D698C000D5A53 /* SpacerView.swift */,
+				1FF152E4217D698C000D5A53 /* CustomMenuHeaderView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		1FF5076D20B15C4F0092F462 /* Comment */ = {
@@ -387,21 +450,21 @@
 			path = API;
 			sourceTree = "<group>";
 		};
-		E24918EF2D0D08D964B871C1 /* Frameworks */ = {
+		5E0BD8E21D451AEDC97161D0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A213286CB9EB83E502E78FBB /* Pods_The_Cookout.framework */,
+				279C9B80BA3C67E5DB339592 /* Pods_The_Cookout.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		E4BC5B1462880AB2A55CB400 /* Pods */ = {
+		E863D97CA4888B11E5094981 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				390C881A38F3B95586CB0671 /* Pods-The-Cookout.debug.xcconfig */,
-				41062D1ADD562626DE736A1C /* Pods-The-Cookout.release.xcconfig */,
+				9D6616ED59DB1D79E1E7CA5E /* Pods-The-Cookout.debug.xcconfig */,
+				824BD3194F23848E66D66DBE /* Pods-The-Cookout.release.xcconfig */,
 			);
-			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -411,11 +474,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1FAB5B5120A7B10F003F9943 /* Build configuration list for PBXNativeTarget "The-Cookout" */;
 			buildPhases = (
-				60427265C1F9FC9FBD3929C8 /* [CP] Check Pods Manifest.lock */,
+				E555F72F07795B366BB649D4 /* [CP] Check Pods Manifest.lock */,
 				1FAB5B3B20A7B10A003F9943 /* Sources */,
 				1FAB5B3C20A7B10A003F9943 /* Frameworks */,
 				1FAB5B3D20A7B10A003F9943 /* Resources */,
-				AC607530D9E275CE1F8A9D55 /* [CP] Embed Pods Frameworks */,
+				C07F4686B60EA3D9F45906D3 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -438,6 +501,7 @@
 				TargetAttributes = {
 					1FAB5B3E20A7B10A003F9943 = {
 						CreatedOnToolsVersion = 9.3.1;
+						LastSwiftMigration = 1000;
 					};
 				};
 			};
@@ -475,6 +539,7 @@
 				1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */,
 				1F75BEBC20ABB46200BA7AF2 /* Default-568h@2x.png in Resources */,
 				1FAB5B4A20A7B10F003F9943 /* Assets.xcassets in Resources */,
+				1FF152EE217D8A63000D5A53 /* 20af1994-18b3-4cf6-88de-d6e182fa4941.jpg in Resources */,
 				1F2BAA3820A8058700350CEC /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -482,51 +547,30 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		60427265C1F9FC9FBD3929C8 /* [CP] Check Pods Manifest.lock */ = {
+		C07F4686B60EA3D9F45906D3 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-The-Cookout-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AC607530D9E275CE1F8A9D55 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-The-Cookout/Pods-The-Cookout-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/BMPlayer/BMPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/Bolts-Swift/BoltsSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework",
-				"${BUILT_PRODUCTS_DIR}/Cache/Cache.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
-				"${BUILT_PRODUCTS_DIR}/Gallery/Gallery.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/Imaginary/Imaginary.framework",
 				"${BUILT_PRODUCTS_DIR}/KILabel/KILabel.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/LBTAComponents/LBTAComponents.framework",
-				"${BUILT_PRODUCTS_DIR}/Lightbox/Lightbox.framework",
 				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
 				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/PinterestLayout/PinterestLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/PryntTrimmerView/PryntTrimmerView.framework",
 				"${BUILT_PRODUCTS_DIR}/SCLAlertView/SCLAlertView.framework",
-				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
 				"${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework",
@@ -536,27 +580,24 @@
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BMPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BoltsSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BonMot.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Gallery.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Imaginary.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KILabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LBTAComponents.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lightbox.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PinterestLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PryntTrimmerView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCLAlertView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stevia.framework",
@@ -567,7 +608,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-The-Cookout/Pods-The-Cookout-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-The-Cookout/Pods-The-Cookout-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E555F72F07795B366BB649D4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-The-Cookout-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -584,20 +647,26 @@
 				1FF5077F20B25D320092F462 /* MessagesController.swift in Sources */,
 				1FCF385020BBDDB3008841B0 /* CommentPostCell.swift in Sources */,
 				1F2BAA2A20A7C57D00350CEC /* HomeDatasource.swift in Sources */,
+				1FF152D6217D6973000D5A53 /* ListsController.swift in Sources */,
 				1F56619F20AEA19800F8E1B7 /* SideMenu.swift in Sources */,
 				1F4FD35820A9ED4600AB73C1 /* MainTabBarController.swift in Sources */,
 				1F2BAA4120A8145B00350CEC /* RegisterController.swift in Sources */,
 				1FF5083520B3EAFA0092F462 /* PostApi.swift in Sources */,
+				1FF152EC217D71F3000D5A53 /* BaseSlidingController.swift in Sources */,
 				1F4FD36E20AA838E00AB73C1 /* PhotoSelectorHeader.swift in Sources */,
 				1FF5077620B2568A0092F462 /* UserMessageCell.swift in Sources */,
 				1FAB5B4320A7B10A003F9943 /* AppDelegate.swift in Sources */,
+				1FF152E7217D698D000D5A53 /* ChatroomMenuCell.swift in Sources */,
 				1F2BAA2C20A7D50400350CEC /* User.swift in Sources */,
+				1FF152EA217D698D000D5A53 /* CustomMenuHeaderView.swift in Sources */,
 				1F2BAA2820A7C55700350CEC /* UserHeaderFooter.swift in Sources */,
 				1F4FD36C20AA804F00AB73C1 /* PhotoSelectorCell.swift in Sources */,
 				1FF5076F20B15D2F0092F462 /* CommentInputAccessoryView.swift in Sources */,
 				1F2BAA3D20A80BC800350CEC /* Extensions.swift in Sources */,
+				1FF152E6217D698D000D5A53 /* ProfileImageView.swift in Sources */,
 				1F2BAA3F20A80C6800350CEC /* Message.swift in Sources */,
 				1FF5078820B39EB90092F462 /* Color.swift in Sources */,
+				1FF152E9217D698D000D5A53 /* SpacerView.swift in Sources */,
 				1F75BEC720AC312600BA7AF2 /* UserSearchCell.swift in Sources */,
 				1F4FD35A20A9EE7500AB73C1 /* UserProfileController.swift in Sources */,
 				1F2BAA2320A7BF0200350CEC /* HomeController.swift in Sources */,
@@ -605,9 +674,13 @@
 				1FF5083F20B3F15D0092F462 /* CommentApi.swift in Sources */,
 				1FF5083920B3EE6F0092F462 /* UserApi.swift in Sources */,
 				1F4FD36A20AA62A900AB73C1 /* PostHeader.swift in Sources */,
+				1FF152DD217D6973000D5A53 /* ChatroomMenuContainerController.swift in Sources */,
 				1FF5077820B257B90092F462 /* ChatMessageCell.swift in Sources */,
 				1FF5084320B3F23F0092F462 /* AuthService.swift in Sources */,
+				1FF152DA217D6973000D5A53 /* BookmarksController.swift in Sources */,
 				1F8DF92620AF2B8B00AEB43B /* Comment.swift in Sources */,
+				1FF152E8217D698D000D5A53 /* Extensions+UIView.swift in Sources */,
+				1FF152D8217D6973000D5A53 /* ChatroomsMenuController.swift in Sources */,
 				1F5661A120AEA4EE00F8E1B7 /* CustomAnimationPresenter.swift in Sources */,
 				1F75BECA20AC323400BA7AF2 /* SearchDatasource.swift in Sources */,
 				1FF5078320B280040092F462 /* MessageDatasource.swift in Sources */,
@@ -623,6 +696,7 @@
 				1F75BEF220AD5B0200BA7AF2 /* StickyLayout.swift in Sources */,
 				1F8DF92C20AF2EE700AEB43B /* CommentsDatasource.swift in Sources */,
 				1F5661A520AEA6C100F8E1B7 /* CustomAnimationDismisser.swift in Sources */,
+				1FF152DC217D6973000D5A53 /* MenuController.swift in Sources */,
 				1F4FD36820AA5CE400AB73C1 /* PhotoSelectorController.swift in Sources */,
 				1FF5083720B3EDB20092F462 /* Api.swift in Sources */,
 				1FF5084520B3F3AF0092F462 /* Config.swift in Sources */,
@@ -630,6 +704,7 @@
 				1F2BAA3620A7F38D00350CEC /* Post.swift in Sources */,
 				1FF5084E20B4216A0092F462 /* ProfileDatasource.swift in Sources */,
 				1FF5083D20B3F0860092F462 /* MyPostsApi.swift in Sources */,
+				1FF152E5217D698D000D5A53 /* MenuItemCell.swift in Sources */,
 				1FF5083B20B3F0360092F462 /* FollowApi.swift in Sources */,
 				1F4FD36620AA5CA900AB73C1 /* PostController.swift in Sources */,
 				1FF5077C20B25BF50092F462 /* ChatLogController.swift in Sources */,
@@ -711,6 +786,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_ENABLE_BATCH_MOD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -764,6 +840,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_ENABLE_BATCH_MOD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -771,7 +848,7 @@
 		};
 		1FAB5B5220A7B10F003F9943 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 390C881A38F3B95586CB0671 /* Pods-The-Cookout.debug.xcconfig */;
+			baseConfigurationReference = 9D6616ED59DB1D79E1E7CA5E /* Pods-The-Cookout.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -784,14 +861,14 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.App-Power.The-Cookout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		1FAB5B5320A7B10F003F9943 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41062D1ADD562626DE736A1C /* Pods-The-Cookout.release.xcconfig */;
+			baseConfigurationReference = 824BD3194F23848E66D66DBE /* Pods-The-Cookout.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -804,7 +881,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.App-Power.The-Cookout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

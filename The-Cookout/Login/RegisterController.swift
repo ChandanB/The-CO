@@ -29,7 +29,10 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         }
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+// Local variable inserted by Swift 4.2 migrator.
+let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+
         
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
             addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -142,7 +145,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
             
             guard let image = self.addPhotoButton.imageView?.image else { return }
             
-            guard let uploadData = UIImageJPEGRepresentation(image, 0.3) else { return }
+            guard let uploadData = image.jpegData(compressionQuality: 0.3) else { return }
             
             let filename = NSUUID().uuidString
             
@@ -233,9 +236,9 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     let alreadyHaveAccountButton: UIButton = {
         let button = UIButton(type: .system)
         let fontStyle = UIFont.systemFont(ofSize: 14)
-        let attributedTitle = NSMutableAttributedString(string: "Already have an account?  ", attributes: [NSAttributedStringKey.font: fontStyle, NSAttributedStringKey.foregroundColor: UIColor.lightGray])
+        let attributedTitle = NSMutableAttributedString(string: "Already have an account?  ", attributes: [NSAttributedString.Key.font: fontStyle, NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         
-        attributedTitle.append(NSAttributedString(string: "Log In.", attributes: [NSAttributedStringKey.foregroundColor: UIColor(r: 17, g: 155, b: 237),  NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)]))
+        attributedTitle.append(NSAttributedString(string: "Log In.", attributes: [NSAttributedString.Key.foregroundColor: UIColor(r: 17, g: 155, b: 237),  NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)]))
         
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.addTarget(self, action: #selector(handleAlreadyHaveAccount), for: .touchUpInside)
@@ -250,8 +253,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(LoginController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(LoginController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         view.addSubview(alreadyHaveAccountButton)
         alreadyHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
@@ -381,7 +384,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        if ((notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue) != nil {
+        if ((notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue) != nil {
             if self.view.frame.origin.y == 0 {
                 self.view.frame.origin.y -= 70
             }
@@ -389,7 +392,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
-        if ((notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue) != nil {
+        if ((notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue) != nil {
             if self.view.frame.origin.y != 0 {
                 self.view.frame.origin.y += 70
             }
@@ -398,11 +401,16 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     
 }
 
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}

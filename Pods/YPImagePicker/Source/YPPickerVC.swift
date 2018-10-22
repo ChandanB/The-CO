@@ -10,7 +10,7 @@ import Foundation
 import Stevia
 import Photos
 
-protocol ImagePickerDelegate {
+protocol ImagePickerDelegate: AnyObject {
     func noPhotos()
 }
 
@@ -19,7 +19,7 @@ public class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     let albumsManager = YPAlbumsManager()
     var shouldHideStatusBar = false
     var initialStatusBarHidden = false
-    var imagePickerDelegate: ImagePickerDelegate?
+    weak var imagePickerDelegate: ImagePickerDelegate?
     
     override public var prefersStatusBarHidden: Bool {
         return (shouldHideStatusBar || initialStatusBarHidden) && YPConfig.hidesStatusBar
@@ -237,7 +237,7 @@ public class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
             arrow.image = YPConfig.icons.arrowDownIcon
             
             let attributes = UINavigationBar.appearance().titleTextAttributes
-            if let attributes = attributes, let foregroundColor = attributes[NSAttributedStringKey.foregroundColor] as? UIColor {
+            if let attributes = attributes, let foregroundColor = attributes[NSAttributedString.Key.foregroundColor] as? UIColor {
                 arrow.image = arrow.image?.withRenderingMode(.alwaysTemplate)
                 arrow.tintColor = foregroundColor
             }

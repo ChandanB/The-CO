@@ -143,7 +143,7 @@ class HomeController: DatasourceController {
             allObjects.reverse()
             
             allObjects.forEach({ (snapshot) in
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
+               // guard let dictionary = snapshot.value as? [String: Any] else { return }
               //  let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
             
             })
@@ -268,9 +268,14 @@ class HomeController: DatasourceController {
         profileButton.imageView?.contentMode = .scaleAspectFill
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: profileButton)
-        navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleLogout)))
+        navigationItem.leftBarButtonItem?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleOpen)))
     }
     
+    @objc func handleOpen() {
+        (UIApplication.shared.keyWindow?.rootViewController as? BaseSlidingController)?.openMenu()
+    }
+    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 1.5
     }
@@ -297,7 +302,7 @@ class HomeController: DatasourceController {
         
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 4
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedStringKey.font: CustomFont.proximaNovaAlt.of(size: 15.0)!]
+        let attributes = [NSAttributedString.Key.font: CustomFont.proximaNovaAlt.of(size: 15.0)!]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         

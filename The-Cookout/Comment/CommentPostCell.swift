@@ -49,22 +49,22 @@ class CommentPostCell: DatasourceCell {
         let font = CustomFont.proximaNovaSemibold.of(size: 14.0)
         let regular = CustomFont.proximaNovaAlt.of(size: 15.0)
         
-        let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedStringKey.font: font!])
+        let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedString.Key.font: font!])
         
         let usernameString = " @\(post.user.username)"
         
-        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
+        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedString.Key.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
-        nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
+        nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 4)]))
         
         let timeAgoDisplay = post.creationDate.timeAgoDisplay()
         let time = timeAgoDisplay
         
-        nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
+        nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedString.Key.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
         nameLabel.attributedText = nameAttributedText
         
-        let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: regular!])
+        let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedString.Key.font: regular!])
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 5

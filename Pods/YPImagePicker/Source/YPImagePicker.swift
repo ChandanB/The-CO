@@ -10,24 +10,17 @@ import UIKit
 import AVFoundation
 import Photos
 
-public protocol YPImagePickerDelegate {
+public protocol YPImagePickerDelegate: AnyObject {
     func noPhotos()
 }
 
 public class YPImagePicker: UINavigationController {
     
-    @available(*, deprecated, message: "Use didFinishPicking callback instead")
-    public var didSelectImage: ((UIImage) -> Void)?
-    @available(*, deprecated, message: "Use didFinishPicking callback instead")
-    public var didSelectVideo: ((Data, UIImage, URL) -> Void)?
-    @available(*, deprecated, message: "Use didFinishPicking callback instead")
-    public var didCancel: (() -> Void)?
-    
     private var _didFinishPicking: (([YPMediaItem], Bool) -> Void)?
     public func didFinishPicking(completion: @escaping (_ items: [YPMediaItem], _ cancelled: Bool) -> Void) {
         _didFinishPicking = completion
     }
-    public var imagePickerDelegate: YPImagePickerDelegate?
+    public weak var imagePickerDelegate: YPImagePickerDelegate?
     
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return YPImagePickerConfiguration.shared.preferredStatusBarStyle
@@ -37,21 +30,7 @@ public class YPImagePicker: UINavigationController {
     // This keeps the backwards compatibility keeps the api as simple as possible.
     // Multiple selection becomes available as an opt-in.
     private func didSelect(items: [YPMediaItem]) {
-        if items.count == 1 {
-            if let didSelectImage = didSelectImage, let first = items.first,
-                case let .photo(pickedPhoto) = first {
-                didSelectImage(pickedPhoto.image)
-            } else if let didSelectVideo = didSelectVideo, let first = items.first,
-                case let .video(pickedVideo) = first {
-                pickedVideo.fetchData { videoData in
-                    didSelectVideo(videoData, pickedVideo.thumbnail, pickedVideo.url)
-                }
-            } else {
-                _didFinishPicking?(items, false)
-            }
-        } else {
-            _didFinishPicking?(items, false)
-        }
+        _didFinishPicking?(items, false)
     }
     
     let loadingView = YPLoadingView()
@@ -77,7 +56,6 @@ public class YPImagePicker: UINavigationController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         picker.didClose = { [weak self] in
-            self?.didCancel?()
             self?._didFinishPicking?([], true)
         }
         viewControllers = [picker]
@@ -90,8 +68,8 @@ public class YPImagePicker: UINavigationController {
             // Use Fade transition instead of default push animation
             let transition = CATransition()
             transition.duration = 0.3
-            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            transition.type = kCATransitionFade
+            transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            transition.type = CATransitionType.fade
             self?.view.layer.add(transition, forKey: nil)
             
             // Multiple items flow

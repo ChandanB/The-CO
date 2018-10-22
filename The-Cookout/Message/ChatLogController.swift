@@ -86,9 +86,12 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
         present(imagePickerController, animated: true, completion: nil)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+// Local variable inserted by Swift 4.2 migrator.
+let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+
         
-        if let videoUrl = info[UIImagePickerControllerMediaURL] as? URL {
+        if let videoUrl = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.mediaURL)] as? URL {
             handleVideoSelectedForUrl(videoUrl)
         } else {
             handleImageSelectedForInfo(info as [String : AnyObject])
@@ -136,7 +139,7 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
         
         do {
             
-            let thumbnailCGImage = try imageGenerator.copyCGImage(at: CMTimeMake(1, 60), actualTime: nil)
+            let thumbnailCGImage = try imageGenerator.copyCGImage(at: CMTimeMake(value: 1, timescale: 60), actualTime: nil)
             return UIImage(cgImage: thumbnailCGImage)
             
         } catch let err {
@@ -167,7 +170,7 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
         let imageName = UUID().uuidString
         let ref = Storage.storage().reference().child("message_images").child(imageName)
         
-        if let uploadData = UIImageJPEGRepresentation(image, 0.2) {
+        if let uploadData = image.jpegData(compressionQuality: 0.2) {
             ref.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                 
                 if error != nil {
@@ -199,7 +202,7 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
     }
     
     func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidShow), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidShow), name: UIResponder.keyboardDidShowNotification, object: nil)
     }
     
     @objc func handleKeyboardDidShow() {
@@ -215,8 +218,8 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
     }
     
     func handleKeyboardWillShow(_ notification: Notification) {
-        let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
-        let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
+        let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+        let keyboardDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
         
         containerViewBottomAnchor?.constant = -keyboardFrame!.height
         UIView.animate(withDuration: keyboardDuration!, animations: {
@@ -225,7 +228,7 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
     }
     
     func handleKeyboardWillHide(_ notification: Notification) {
-        let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
+        let keyboardDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
         
         containerViewBottomAnchor?.constant = 0
         UIView.animate(withDuration: keyboardDuration!, animations: {
@@ -320,7 +323,7 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
     fileprivate func estimateFrameForText(_ text: String) -> CGRect {
         let size = CGSize(width: 200, height: 1000)
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)], context: nil)
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
     var containerViewBottomAnchor: NSLayoutConstraint?
@@ -434,3 +437,13 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
     }
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
+	return input.rawValue
+}

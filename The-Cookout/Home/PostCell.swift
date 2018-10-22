@@ -15,7 +15,6 @@ import LBTAComponents
 import UIFontComplete
 import Spring
 import AVFoundation
-import SkeletonView
 
 protocol UserPostCellDelegate {
     func didLike(for cell: PostCell)
@@ -54,22 +53,22 @@ class PostCell: DatasourceCell {
         let font = CustomFont.proximaNovaSemibold.of(size: 14.0)
         let regular = CustomFont.proximaNovaAlt.of(size: 15.0)
         
-        let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedStringKey.font: font!])
+        let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedString.Key.font: font!])
         
         let usernameString = "  @\(post.user.username)"
         
-        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedStringKey.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
+        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedString.Key.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
-        nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
+        nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 4)]))
                 
         let timeAgoDisplay = post.creationDate.timeAgoDisplay()
         let time = timeAgoDisplay
         
-        nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedStringKey.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
+        nameAttributedText.append(NSAttributedString(string: (time), attributes: [NSAttributedString.Key.font: regular!, .foregroundColor: UIColor(r: 100, g: 100, b: 100)]))
         
         nameLabel.attributedText = nameAttributedText
         
-        let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedStringKey.font: regular!])
+        let attributedText = NSMutableAttributedString(string: (post.caption), attributes: [NSAttributedString.Key.font: regular!])
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 5
@@ -99,7 +98,7 @@ class PostCell: DatasourceCell {
         iv.clipsToBounds = true
         iv.image = #imageLiteral(resourceName: "heart.png")
         iv.alpha = 0
-        iv.isSkeletonable = true
+      //  iv.isSkeletonable = true
         return iv
     }()
     
@@ -111,7 +110,7 @@ class PostCell: DatasourceCell {
         let tg = UITapGestureRecognizer(target: self, action: #selector(handleComment))
         tv.addGestureRecognizer(tg)
         tv.isUserInteractionEnabled = true
-        tv.isSkeletonable = true
+     //   tv.isSkeletonable = true
         return tv
     }()
     
@@ -211,7 +210,7 @@ class PostCell: DatasourceCell {
         let tg = UITapGestureRecognizer(target: self, action: #selector(handleUserProfile))
         label.addGestureRecognizer(tg)
         label.isUserInteractionEnabled = true
-        label.isSkeletonable = true
+    //    label.isSkeletonable = true
         return label
     }()
     

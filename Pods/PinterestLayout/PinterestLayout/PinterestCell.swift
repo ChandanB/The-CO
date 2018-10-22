@@ -101,7 +101,7 @@ extension PinterestCell {
                 attribute: .top,
                 relatedBy: .equal,
                 toItem: roundedCornersView,
-                attribute: NSLayoutAttribute.top,
+                attribute: NSLayoutConstraint.Attribute.top,
                 multiplier: 1,
                 constant: 0
             )

@@ -27,8 +27,8 @@ struct Post {
     
     let creationDate: Date
     
-    var repostCount = 0
-    var hasRepost = false
+    var likeCount = 0
+    var hasLiked = false
 
     init(user: User, dictionary: [String: AnyObject]) {
         self.user = user

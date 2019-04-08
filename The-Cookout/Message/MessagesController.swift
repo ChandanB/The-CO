@@ -9,30 +9,6 @@
 import LBTAComponents
 import Firebase
 
-struct ChatMessage {
-    let text: String
-    let isIncoming: Bool
-    let date: Date
-}
-
-extension Date {
-    static func dateFromCustomString(customString: String) -> Date {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yyyy"
-        return dateFormatter.date(from: customString) ?? Date()
-    }
-    
-    func reduceToMonthDayYear() -> Date {
-        let calendar = Calendar.current
-        let month = calendar.component(.month, from: self)
-        let day = calendar.component(.day, from: self)
-        let year = calendar.component(.year, from: self)
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yyyy"
-        return dateFormatter.date(from: "\(month)/\(day)/\(year)") ?? Date()
-    }
-}
-
 class MessagesController: UITableViewController {
     
     let cellId = "cellId"
@@ -41,7 +17,6 @@ class MessagesController: UITableViewController {
         super.viewDidLoad()
         
         fetchUserAndSetupNavBarTitle()
-        attemptToAssembleGroupedMessages()
         
         tableView.register(UserMessageCell.self, forCellReuseIdentifier: cellId)
         tableView.allowsMultipleSelectionDuringEditing = true
@@ -116,22 +91,6 @@ class MessagesController: UITableViewController {
             }
             
         }, withCancel: nil)
-    }
-    
-    fileprivate func attemptToAssembleGroupedMessages() {
-        print("Attempt to group our messages together based on Date property")
-        
-        let groupedMessages = Dictionary(grouping: messages) { (element) -> Date in
-            return element.date.reduceToMonthDayYear()
-        }
-        
-        // provide a sorting for your keys somehow
-        let sortedKeys = groupedMessages.keys.sorted()
-        sortedKeys.forEach { (key) in
-            let values = groupedMessages[key]
-            chatMessages.append(values ?? [])
-        }
-        
     }
     
     fileprivate func attemptReloadOfTable() {

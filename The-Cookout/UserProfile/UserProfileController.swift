@@ -368,7 +368,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func didLike(for cell: PostCell) {
-        var indexPaths = [IndexPath]()
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         
         var post = self.listArray[indexPath.item]
@@ -377,7 +376,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        let values = [uid: post.hasRepost == true ? 0 : 1]
+        let values = [uid: post.hasLiked == true ? 0 : 1]
         Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, _) in
             
             if let err = err {
@@ -387,13 +386,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             
             print("Successfully liked post.")
             
-            post.hasRepost = !post.hasRepost
-            indexPaths.append(indexPath)
+            post.hasLiked = !post.hasLiked
+            
             self.listArray[indexPath.item] = post
             
-            self.collectionView?.reloadItems(at: indexPaths)
+            self.collectionView?.reloadItems(at: [indexPath])
         }
-        
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

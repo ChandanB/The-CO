@@ -273,8 +273,6 @@ class HomeController: DatasourceController {
     
     @objc func handleOpen() {
         (UIApplication.shared.keyWindow?.rootViewController as? BaseSlidingController)?.openMenu()
-        
-        handleLogout()
     }
     
 

@@ -5,6 +5,7 @@
 //  Created by Chandan Brown on 5/18/18.
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
+
 import LBTAComponents
 
 class CommentCell: DatasourceCell {
@@ -44,7 +45,7 @@ class CommentCell: DatasourceCell {
         addSubview(textView)
         textView.anchor(topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 4, leftConstant: 4, bottomConstant: 4, rightConstant: 4, widthConstant: 0, heightConstant: 0)
     }
-    
+
     fileprivate func setupAttributedText(_ comment: Comment) {
         let name = comment.user.name
         let username = comment.user.username

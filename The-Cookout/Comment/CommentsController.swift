@@ -5,6 +5,7 @@
 //  Created by Chandan Brown on 5/18/18.
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
+
 import LBTAComponents
 import Firebase
 
@@ -59,7 +60,7 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -80, right: 0)
         
-        collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
+         collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
         
         fetchComments()
         
@@ -170,3 +171,4 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         return true
     }
 }
+

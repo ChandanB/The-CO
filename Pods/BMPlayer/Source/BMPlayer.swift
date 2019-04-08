@@ -233,10 +233,10 @@ open class BMPlayer: UIView {
         
         // 判断是垂直移动还是水平移动
         switch pan.state {
-        case UIGestureRecognizerState.began:
+        case UIGestureRecognizer.State.began:
             // 使用绝对值来判断移动的方向
-            let x = fabs(velocityPoint.x)
-            let y = fabs(velocityPoint.y)
+            let x = abs(velocityPoint.x)
+            let y = abs(velocityPoint.y)
             
             if x > y {
                 self.panDirection = BMPanDirection.horizontal
@@ -256,7 +256,7 @@ open class BMPlayer: UIView {
                 }
             }
             
-        case UIGestureRecognizerState.changed:
+        case UIGestureRecognizer.State.changed:
             switch self.panDirection {
             case BMPanDirection.horizontal:
                 self.horizontalMoved(velocityPoint.x)
@@ -264,7 +264,7 @@ open class BMPlayer: UIView {
                 self.verticalMoved(velocityPoint.y)
             }
             
-        case UIGestureRecognizerState.ended:
+        case UIGestureRecognizer.State.ended:
             // 移动结束也需要判断垂直或者平移
             // 比如水平移动结束时，要快进到指定位置，如果这里没有判断，当我们调节音量完之后，会出现屏幕跳动的bug
             switch (self.panDirection) {

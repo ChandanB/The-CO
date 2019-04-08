@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1020"
+   LastUpgradeVersion = "1000"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DA8A6AA4F2F8CCBE12484F249BA4A7B1"
+               BlueprintIdentifier = "93D582226813520A5212F639E30D46B8"
                BuildableName = "FirebaseAuth.framework"
                BlueprintName = "FirebaseAuth"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DA8A6AA4F2F8CCBE12484F249BA4A7B1"
+            BlueprintIdentifier = "93D582226813520A5212F639E30D46B8"
             BuildableName = "FirebaseAuth.framework"
             BlueprintName = "FirebaseAuth"
             ReferencedContainer = "container:Pods.xcodeproj">

@@ -13,7 +13,7 @@ import UIKit
  */
 open class CachedImageView: UIImageView {
     
-    public static let imageCache = NSCache<NSString, DiscardableImageCacheItem>()
+    open static let imageCache = NSCache<NSString, DiscardableImageCacheItem>()
     
     open var shouldUseEmptyImage = true
     

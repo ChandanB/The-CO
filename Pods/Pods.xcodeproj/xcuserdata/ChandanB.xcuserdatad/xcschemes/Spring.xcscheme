@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BA6904F23249912D5FDBDA32BA4A0B1F"
+               BlueprintIdentifier = "BD9F57EEC3229B49CBF1A2EFAB3FD559"
                BuildableName = "Spring.framework"
                BlueprintName = "Spring"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BA6904F23249912D5FDBDA32BA4A0B1F"
+            BlueprintIdentifier = "BD9F57EEC3229B49CBF1A2EFAB3FD559"
             BuildableName = "Spring.framework"
             BlueprintName = "Spring"
             ReferencedContainer = "container:Pods.xcodeproj">

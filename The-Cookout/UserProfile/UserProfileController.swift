@@ -10,7 +10,7 @@ import Firebase
 import LBTAComponents
 import PinterestLayout
 
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, PinterestLayoutDelegate {
+class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserPostCellDelegate, PinterestLayoutDelegate {
     
     let lightboxHeaderTitle: UILabel = {
         let label = UILabel()
@@ -293,10 +293,10 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! UserProfileHeader
         header.user = self.user
-        header.delegate = self
-        header.postCount = self.postCount
-        header.followersCount = self.followersCount
-        header.followingCount = self.followingCount
+//        header.delegate = self
+//        header.postCount = self.postCount
+//        header.followersCount = self.followersCount
+//        header.followingCount = self.followingCount
         
         return header
     }

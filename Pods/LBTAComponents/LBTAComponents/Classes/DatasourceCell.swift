@@ -14,7 +14,7 @@ open class DatasourceCell: UICollectionViewCell {
     open var datasourceItem: Any?
     open weak var controller: DatasourceController?
     
-    public let separatorLineView: UIView = {
+    open let separatorLineView: UIView = {
         let lineView = UIView()
         lineView.backgroundColor = UIColor(white: 0, alpha: 0.5)
         lineView.isHidden = true

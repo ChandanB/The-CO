@@ -11,7 +11,7 @@ import LBTAComponents
 class MessageDatasource: Datasource {
     
     var messages = [Message]()
-    
+
     override func cellClasses() -> [DatasourceCell.Type] {
         return [ChatMessageCell.self]
     }
@@ -19,12 +19,12 @@ class MessageDatasource: Datasource {
     override func item(_ indexPath: IndexPath) -> Any? {
         return messages[indexPath.item]
     }
-    
+
     override func numberOfItems(_ section: Int) -> Int {
-        
+
         return messages.count
     }
-    
+
     override func numberOfSections() -> Int {
         return  1
     }

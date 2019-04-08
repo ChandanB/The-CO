@@ -14,16 +14,19 @@ struct Message {
     let text: String?
     let toId: String?
     let fromId: String?
+    let isIncoming: Bool?
     let imageUrl: String?
     let videoUrl: String?
     let timestamp: NSNumber?
     let imageWidth: NSNumber?
     let imageHeight: NSNumber?
     
+    
     init(dictionary: [String: AnyObject]) {
         self.text = dictionary["text"] as? String
         self.toId = dictionary["toId"] as? String
         self.fromId = dictionary["fromId"] as? String
+        self.isIncoming = dictionary["false"] as? Bool
         self.imageUrl = dictionary["imageUrl"] as? String
         self.videoUrl = dictionary["videoUrl"] as? String
         self.timestamp = dictionary["timestamp"] as? NSNumber

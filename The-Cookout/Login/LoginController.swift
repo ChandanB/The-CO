@@ -94,13 +94,13 @@ class LoginController: UIViewController {
             }
             //successfully logged in our user
             
-            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? BaseSlidingController else { return }
             
             guard let uid = Auth.auth().currentUser?.uid else { return }
             Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 print(snapshot.value ?? "")
                 
-                mainTabBarController.setupViewControllers()
+              //  mainTabBarController.setupViewControllers()
                 HUD.hide()
                 self.handleAnimations()
                 

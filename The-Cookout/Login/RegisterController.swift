@@ -30,10 +30,9 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-// Local variable inserted by Swift 4.2 migrator.
-let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+        // Local variable inserted by Swift 4.2 migrator.
+        let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
 
-        
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
             addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
         } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
@@ -185,8 +184,8 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
                         
                         print("Successfully saved user info to db")
                         
-                        guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
-                        mainTabBarController.setupViewControllers()
+                        guard let baseSlidingController = UIApplication.shared.keyWindow?.rootViewController as? BaseSlidingController else { return }
+                        
                         HUD.hide()
                         self.handleAnimations()
                     })

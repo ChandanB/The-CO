@@ -132,7 +132,7 @@ class BaseSlidingController: UIViewController {
         case 2:
             rightViewController = BookmarksController()
         default:
-            rightViewController = UINavigationController(rootViewController: HomeController())
+            rightViewController = UINavigationController(rootViewController: UserProfileController())
         }
         
         redView.addSubview(rightViewController.view)

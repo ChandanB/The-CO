@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import NVActivityIndicatorView
+// import NVActivityIndicatorView
 
 
 @objc public protocol BMPlayerControlViewDelegate: class {
@@ -103,7 +103,7 @@ open class BMPlayerControlView: UIView {
     open var subtileAttrabute: [NSAttributedString.Key : Any]?
     
     /// Activty Indector for loading
-    open var loadingIndector  = NVActivityIndicatorView(frame:  CGRect(x: 0, y: 0, width: 30, height: 30))
+    open var loadingIndector  = UIActivityIndicatorView(frame:  CGRect(x: 0, y: 0, width: 30, height: 30))
     
     open var seekToView       = UIView()
     open var seekToViewImage  = UIImageView()
@@ -562,7 +562,7 @@ open class BMPlayerControlView: UIView {
         
         mainMaskView.addSubview(loadingIndector)
         
-        loadingIndector.type             = BMPlayerConf.loaderType
+    //  loadingIndector.style             = BMPlayerConf.loaderType
         loadingIndector.color            = BMPlayerConf.tintColor
         
         // View to show when slide to seek

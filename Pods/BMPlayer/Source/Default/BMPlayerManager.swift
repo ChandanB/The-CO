@@ -20,7 +20,7 @@ public enum BMPlayerTopBarShowCase: Int {
 
 open class BMPlayerManager {
     /// 单例
-    public static let shared = BMPlayerManager()
+    open static let shared = BMPlayerManager()
     
     /// tint color
     open var tintColor   = UIColor.white

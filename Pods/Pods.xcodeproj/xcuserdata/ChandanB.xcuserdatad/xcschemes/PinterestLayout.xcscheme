@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AF66DAB5652AA5C98791F1A73AD0F17"
+               BlueprintIdentifier = "C82AFEA3E5B1D171B5842E075E4C1148"
                BuildableName = "PinterestLayout.framework"
                BlueprintName = "PinterestLayout"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AF66DAB5652AA5C98791F1A73AD0F17"
+            BlueprintIdentifier = "C82AFEA3E5B1D171B5842E075E4C1148"
             BuildableName = "PinterestLayout.framework"
             BlueprintName = "PinterestLayout"
             ReferencedContainer = "container:Pods.xcodeproj">

@@ -1,0 +1,228 @@
+PODS:
+  - BMPlayer (1.0.1):
+    - BMPlayer/Full (= 1.0.1)
+  - BMPlayer/Core (1.0.1)
+  - BMPlayer/Full (1.0.1):
+    - BMPlayer/Core
+    - NVActivityIndicatorView (~> 4.0.0)
+    - SnapKit (~> 4.0.0)
+  - Bolts-Swift (1.4.0)
+  - BonMot (5.3)
+  - Firebase/Analytics (5.10.0):
+    - Firebase/Core
+  - Firebase/Auth (5.10.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (= 5.0.4)
+  - Firebase/Core (5.10.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (= 5.2.0)
+  - Firebase/CoreOnly (5.10.0):
+    - FirebaseCore (= 5.1.5)
+  - Firebase/Database (5.10.0):
+    - Firebase/CoreOnly
+    - FirebaseDatabase (= 5.0.3)
+  - Firebase/DynamicLinks (5.10.0):
+    - Firebase/CoreOnly
+    - FirebaseDynamicLinks (= 3.1.0)
+  - Firebase/Performance (5.10.0):
+    - Firebase/Core
+    - FirebasePerformance (= 2.1.2)
+  - Firebase/Storage (5.10.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (= 3.0.2)
+  - FirebaseAnalytics (5.2.0):
+    - FirebaseCore (~> 5.1)
+    - FirebaseInstanceID (~> 3.2)
+    - GoogleAppMeasurement (~> 5.2)
+    - GoogleUtilities/AppDelegateSwizzler (~> 5.2)
+    - GoogleUtilities/MethodSwizzler (~> 5.2)
+    - GoogleUtilities/Network (~> 5.2)
+    - "GoogleUtilities/NSData+zlib (~> 5.2)"
+    - nanopb (~> 0.3)
+  - FirebaseAnalyticsInterop (1.1.0)
+  - FirebaseAuth (5.0.4):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 5.0)
+    - GoogleUtilities/Environment (~> 5.2)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - FirebaseAuthInterop (1.0.0)
+  - FirebaseCore (5.1.5):
+    - GoogleUtilities/Logger (~> 5.2)
+  - FirebaseDatabase (5.0.3):
+    - FirebaseCore (~> 5.0)
+    - leveldb-library (~> 1.18)
+  - FirebaseDynamicLinks (3.1.0):
+    - FirebaseAnalytics (~> 5.1)
+    - FirebaseAnalyticsInterop (~> 1.0)
+    - FirebaseCore (~> 5.1)
+  - FirebaseInstanceID (3.2.2):
+    - FirebaseCore (~> 5.1)
+    - GoogleUtilities/Environment (~> 5.3)
+    - GoogleUtilities/UserDefaults (~> 5.3)
+  - FirebasePerformance (2.1.2):
+    - FirebaseAnalytics (~> 5.1)
+    - FirebaseInstanceID (~> 3.2)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - GoogleUtilities/ISASwizzler (~> 5.2)
+    - GoogleUtilities/MethodSwizzler (~> 5.2)
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.5)
+  - FirebaseStorage (3.0.2):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 5.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - GoogleAppMeasurement (5.2.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 5.2)
+    - GoogleUtilities/MethodSwizzler (~> 5.2)
+    - GoogleUtilities/Network (~> 5.2)
+    - "GoogleUtilities/NSData+zlib (~> 5.2)"
+    - nanopb (~> 0.3)
+  - GoogleToolboxForMac/Defines (2.1.4)
+  - GoogleToolboxForMac/Logger (2.1.4):
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - GoogleUtilities/AppDelegateSwizzler (5.3.3):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (5.3.3)
+  - GoogleUtilities/ISASwizzler (5.3.3)
+  - GoogleUtilities/Logger (5.3.3):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (5.3.3):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (5.3.3):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (5.3.3)"
+  - GoogleUtilities/Reachability (5.3.3):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/UserDefaults (5.3.3):
+    - GoogleUtilities/Logger
+  - GTMSessionFetcher/Core (1.2.0)
+  - KILabel (1.0.1)
+  - Kingfisher (4.10.0)
+  - LBTAComponents (1.0.2)
+  - leveldb-library (1.20)
+  - nanopb (0.3.8):
+    - nanopb/decode (= 0.3.8)
+    - nanopb/encode (= 0.3.8)
+  - nanopb/decode (0.3.8)
+  - nanopb/encode (0.3.8)
+  - NVActivityIndicatorView (4.0.1):
+    - NVActivityIndicatorView/Presenter (= 4.0.1)
+  - NVActivityIndicatorView/Presenter (4.0.1)
+  - PinterestLayout (1.0.3)
+  - PKHUD (5.2.0)
+  - Protobuf (3.6.1)
+  - PryntTrimmerView (3.0.0)
+  - SCLAlertView (0.8)
+  - SnapKit (4.0.1)
+  - Spring (1.0.5)
+  - SteviaLayout (4.4.0)
+  - UIFontComplete (3.0.0)
+  - YPImagePicker (3.5.2):
+    - PryntTrimmerView (~> 3.0.0)
+    - SteviaLayout (~> 4.4.0)
+
+DEPENDENCIES:
+  - BMPlayer
+  - Bolts-Swift
+  - BonMot
+  - Firebase/Analytics
+  - Firebase/Auth
+  - Firebase/Core
+  - Firebase/Database
+  - Firebase/DynamicLinks
+  - Firebase/Performance
+  - Firebase/Storage
+  - KILabel
+  - Kingfisher
+  - LBTAComponents
+  - PinterestLayout
+  - PKHUD
+  - SCLAlertView
+  - SnapKit
+  - Spring
+  - UIFontComplete
+  - YPImagePicker (~> 3.5.2)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - BMPlayer
+    - Bolts-Swift
+    - BonMot
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseAnalyticsInterop
+    - FirebaseAuth
+    - FirebaseAuthInterop
+    - FirebaseCore
+    - FirebaseDatabase
+    - FirebaseDynamicLinks
+    - FirebaseInstanceID
+    - FirebasePerformance
+    - FirebaseStorage
+    - GoogleAppMeasurement
+    - GoogleToolboxForMac
+    - GoogleUtilities
+    - GTMSessionFetcher
+    - KILabel
+    - Kingfisher
+    - LBTAComponents
+    - leveldb-library
+    - nanopb
+    - NVActivityIndicatorView
+    - PinterestLayout
+    - PKHUD
+    - Protobuf
+    - PryntTrimmerView
+    - SCLAlertView
+    - SnapKit
+    - Spring
+    - SteviaLayout
+    - UIFontComplete
+    - YPImagePicker
+
+SPEC CHECKSUMS:
+  BMPlayer: 44eebf06eb01450dd14ea74b27d07c5222f0eed1
+  Bolts-Swift: 650d72e8017721b1a6bbe43d542c4578f8e5ba6f
+  BonMot: 0104d1b4eda54f4a4b7393d6559539ef25498fbd
+  Firebase: 6691d47562a780c26281ce8464518faafc90c610
+  FirebaseAnalytics: 831f1f127f4a75698e9875a87bf7e2668730d953
+  FirebaseAnalyticsInterop: e5f21be9af6548372e2f0815834ff909bff395a2
+  FirebaseAuth: 504b198ceb3472dca5c65bb95544ea44cfc9439e
+  FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc
+  FirebaseCore: c6079de64c1a87000e52e9b408dddcadc901177f
+  FirebaseDatabase: e2bcbc106adc4b11a2da3ec2eb63c0c4a44f2f54
+  FirebaseDynamicLinks: 33f349103fa71d463688b7671e6a60e00ac6a5af
+  FirebaseInstanceID: 78ba376fcd5b94c001f9999b2cbd3d1f1e56e78d
+  FirebasePerformance: 65f7eb943ef3cc118899f945065ff9fa2d924e52
+  FirebaseStorage: fd82e5e5c474897e19972b34b22ac0f589dce04e
+  GoogleAppMeasurement: 2b3a023a61239c8d002e6e4fcf4abce8eddce0e0
+  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
+  GoogleUtilities: 8208aee3e97a1ae93d44c57e96c476a5a3b03f0a
+  GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
+  KILabel: 4797807cdc0b4992dad8bf91175ddc973c3b569b
+  Kingfisher: 43c4b802d8b5256cf1f4379e9cd10b329be6d3e2
+  LBTAComponents: c4c8863e0ef6715e378300db148b96a09df656f7
+  leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
+  nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  NVActivityIndicatorView: 77ed6d7b571643e24899e7858bf9ae2ee4c21f31
+  PinterestLayout: f1c7ec0254ffa842d69f1b43e4436c8ded4359b9
+  PKHUD: dd5357ac65f26115c35c4a68e9b328053326c5fe
+  Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
+  PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
+  SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
+  SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
+  Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
+  SteviaLayout: dd74d1abd127bbf0ce346ac9430441684fe427d0
+  UIFontComplete: 5b0f59a83308816c610164b79a2540b3520f9b72
+  YPImagePicker: 26d5bf7bfe1cffd1c5eedea3ac60422b314e2a42
+
+PODFILE CHECKSUM: da9604531ceee614febaba5f9a7aa59626dcb68c
+
+COCOAPODS: 1.6.0.beta.2

@@ -29,7 +29,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     var postCellId = "postCellId"
     var headerOne = "headerId1"
     var headerTwo = "headerId2"
- 
+    
     
     var isGridView = true
     var gridArray = [Post]()
@@ -237,15 +237,15 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         if isGridView {
             let post = self.gridArray[indexPath.item]
             
-//            let h = CGFloat(truncating: post.imageHeight)
-//            let w = CGFloat(truncating: post.imageWidth)
+            //            let h = CGFloat(truncating: post.imageHeight)
+            //            let w = CGFloat(truncating: post.imageWidth)
             
             if post.hasText == "true" && post.hasImage == "false" {
                 return .zero
             }
             let width = (view.frame.width - 2) / 3
             
-//            let height = h * width / w
+            //            let height = h * width / w
             
             return CGSize(width: width, height: width)
         }
@@ -282,7 +282,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     var header: UserProfileHeader?
     var bannerHeader: UserBannerHeader?
-
+    
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         switch kind {
@@ -290,7 +290,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             let section = indexPath.section
             
             switch section {
-             case 0:
+            case 0:
                 bannerHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerTwo, for: indexPath) as? UserBannerHeader
                 bannerHeader?.user = self.user
                 bannerHeader?.delegate = self
@@ -305,7 +305,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 header?.postCount = self.postCount
                 header?.followersCount = self.followersCount
                 header?.followingCount = self.followingCount
-
+                
                 return header!
             }
             
@@ -483,8 +483,8 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     var headerXOriginal: CGFloat = 0.0
     var index = 0
-    let scrollToScaleDownProfileIconDistance: CGFloat = 30
-
+    let scrollToScaleDownProfileIconDistance: CGFloat = 0
+    
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let header = self.header else {return}
         guard let bannerHeader = self.bannerHeader else {return}
@@ -493,6 +493,8 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let contentOffsetY = scrollView.contentOffset.y
         
         let scaleProgress = max(0, min(1, contentOffsetY / self.scrollToScaleDownProfileIconDistance))
+        let height = header.profileImageView.bounds.height
+        let width = header.profileImageView.bounds.width
         header.animate(t: scaleProgress)
         
         if index == 0 {
@@ -502,25 +504,27 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         self.index = 1
         
-        if contentOffsetY < 0 {
-            bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 180
-            return
+        if contentOffsetY > 0 && contentOffsetY < 50 {
+            UIView.animate(withDuration: 0.6, animations: {
+              //  header.profileImageView.center.y = contentOffsetY
+             //   header.profileImageView.frame = CGRect(x: self.headerXOriginal, y: contentOffsetY, width: width, height: height)
+            })
         }
         
+        
         if contentOffsetY > 0 {
-            
             if contentOffsetY >= scrollToScaleDownProfileIconDistance {
-               // bannerHeader.frame = CGRect(x: 0, y: contentOffsetY - scrollToScaleDownProfileIconDistance, width: scrollView.bounds.width, height: 160)
-                
-                // bring stickyHeader to the front
-                scrollView.bringSubviewToFront(bannerHeader)
-                
-            } else {
-                scrollView.bringSubviewToFront(header)
-            //    bannerHeader.frame = CGRect(x: 0, y: 0, width: scrollView.bounds.width, height: 160)
+            //    scrollView.bringSubviewToFront(bannerHeader)
                 bannerHeader.animator.fractionComplete = 0
+                return
             }
         }
+        
+        if contentOffsetY <= 0 {
+         //   scrollView.bringSubviewToFront(header)
+            bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 180
+        }
+        
     }
     
 }

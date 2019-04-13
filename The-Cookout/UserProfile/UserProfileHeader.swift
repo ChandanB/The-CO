@@ -341,7 +341,7 @@ class UserProfileHeader: DatasourceCell {
         
        
         
-        profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: -60, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: maxHeight)
+        profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 120, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: maxHeight)
         
         profileImageView.heightConstraint?.constant = maxHeight
         profileImageView.heightConstraint?.isActive = true
@@ -410,6 +410,8 @@ class UserProfileHeader: DatasourceCell {
     
     fileprivate func setupVisualEffectBlur() {
         animator = UIViewPropertyAnimator(duration: 3.0, curve: .linear, animations: { [weak self] in
+            
+          //  self?.profileImageView.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
             
             // treat this area as the end state of your animation
             let blurEffect = UIBlurEffect(style: .regular)

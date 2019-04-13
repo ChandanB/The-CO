@@ -9,6 +9,8 @@
 import Firebase
 import LBTAComponents
 import PinterestLayout
+import AlamofireImage
+
 
 class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, PinterestLayoutDelegate {
     
@@ -25,6 +27,9 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     var userId: String?
     var cellId = "cellId"
     var postCellId = "postCellId"
+    var headerOne = "headerId1"
+    var headerTwo = "headerId2"
+ 
     
     var isGridView = true
     var gridArray = [Post]()
@@ -37,40 +42,44 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     var indexes = [Int: Int]()
     var currentIndex = 0
     
-    let layout: PinterestLayout? = {
-        let layout = PinterestLayout()
-        layout.cellPadding = 5
-        layout.numberOfColumns = 2
-        return layout
-    }()
     
     func didChangeToGridView() {
         isGridView = true
-        paginateGrid()
+        paginate(array: gridArray)
     }
     
     func didChangeToListView() {
         isGridView = false
-        paginateList()
+        paginate(array: listArray)
     }
     
     var isFinishedPaging = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
-        
-        collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
-        collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView?.register(PostCell.self, forCellWithReuseIdentifier: postCellId)
-        
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: #selector(dismissView))
-        
-        collectionView?.backgroundColor = .white
-        
+        setupCollectionView()
         setupRefresherControl()
         fetchUser()
+    }
+    
+    fileprivate func setupCollectionView() {
+        self.navigationController?.isNavigationBarHidden = true
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: #selector(dismissView))
+        
+        //Observe refresh
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
+        
+        // Register header
+        collectionView.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerOne)
+        collectionView.register(UserBannerHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerTwo)
+        collectionView.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView.register(PostCell.self, forCellWithReuseIdentifier: postCellId)
+        
+        
+        collectionView.backgroundColor = .white
+        self.view.backgroundColor = .red
+        
+        collectionView.contentInsetAdjustmentBehavior = .never
     }
     
     fileprivate func setupRefresherControl() {
@@ -87,127 +96,107 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         if isGridView {
             self.gridArray.removeAll()
-            paginateGrid()
+            paginate(array: gridArray)
         } else {
             self.listArray.removeAll()
-            paginateList()
+            paginate(array: listArray)
         }
-        
+    }
+    
+    var currentArray = 0
+    
+    fileprivate func paginate(array: [Post]) {
         self.refreshControl.endRefreshing()
-    }
-    
-    
-    fileprivate func refreshPosts() {
-        refreshControl.endRefreshing()
         
-        guard let user = self.user else {return}
-        
-        let uid = user.uid
-        
-        let ref = Database.database().reference().child("posts").child(uid)
-        let query = ref.queryOrdered(byChild: "creationDate")
-        
-        query.queryLimited(toFirst: 1).observe( .value) { (snapshot) in
-            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
-            
-            allObjects.reverse()
-            
-            allObjects.forEach({ (snapshot) in
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-              //  let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                
-            })
+        if isGridView {
+            currentArray = 0
+        } else {
+            currentArray = 1
         }
-    }
-    
-    fileprivate func paginateGrid() {
         
-        var count = 6
         guard let uid = self.user?.uid else { return }
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
-        self.refreshControl.endRefreshing()
         
-        if gridArray.count > 0 {
-            let value = self.gridArray.last?.creationDate.timeIntervalSince1970
-            query = query.queryEnding(atValue: value)
-            count = 8
-        }
-        
-        query.queryLimited(toLast: UInt(count)).observeSingleEvent(of: .value) { (snapshot) in
-            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+        switch currentArray {
             
-            allObjects.reverse()
-            
-            if allObjects.count < 6 {
-                self.isFinishedPaging = true
+        case 0:
+            var gridCount = 6
+            if gridArray.count > 0 {
+                let value = self.gridArray.last?.creationDate.timeIntervalSince1970
+                query = query.queryEnding(atValue: value)
+                gridCount = 8
             }
             
-            if self.gridArray.count > 0 && allObjects.count > 0 {
-                allObjects.removeFirst()
-            }
-            
-            guard let user = self.user else { return }
-            
-            allObjects.forEach({ (snapshot) in
+            query.queryLimited(toLast: UInt(gridCount)).observeSingleEvent(of: .value) { (snapshot) in
+                guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
                 
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                allObjects.reverse()
                 
-                if post.hasImage == "true" {
-                    self.gridArray.append(post)
-                    let imageUrl = post.imageUrl
-                    self.currentIndex += 1
+                if allObjects.count < 6 {
+                    self.isFinishedPaging = true
                 }
                 
-            })
+                if self.gridArray.count > 0 && allObjects.count > 0 {
+                    allObjects.removeFirst()
+                }
+                
+                guard let user = self.user else { return }
+                
+                allObjects.forEach({ (snapshot) in
+                    
+                    guard let dictionary = snapshot.value as? [String: Any] else { return }
+                    let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                    
+                    if post.hasImage == "true" {
+                        self.gridArray.append(post)
+                        // let imageUrl = post.imageUrl
+                        // self.currentIndex += 1
+                    }
+                    
+                })
+                
+                self.collectionView?.reloadData()
+                return
+            }
             
-            self.collectionView?.collectionViewLayout.invalidateLayout()
-            self.collectionView?.reloadData()
+        default:
+            var listCount = 10
+            if listArray.count > 0 {
+                let value = self.listArray.last?.creationDate.timeIntervalSince1970
+                query = query.queryEnding(atValue: value)
+                listCount = 12
+            }
+            
+            query.queryLimited(toLast: UInt(listCount)).observeSingleEvent(of: .value) { (snapshot) in
+                guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+                
+                allObjects.reverse()
+                
+                if allObjects.count < 10 {
+                    self.isFinishedPaging = true
+                }
+                
+                if self.listArray.count > 0 && allObjects.count > 0 {
+                    allObjects.removeFirst()
+                }
+                
+                guard let user = self.user else { return }
+                
+                allObjects.forEach({ (snapshot) in
+                    
+                    guard let dictionary = snapshot.value as? [String: Any] else { return }
+                    let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                    
+                    if post.hasText == "true" && post.hasImage == "false" {
+                        self.listArray.append(post)
+                    }
+                })
+                self.collectionView?.reloadData()
+            }
         }
     }
     
-    fileprivate func paginateList() {
-        var count = 10
-        guard let uid = self.user?.uid else { return }
-        let ref = Database.database().reference().child("posts").child(uid)
-        var query = ref.queryOrdered(byChild: "creationDate")
-        self.refreshControl.endRefreshing()
-        
-        if listArray.count > 0 {
-            let value = self.listArray.last?.creationDate.timeIntervalSince1970
-            query = query.queryEnding(atValue: value)
-            count = 12
-        }
-        
-        query.queryLimited(toLast: UInt(count)).observeSingleEvent(of: .value) { (snapshot) in
-            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
-            
-            allObjects.reverse()
-            
-            if allObjects.count < 10 {
-                self.isFinishedPaging = true
-            }
-            
-            if self.listArray.count > 0 && allObjects.count > 0 {
-                allObjects.removeFirst()
-            }
-            
-            guard let user = self.user else { return }
-            
-            allObjects.forEach({ (snapshot) in
-                
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-            
-                if post.hasText == "true" && post.hasImage == "false" {
-                    self.listArray.append(post)
-                }
-            })
-            
-            self.collectionView?.reloadData()
-        }
-    }
     
     fileprivate func fetchStatsCount() {
         
@@ -248,16 +237,16 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         if isGridView {
             let post = self.gridArray[indexPath.item]
             
-            let h = CGFloat(truncating: post.imageHeight)
-            let w = CGFloat(truncating: post.imageWidth)
+//            let h = CGFloat(truncating: post.imageHeight)
+//            let w = CGFloat(truncating: post.imageWidth)
             
             if post.hasText == "true" && post.hasImage == "false" {
                 return .zero
             }
             let width = (view.frame.width - 2) / 3
             
-          //  let height = h * width / w
-
+//            let height = h * width / w
+            
             return CGSize(width: width, height: width)
         }
         
@@ -290,29 +279,71 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
     }
     
+    
+    var header: UserProfileHeader?
+    var bannerHeader: UserBannerHeader?
+
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! UserProfileHeader
-        header.user = self.user
-        header.delegate = self
-        header.postCount = self.postCount
-        header.followersCount = self.followersCount
-        header.followingCount = self.followingCount
         
-        return header
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            let section = indexPath.section
+            
+            switch section {
+             case 0:
+                bannerHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerTwo, for: indexPath) as? UserBannerHeader
+                bannerHeader?.user = self.user
+                bannerHeader?.delegate = self
+                
+                return bannerHeader!
+            default:
+                header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerOne, for: indexPath) as? UserProfileHeader
+                
+                header?.clipsToBounds = false
+                header?.user = self.user
+                header?.delegate = self
+                header?.postCount = self.postCount
+                header?.followersCount = self.followersCount
+                header?.followingCount = self.followingCount
+
+                return header!
+            }
+            
+        default:
+            return UserProfileHeader()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        var edgeInsets = UIEdgeInsets()
+        
+        if section == 0 {
+            edgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
+            return edgeInsets
+        }
+        
+        edgeInsets = .init(top: 0, left: 0, bottom: 60, right: 0)
+        
+        return edgeInsets
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        if section == 1 {
-            return .zero
+        if section == 0 {
+            return CGSize(width: view.frame.width, height: 160)
         }
         
         guard let user = self.user else { return .zero }
         let estimatedHeight = estimatedHeightForBioText(user.bio)
-        return CGSize(width: view.frame.width, height: estimatedHeight + 420)
+        return CGSize(width: view.frame.width, height: estimatedHeight + 260)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        if section == 0 {
+            return 0
+        }
+        
         if isGridView {
             return gridArray.count
         }
@@ -397,12 +428,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if isGridView {
             if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
-                self.paginateGrid()
+                self.paginate(array: gridArray)
                 return
             }
         } else if !isGridView {
             if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
-                self.paginateList()
+                self.paginate(array: listArray)
             }
         }
     }
@@ -425,9 +456,95 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         return 0
     }
     
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
+    }
+    
     @objc func dismissView() {
         dismiss(animated: true, completion: nil)
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
+    }
+    
+    let bannerStopAtOffset:CGFloat = 200 - 64
+    let distanceBetweenTopAndHeader:CGFloat = 30.0
+    
+    var lastContentOffset: CGFloat = 0
+    
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.lastContentOffset = scrollView.contentOffset.y
+    }
+    
+    var headerXOriginal: CGFloat = 0.0
+    var index = 0
+    let scrollToScaleDownProfileIconDistance: CGFloat = 30
+
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let header = self.header else {return}
+        guard let bannerHeader = self.bannerHeader else {return}
+        
+        var headerX: CGFloat = 0
+        let contentOffsetY = scrollView.contentOffset.y
+        
+        let scaleProgress = max(0, min(1, contentOffsetY / self.scrollToScaleDownProfileIconDistance))
+        header.animate(t: scaleProgress)
+        
+        if index == 0 {
+            headerX = header.profileImageView.frame.minX
+            self.headerXOriginal = headerX
+        }
+        
+        self.index = 1
+        
+        if contentOffsetY < 0 {
+            bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 180
+            return
+        }
+        
+        if contentOffsetY > 0 {
+            
+            if contentOffsetY >= scrollToScaleDownProfileIconDistance {
+               // bannerHeader.frame = CGRect(x: 0, y: contentOffsetY - scrollToScaleDownProfileIconDistance, width: scrollView.bounds.width, height: 160)
+                
+                // bring stickyHeader to the front
+                scrollView.bringSubviewToFront(bannerHeader)
+                
+            } else {
+                scrollView.bringSubviewToFront(header)
+            //    bannerHeader.frame = CGRect(x: 0, y: 0, width: scrollView.bounds.width, height: 160)
+                bannerHeader.animator.fractionComplete = 0
+            }
+        }
+    }
+    
 }
 
+
+//    fileprivate func refreshPosts() {
+//        refreshControl.endRefreshing()
+//
+//        guard let user = self.user else {return}
+//
+//        let uid = user.uid
+//
+//        let ref = Database.database().reference().child("posts").child(uid)
+//        let query = ref.queryOrdered(byChild: "creationDate")
+//
+//        query.queryLimited(toFirst: 1).observe( .value) { (snapshot) in
+//            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+//
+//            allObjects.reverse()
+//
+//            allObjects.forEach({ (snapshot) in
+//                guard (snapshot.value as? [String: Any]) != nil else { return }
+//            //  let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+//
+//            })
+//        }
+//    }

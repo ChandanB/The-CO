@@ -29,7 +29,7 @@
         /// - parameter withFeatures: the features to attempt to enable on the
         ///                           font.
         /// - returns: a new font with the specified features enabled.
-        public func font(withFeatures featureProviders: [FontFeatureProvider]) -> BONFont {
+        func font(withFeatures featureProviders: [FontFeatureProvider]) -> BONFont {
 
             guard featureProviders.count > 0 else {
                 return self

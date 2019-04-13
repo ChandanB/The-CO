@@ -27,6 +27,7 @@ target 'The-Cookout' do
   pod 'SnapKit'
   pod 'PinterestLayout'
   pod 'YPImagePicker', '~> 3.5.2'
+  pod 'AlamofireImage', '~> 3.5'
 
 	
 end

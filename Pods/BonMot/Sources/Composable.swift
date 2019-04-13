@@ -59,7 +59,7 @@ public extension Composable {
     /// base style.
     ///
     /// - returns: a new `NSAttributedString`
-    public func attributedString() -> NSAttributedString {
+    func attributedString() -> NSAttributedString {
         return .composed(of: [self])
     }
 
@@ -70,7 +70,7 @@ public extension Composable {
     /// - parameter stripTrailingKerning: whether to strip NSAttributedStringKey.kern
     ///                                   from the last character of the result.
     /// - returns: A new `NSAttributedString`.
-    public func styled(with style: StringStyle, _ overrideParts: StringStyle.Part..., stripTrailingKerning: Bool = true) -> NSAttributedString {
+    func styled(with style: StringStyle, _ overrideParts: StringStyle.Part..., stripTrailingKerning: Bool = true) -> NSAttributedString {
         let string = NSMutableAttributedString()
         let newStyle = style.byAdding(stringStyle: StringStyle(overrideParts))
         append(to: string, baseStyle: newStyle, isLastElement: stripTrailingKerning)
@@ -83,7 +83,7 @@ public extension Composable {
     /// - parameter stripTrailingKerning: whether to strip NSAttributedStringKey.kern
     ///                                   from the last character of the result.
     /// - returns: A new `NSAttributedString`.
-    public func styled(with parts: StringStyle.Part..., stripTrailingKerning: Bool = true) -> NSAttributedString {
+    func styled(with parts: StringStyle.Part..., stripTrailingKerning: Bool = true) -> NSAttributedString {
         var style = StringStyle()
         for part in parts {
             style.update(part: part)
@@ -109,7 +109,7 @@ public extension NSAttributedString {
     /// - parameter separator: The separator to insert between every pair of
     ///                        elements in `composables`.
     /// - returns: A new `NSAttributedString`.
-    @nonobjc public static func composed(of composables: [Composable], baseStyle: StringStyle = StringStyle(), separator: Composable? = nil) -> NSAttributedString {
+    @nonobjc static func composed(of composables: [Composable], baseStyle: StringStyle = StringStyle(), separator: Composable? = nil) -> NSAttributedString {
         let string = NSMutableAttributedString()
         string.beginEditing()
         let lastComposableIndex = composables.endIndex
@@ -125,7 +125,7 @@ public extension NSAttributedString {
         return string
     }
 
-    public func styled(with style: StringStyle, _ overrideParts: StringStyle.Part...) -> NSAttributedString {
+    func styled(with style: StringStyle, _ overrideParts: StringStyle.Part...) -> NSAttributedString {
         let newStyle = style.byAdding(overrideParts)
         let newAttributes = newStyle.attributes
 

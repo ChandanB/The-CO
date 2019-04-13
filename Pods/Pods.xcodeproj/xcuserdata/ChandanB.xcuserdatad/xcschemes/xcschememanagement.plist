@@ -4,6 +4,16 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Alamofire.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>AlamofireImage.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>BMPlayer.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -20,6 +30,11 @@
 			<false/>
 		</dict>
 		<key>Firebase.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>FirebaseABTesting.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -65,6 +80,11 @@
 			<false/>
 		</dict>
 		<key>FirebasePerformance.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>FirebaseRemoteConfig.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

@@ -15,7 +15,7 @@
 
     public extension BONFont {
 
-        public func has(feature theFeature: MappableFeature) -> Bool {
+        func has(feature theFeature: MappableFeature) -> Bool {
             let matchingFeatures = availableFeaturesDictionaries.filter { featureDict in
                 guard let featureTypeIdentifier = featureDict[kCTFontFeatureTypeIdentifierKey as String] as? Int else {
                     return false
@@ -39,7 +39,7 @@
         ///         feature is exclusive, that means that you can use only one
         ///         of its available options at a time. Otherwise, you can mix
         ///         and match any combination of its options.
-        public func availableFontFeatures(includeIdentifiers includeIDs: Bool = false) -> String {
+        func availableFontFeatures(includeIdentifiers includeIDs: Bool = false) -> String {
             let preamble = "Available font features of \(fontName)"
             let features: [String] = availableFeaturesDictionaries.map { featureDict in
                 let featureName = featureDict[kCTFontFeatureTypeNameKey as String] as? String

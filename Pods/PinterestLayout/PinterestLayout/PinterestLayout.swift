@@ -117,7 +117,7 @@ public class PinterestLayout: UICollectionViewLayout {
                 for item in 0..<numberOfItems {
                     let indexPath = IndexPath(item: item, section: section)
                     
-                    let column = yOffsets.index(of: yOffsets.min() ?? 0) ?? 0
+                    let column = yOffsets.firstIndex(of: yOffsets.min() ?? 0) ?? 0
                     
                     let imageHeight = delegate.collectionView(
                         collectionView: collectionView,

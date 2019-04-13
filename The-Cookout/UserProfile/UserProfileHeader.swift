@@ -17,9 +17,30 @@ protocol UserProfileHeaderDelegate {
     func didChangeToGridView()
 }
 
+class SphereView: UIView {
+    // iOS 9 specific
+    override var collisionBoundsType: UIDynamicItemCollisionBoundsType {
+        return .ellipse
+    }
+}
+
 class UserProfileHeader: DatasourceCell {
+    
+    var user: User? {
+        didSet {
+            let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
+            setupProfileAndBannerImage()
+            nameLabel.text = user?.name
+            nameLabel.font = font!
+            usernameLabel.text = "@\(user?.username ?? "")"
+            setupUserBio(user!)
+            setupEditFollowButton()
+        }
+    }
 
     var delegate: UserProfileHeaderDelegate?
+    
+    var contentOffsetY = 0
     
     var postCount: Int? {
         didSet {
@@ -45,19 +66,6 @@ class UserProfileHeader: DatasourceCell {
             let attributedText = NSMutableAttributedString(string: "\(followingCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
             attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
             followingLabel.attributedText = attributedText
-        }
-    }
-
-    
-    var user: User? {
-        didSet {
-            let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
-            setupProfileAndBannerImage()
-            nameLabel.text = user?.name
-            nameLabel.font = font!
-            usernameLabel.text = "@\(user?.username ?? "")"
-            setupEditFollowButton()
-            setupUserBio(user!)
         }
     }
     
@@ -104,6 +112,16 @@ class UserProfileHeader: DatasourceCell {
                 }
             }
         }
+    }
+    
+    fileprivate func setupFollowStyle() {
+        UIView.performWithoutAnimation {
+            self.editProfileFollowButton.setTitle("Follow", for: .normal)
+            self.editProfileFollowButton.layoutIfNeeded()
+        }
+        self.editProfileFollowButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
+        self.editProfileFollowButton.setTitleColor(.white, for: .normal)
+        self.editProfileFollowButton.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
     }
     
     @objc func handleEditProfileOrFollow() {
@@ -174,17 +192,6 @@ class UserProfileHeader: DatasourceCell {
     }
     
     static let updateFeedNotificationName = NSNotification.Name(rawValue: "FollowedUser")
-
-    
-    fileprivate func setupFollowStyle() {
-        UIView.performWithoutAnimation {
-            self.editProfileFollowButton.setTitle("Follow", for: .normal)
-            self.editProfileFollowButton.layoutIfNeeded()
-        }
-        self.editProfileFollowButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
-        self.editProfileFollowButton.setTitleColor(.white, for: .normal)
-        self.editProfileFollowButton.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
-    }
     
     lazy var likesButton: UIButton = {
         let btn = UIButton(type: .system)
@@ -226,7 +233,7 @@ class UserProfileHeader: DatasourceCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.font = UIFont.boldSystemFont(ofSize: 24)
         return label
     }()
     
@@ -265,6 +272,7 @@ class UserProfileHeader: DatasourceCell {
         button.setTitle("Edit Profile", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.backgroundColor = UIColor.white
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 3
@@ -276,10 +284,11 @@ class UserProfileHeader: DatasourceCell {
         let iv = CachedImageView()
         iv.layer.cornerRadius = 60
         iv.backgroundColor = .lightGray
-        iv.layer.masksToBounds = true
         iv.contentMode = .scaleAspectFill
         iv.layer.borderColor = UIColor.white.cgColor
         iv.layer.borderWidth = 1
+        iv.clipsToBounds = true
+        iv.layer.masksToBounds = true
         return iv
     }()
     
@@ -292,25 +301,55 @@ class UserProfileHeader: DatasourceCell {
         return iv
     }()
     
+    let backgroundImageView: UIImageView = {
+        let iv = CachedImageView()
+        iv.contentMode = .scaleAspectFill
+        return iv
+    }()
+    
     let bioTextView: UITextView = {
         let textView = UITextView()
+        textView.backgroundColor = .clear
         return textView
     }()
     
+    let topDividerView = UIView()
+    let bottomDividerView = UIView()
+    
+    var profileImageTopAnchor: NSLayoutConstraint?
+    
+    let maxHeight: CGFloat = 120
+    let minHeight: CGFloat = 50
     
     override func setupViews() {
         super.setupViews()
         
-        addSubview(bannerImageView)
+        addSubview(backgroundImageView)
+     //   addSubview(bannerImageView)
         addSubview(profileImageView)
         addSubview(nameLabel)
         addSubview(bioTextView)
         addSubview(editProfileFollowButton)
         
-        bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
+        backgroundImageView.fillSuperview()
+//        
+//        var height = backgroundImageView.frame.height
+//        
+//        backgroundImageView.frame = CGRect(x: 0, y: 0, width: self.width, height: height)
         
-        profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 90, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: 120)
+     //   bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
+        
+       
+        
+        profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: -60, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: maxHeight)
+        
+        profileImageView.heightConstraint?.constant = maxHeight
+        profileImageView.heightConstraint?.isActive = true
+        
+        profileImageView.topAnchor.constraint(equalTo: topAnchor, constant: -60).isActive = true
         profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        
+        
         
         nameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         nameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
@@ -323,6 +362,9 @@ class UserProfileHeader: DatasourceCell {
         editProfileFollowButton.anchor(followersLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
 
         setupBottomToolBar()
+        
+        //blur
+        setupVisualEffectBlur()
     }
    
     fileprivate func setupUserStatsView() {
@@ -338,10 +380,7 @@ class UserProfileHeader: DatasourceCell {
     
     fileprivate func setupBottomToolBar() {
         
-        let topDividerView = UIView()
         topDividerView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
-        
-        let bottomDividerView = UIView()
         bottomDividerView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         let stackView = UIStackView(arrangedSubviews: [gridButton, listButton, likesButton])
@@ -361,12 +400,37 @@ class UserProfileHeader: DatasourceCell {
     
     fileprivate func setupProfileAndBannerImage() {
         guard let profileImageUrl = user?.profileImageUrl else { return }
-        guard let bannerImageUrl = user?.bannerImageUrl else { return }
         
         DispatchQueue.main.async {
             self.profileImageView.loadImage(urlString: profileImageUrl)
-            self.bannerImageView.loadImage(urlString: bannerImageUrl)
         }
     }
+    
+    var animator: UIViewPropertyAnimator!
+    
+    fileprivate func setupVisualEffectBlur() {
+        animator = UIViewPropertyAnimator(duration: 3.0, curve: .linear, animations: { [weak self] in
+            
+            // treat this area as the end state of your animation
+            let blurEffect = UIBlurEffect(style: .regular)
+            let visualEffectView = UIVisualEffectView(effect: blurEffect)
+            self?.backgroundImageView.addSubview(visualEffectView)
+         //   self?.addSubview(visualEffectView)
+            visualEffectView.fillSuperview()
+        })
+    }
+    
+
+    func animate(t: CGFloat) {
+        
+        if t < 0 {
+            profileImageView.heightConstraint?.constant = maxHeight
+            return
+        }
+        
+        let height = max(maxHeight - (maxHeight - minHeight) * t, minHeight)
+        profileImageView.heightConstraint?.constant = height
+    }
+    
 
 }

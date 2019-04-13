@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "259DA213A7ED8FCEB75FE5F888BAE02D"
+               BlueprintIdentifier = "4723C8EDB7276C2CD9B44E4C5AEC8203"
                BuildableName = "FirebaseDynamicLinks.framework"
                BlueprintName = "FirebaseDynamicLinks"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "259DA213A7ED8FCEB75FE5F888BAE02D"
+            BlueprintIdentifier = "4723C8EDB7276C2CD9B44E4C5AEC8203"
             BuildableName = "FirebaseDynamicLinks.framework"
             BlueprintName = "FirebaseDynamicLinks"
             ReferencedContainer = "container:Pods.xcodeproj">

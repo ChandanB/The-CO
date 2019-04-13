@@ -49,7 +49,7 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         
         let user = self.searchDatasource.filteredUsers[indexPath.item]
         
-        let layout = UICollectionViewFlowLayout()
+        let layout = StretchyHeaderLayout()
         let userProfileController = UserProfileController(collectionViewLayout: layout)
         userProfileController.userId = user.uid
         userProfileController.user = user

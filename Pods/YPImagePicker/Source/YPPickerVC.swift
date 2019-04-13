@@ -114,7 +114,7 @@ public class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         }
         
         // Select good screen
-        if let index = YPConfig.screens.index(of: YPConfig.startOnScreen) {
+        if let index = YPConfig.screens.firstIndex(of: YPConfig.startOnScreen) {
             startOnPage(index)
         }
         
@@ -281,10 +281,8 @@ public class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
             navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
             
             // Disable Next Button until minNumberOfItems is reached.
-            let minNumberOfItems = YPConfig.library.minNumberOfItems
-            if minNumberOfItems > 1 {
-                navigationItem.rightBarButtonItem?.isEnabled = libraryVC!.selection.count >= minNumberOfItems
-            }
+            navigationItem.rightBarButtonItem?.isEnabled = libraryVC!.selection.count >= YPConfig.library.minNumberOfItems
+
         case .camera:
             navigationItem.titleView = nil
             title = cameraVC?.title
@@ -359,6 +357,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
         
         v.header.bottomConstraint?.constant = enabled ? offset : 0
         v.layoutIfNeeded()
+        updateUI()
     }
     
     public func noPhotosForOptions() {

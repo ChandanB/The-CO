@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7F2BE51821907967A36B77A819502DD3"
+               BlueprintIdentifier = "91AFCC8899E3CE90D64F1BCA19A3B194"
                BuildableName = "UIFontComplete.framework"
                BlueprintName = "UIFontComplete"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7F2BE51821907967A36B77A819502DD3"
+            BlueprintIdentifier = "91AFCC8899E3CE90D64F1BCA19A3B194"
             BuildableName = "UIFontComplete.framework"
             BlueprintName = "UIFontComplete"
             ReferencedContainer = "container:Pods.xcodeproj">

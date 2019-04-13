@@ -140,7 +140,7 @@ extension UIViewController {
 extension Array where Element: Equatable {
     
     @discardableResult mutating func remove(object: Element) -> Bool {
-        if let index = index(of: object) {
+        if let index = firstIndex(of: object) {
             self.remove(at: index)
             return true
         }
@@ -148,7 +148,7 @@ extension Array where Element: Equatable {
     }
     
     @discardableResult mutating func remove(where predicate: (Array.Iterator.Element) -> Bool) -> Bool {
-        if let index = self.index(where: { (element) -> Bool in
+        if let index = self.firstIndex(where: { (element) -> Bool in
             return predicate(element)
         }) {
             self.remove(at: index)
@@ -233,6 +233,28 @@ extension Date {
         
         return "\(quotient) \(unit)\(quotient == 1 ? "" : "s") ago"
         
+    }
+}
+
+extension UIView {
+    
+    public func pauseAnimation(delay: Double) {
+        let time = delay + CFAbsoluteTimeGetCurrent()
+        let timer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, time, 0, 0, 0, { timer in
+            let layer = self.layer
+            let pausedTime = layer.convertTime(CACurrentMediaTime(), from: nil)
+            layer.speed = 0.0
+            layer.timeOffset = pausedTime
+        })
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, CFRunLoopMode.commonModes)
+    }
+    
+    public func resumeAnimation() {
+        let pausedTime  = layer.timeOffset
+        
+        layer.speed = 1.0
+        layer.timeOffset = 0.0
+        layer.beginTime = layer.convertTime(CACurrentMediaTime(), from: nil) - pausedTime
     }
 }
 

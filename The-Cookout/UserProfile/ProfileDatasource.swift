@@ -14,16 +14,15 @@ class ProfileDatasource: Datasource {
     var listArray = [Post]()
     
     override func headerClasses() -> [DatasourceCell.Type]? {
-        return [UserProfileHeader.self]
+        return [UserBannerHeader.self, UserProfileHeader.self]
     }
     
     override func cellClasses() -> [DatasourceCell.Type] {
         return [UserProfilePhotoCell.self, PostCell.self]
     }
-
     
     override func numberOfSections() -> Int {
-        return 1
+        return 2
     }
     
 }

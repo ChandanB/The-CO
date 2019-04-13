@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0222870F881FC10C72EEB88ADE4FFD5E"
+               BlueprintIdentifier = "651785BAFFDE8AF36DC0F00ED240D893"
                BuildableName = "SCLAlertView.framework"
                BlueprintName = "SCLAlertView"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0222870F881FC10C72EEB88ADE4FFD5E"
+            BlueprintIdentifier = "651785BAFFDE8AF36DC0F00ED240D893"
             BuildableName = "SCLAlertView.framework"
             BlueprintName = "SCLAlertView"
             ReferencedContainer = "container:Pods.xcodeproj">

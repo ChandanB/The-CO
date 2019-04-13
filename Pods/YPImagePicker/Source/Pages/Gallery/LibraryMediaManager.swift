@@ -16,7 +16,6 @@ class LibraryMediaManager {
     internal var fetchResult: PHFetchResult<PHAsset>!
     internal var previousPreheatRect: CGRect = .zero
     internal var imageManager: PHCachingImageManager?
-    internal var selectedAsset: PHAsset!
     internal var exportTimer: Timer?
     internal var currentExportSessions: [AVAssetExportSession] = []
     
@@ -138,7 +137,7 @@ class LibraryMediaManager {
                     DispatchQueue.main.async {
                         if let url = exportSession?.outputURL, exportSession?.status == .completed {
                             callback(url)
-                            if let index = self.currentExportSessions.index(of:exportSession!) {
+                            if let index = self.currentExportSessions.firstIndex(of:exportSession!) {
                                 self.currentExportSessions.remove(at: index)
                             }
                         } else {

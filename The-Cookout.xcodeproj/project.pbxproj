@@ -56,6 +56,8 @@
 		1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */; };
 		1FCF385020BBDDB3008841B0 /* CommentPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCF384F20BBDDB3008841B0 /* CommentPostCell.swift */; };
 		1FCF385420BC0085008841B0 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCF385320BC0085008841B0 /* VideoPlayerViewController.swift */; };
+		1FEE32BB225D4EF100B93FD5 /* StretchyHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE32BA225D4EF000B93FD5 /* StretchyHeaderLayout.swift */; };
+		1FEE32BD225D545A00B93FD5 /* UserBannerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE32BC225D545A00B93FD5 /* UserBannerHeader.swift */; };
 		1FF152D6217D6973000D5A53 /* ListsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152CD217D695B000D5A53 /* ListsController.swift */; };
 		1FF152D8217D6973000D5A53 /* ChatroomsMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152CF217D6961000D5A53 /* ChatroomsMenuController.swift */; };
 		1FF152DA217D6973000D5A53 /* BookmarksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF152D1217D696A000D5A53 /* BookmarksController.swift */; };
@@ -148,6 +150,8 @@
 		1FAB5B4E20A7B10F003F9943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FCF384F20BBDDB3008841B0 /* CommentPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentPostCell.swift; sourceTree = "<group>"; };
 		1FCF385320BC0085008841B0 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
+		1FEE32BA225D4EF000B93FD5 /* StretchyHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyHeaderLayout.swift; sourceTree = "<group>"; };
+		1FEE32BC225D545A00B93FD5 /* UserBannerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBannerHeader.swift; sourceTree = "<group>"; };
 		1FF152CD217D695B000D5A53 /* ListsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListsController.swift; sourceTree = "<group>"; };
 		1FF152CF217D6961000D5A53 /* ChatroomsMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatroomsMenuController.swift; sourceTree = "<group>"; };
 		1FF152D1217D696A000D5A53 /* BookmarksController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookmarksController.swift; sourceTree = "<group>"; };
@@ -228,8 +232,10 @@
 		1F4FD35B20A9F7D600AB73C1 /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
-				1F4FD35920A9EE7500AB73C1 /* UserProfileController.swift */,
+				1FEE32BA225D4EF000B93FD5 /* StretchyHeaderLayout.swift */,
+				1FEE32BC225D545A00B93FD5 /* UserBannerHeader.swift */,
 				1F4FD35C20A9F7E600AB73C1 /* UserProfileHeader.swift */,
+				1F4FD35920A9EE7500AB73C1 /* UserProfileController.swift */,
 				1F4FD37120AAFA5200AB73C1 /* UserProfilePhotoCell.swift */,
 				1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */,
 			);
@@ -501,7 +507,7 @@
 				TargetAttributes = {
 					1FAB5B3E20A7B10A003F9943 = {
 						CreatedOnToolsVersion = 9.3.1;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -556,6 +562,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-The-Cookout/Pods-The-Cookout-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/AlamofireImage/AlamofireImage.framework",
 				"${BUILT_PRODUCTS_DIR}/BMPlayer/BMPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/Bolts-Swift/BoltsSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework",
@@ -583,6 +591,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BMPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BoltsSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BonMot.framework",
@@ -670,6 +680,8 @@
 				1F75BEC720AC312600BA7AF2 /* UserSearchCell.swift in Sources */,
 				1F4FD35A20A9EE7500AB73C1 /* UserProfileController.swift in Sources */,
 				1F2BAA2320A7BF0200350CEC /* HomeController.swift in Sources */,
+				1FEE32BB225D4EF100B93FD5 /* StretchyHeaderLayout.swift in Sources */,
+				1FEE32BD225D545A00B93FD5 /* UserBannerHeader.swift in Sources */,
 				1FCF385420BC0085008841B0 /* VideoPlayerViewController.swift in Sources */,
 				1FF5083F20B3F15D0092F462 /* CommentApi.swift in Sources */,
 				1FF5083920B3EE6F0092F462 /* UserApi.swift in Sources */,
@@ -861,7 +873,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.App-Power.The-Cookout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -881,7 +893,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.App-Power.The-Cookout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

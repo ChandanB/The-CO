@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "855787E7411FCD06B22B2A27EAF62285"
+               BlueprintIdentifier = "D611AAFBD53E9A0129C51CD207705897"
                BuildableName = "GoogleAppMeasurement"
                BlueprintName = "GoogleAppMeasurement"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "855787E7411FCD06B22B2A27EAF62285"
+            BlueprintIdentifier = "D611AAFBD53E9A0129C51CD207705897"
             BuildableName = "GoogleAppMeasurement"
             BlueprintName = "GoogleAppMeasurement"
             ReferencedContainer = "container:Pods.xcodeproj">

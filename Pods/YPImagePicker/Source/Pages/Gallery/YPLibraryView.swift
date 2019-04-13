@@ -32,7 +32,7 @@ final class YPLibraryView: UIView {
         )
         
         layout(
-            assetViewContainer,
+            assetViewContainer as Any,
             |line| ~ 1
         )
         

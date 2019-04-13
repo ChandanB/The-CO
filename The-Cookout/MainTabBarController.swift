@@ -59,7 +59,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         let likeNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "like_unselected"), selectedImage: #imageLiteral(resourceName: "like_selected"))
         
         // user profile
-        let layout = UICollectionViewFlowLayout()
+        let layout = StretchyHeaderLayout()
             
         let userProfileController = UserProfileController(collectionViewLayout: layout)
         userProfileController.user = self.user
@@ -84,7 +84,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         
-        let index = viewControllers?.index(of: viewController)
+        let index = viewControllers?.firstIndex(of: viewController)
         if index == 2 {
             
             let layout = UICollectionViewFlowLayout()

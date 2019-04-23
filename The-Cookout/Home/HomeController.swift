@@ -219,7 +219,7 @@ class HomeController: DatasourceController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+        return UIEdgeInsets(top: 7, left: 0, bottom: 10, right: 0)
     }
     
     func setupNavigationBarItems() {
@@ -286,15 +286,16 @@ class HomeController: DatasourceController {
         
         let estimatedTextHeight = estimatedHeightForText(post.caption)
         let estimatedImageHeight = estimatedHeightForImage(post.imageHeight, width: post.imageWidth)
+        let width = view.frame.width / 1.04
         
         if post.hasImage == "true" && post.hasText == "true" {
             let height: CGFloat = estimatedImageHeight + estimatedTextHeight
-            return CGSize(width: view.frame.width, height: height + 128)
+            return CGSize(width: width, height: height + 128)
         } else if post.hasImage == "true" && post.hasText == "false" {
             let height: CGFloat = estimatedImageHeight
-            return CGSize(width: view.frame.width, height: height + 128)
+            return CGSize(width: width, height: height + 128)
         } else {
-            return CGSize(width: view.frame.width, height: estimatedTextHeight + 128)
+            return CGSize(width: width, height: estimatedTextHeight + 128)
         }
     }
     
@@ -302,7 +303,7 @@ class HomeController: DatasourceController {
         
         let approximateWidthOfTextView = view.frame.width - 12 - 50 - 12 - 4
         let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedString.Key.font: CustomFont.proximaNovaAlt.of(size: 15.0)!]
+        let attributes = [NSAttributedString.Key.font: CustomFont.proximaNovaAlt.of(size: 14.0)!]
         
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         
@@ -322,7 +323,7 @@ class HomeController: DatasourceController {
     
     func didTapComment(post: Post) {
         let commentsController = CommentsController()
-        commentsController.post = post        
+        commentsController.post = post
         navigationController?.pushViewController(commentsController, animated: true)
     }
     
@@ -383,7 +384,7 @@ class HomeController: DatasourceController {
     
     func didTapProfilePicture(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        let layout = UICollectionViewFlowLayout()
+        let layout = StretchyHeaderLayout()
         let userProfileController = UserProfileController(collectionViewLayout: layout)
         let post = self.homeDatasource.posts[indexPath.item]
         let user = post.user

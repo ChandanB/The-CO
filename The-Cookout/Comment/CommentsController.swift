@@ -8,6 +8,7 @@
 
 import LBTAComponents
 import Firebase
+import Spring
 
 class CommentsController: DatasourceController, CommentInputAccessoryViewDelegate {
     
@@ -146,12 +147,12 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        tabBarController?.tabBar.isHidden = false
+        self.tabBarController?.tabBar.isHidden = false
     }
     
     lazy var containerView: CommentInputAccessoryView = {

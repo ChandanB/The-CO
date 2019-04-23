@@ -282,7 +282,6 @@ class UserProfileHeader: DatasourceCell {
 
     let profileImageView: CachedImageView = {
         let iv = CachedImageView()
-        iv.layer.cornerRadius = 60
         iv.backgroundColor = .lightGray
         iv.contentMode = .scaleAspectFill
         iv.layer.borderColor = UIColor.white.cgColor
@@ -318,31 +317,29 @@ class UserProfileHeader: DatasourceCell {
     
     var profileImageTopAnchor: NSLayoutConstraint?
     
-    let maxHeight: CGFloat = 120
-    let minHeight: CGFloat = 50
+    
     
     override func setupViews() {
         super.setupViews()
         
         addSubview(backgroundImageView)
-     //   addSubview(bannerImageView)
+//   addSubview(bannerImageView)
         addSubview(profileImageView)
         addSubview(nameLabel)
         addSubview(bioTextView)
         addSubview(editProfileFollowButton)
         
         backgroundImageView.fillSuperview()
-//        
+        
 //        var height = backgroundImageView.frame.height
-//        
+        
 //        backgroundImageView.frame = CGRect(x: 0, y: 0, width: self.width, height: height)
         
-     //   bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
-        
+//        bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
        
         
         profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 120, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: maxHeight)
-        
+        profileImageView.layer.cornerRadius = maxHeight / 2
         profileImageView.heightConstraint?.constant = maxHeight
         profileImageView.heightConstraint?.isActive = true
         
@@ -422,16 +419,20 @@ class UserProfileHeader: DatasourceCell {
         })
     }
     
+    let maxHeight: CGFloat = 120
+    let minHeight: CGFloat = 60
 
     func animate(t: CGFloat) {
         
         if t < 0 {
             profileImageView.heightConstraint?.constant = maxHeight
+            profileImageView.widthConstraint?.constant = maxHeight
             return
         }
         
         let height = max(maxHeight - (maxHeight - minHeight) * t, minHeight)
         profileImageView.heightConstraint?.constant = height
+        profileImageView.widthConstraint?.constant = height
     }
     
 

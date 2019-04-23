@@ -30,8 +30,8 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     var headerOne = "headerId1"
     var headerTwo = "headerId2"
     
-    
     var isGridView = true
+    
     var gridArray = [Post]()
     var listArray = [Post]()
     
@@ -63,6 +63,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     fileprivate func setupCollectionView() {
+        
         self.navigationController?.isNavigationBarHidden = true
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: #selector(dismissView))
         
@@ -156,7 +157,19 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                     
                 })
                 
+           //     let sectionIndex = IndexSet(integer: 1)
                 self.collectionView?.reloadData()
+                
+          //      tableView.reloadSections(sectionIndex, with: .none) // or fade, right, left, top, bottom, none, middle, automatic
+                
+          //      self.collectionView?.reloadRowsInSection(section: 1, oldCount: self.listArray.count, newCount: self.listArray.count)
+               
+          //      self.collectionView?.layoutSubviews()
+         //       self.collectionView?.layoutIfNeeded()
+         //       self.header?.layoutIfNeeded()
+        //        self.header?.layoutSubviews()
+         //       self.header?.setNeedsDisplay()
+            //    self.collectionView.collectionViewLayout.invalidateLayout()
                 return
             }
             
@@ -192,7 +205,21 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                         self.listArray.append(post)
                     }
                 })
-                self.collectionView?.reloadData()
+                
+                 self.collectionView?.reloadData()
+                
+                
+          //      self.collectionView?.reloadRowsInSection(section: 1, oldCount: self.listArray.count, newCount: self.listArray.count)
+               
+        //        let sectionIndex = IndexSet(integer: 1)
+        //        tableView.reloadSections(sectionIndex, with: .none) // or fade, right, left, top, bottom, none, middle, automatic
+
+          //      self.collectionView?.layoutSubviews()
+          //      self.collectionView?.layoutIfNeeded()
+         //       self.header?.layoutIfNeeded()
+        //        self.header?.layoutSubviews()
+        //        self.header?.setNeedsDisplay()
+              //  self.collectionView.collectionViewLayout.invalidateLayout()
             }
         }
     }
@@ -218,8 +245,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
             self.followersCount = allObjects.count
         }
-        
-        self.collectionView?.reloadData()
         
     }
     
@@ -279,6 +304,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
     }
     
+
     
     var header: UserProfileHeader?
     var bannerHeader: UserBannerHeader?
@@ -292,13 +318,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             switch section {
             case 0:
                 bannerHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerTwo, for: indexPath) as? UserBannerHeader
+                bannerHeader?.clipsToBounds = false
                 bannerHeader?.user = self.user
                 bannerHeader?.delegate = self
                 
                 return bannerHeader!
             default:
                 header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerOne, for: indexPath) as? UserProfileHeader
-                
                 header?.clipsToBounds = false
                 header?.user = self.user
                 header?.delegate = self
@@ -381,7 +407,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     fileprivate func fetchUser() {
         self.navigationItem.title = self.user?.username
-        self.collectionView?.reloadData()
         self.fetchStatsCount()
         self.handleRefresh()
     }
@@ -474,6 +499,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     let bannerStopAtOffset:CGFloat = 200 - 64
     let distanceBetweenTopAndHeader:CGFloat = 30.0
+    let scrollToScaleDownProfileIconDistance: CGFloat = 60
     
     var lastContentOffset: CGFloat = 0
     
@@ -481,48 +507,46 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.lastContentOffset = scrollView.contentOffset.y
     }
     
-    var headerXOriginal: CGFloat = 0.0
-    var index = 0
-    let scrollToScaleDownProfileIconDistance: CGFloat = 0
+    let maxHeight: CGFloat = 120
+    let minHeight: CGFloat = 60
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
         guard let header = self.header else {return}
         guard let bannerHeader = self.bannerHeader else {return}
         
-        var headerX: CGFloat = 0
         let contentOffsetY = scrollView.contentOffset.y
+        let contentOffsetX = scrollView.contentOffset.x
+        
+        let halfWidth = header.frame.width / 2.0
+        let centerX = (halfWidth - (header.profileImageView.frame.width / 2))
         
         let scaleProgress = max(0, min(1, contentOffsetY / self.scrollToScaleDownProfileIconDistance))
-        let height = header.profileImageView.bounds.height
-        let width = header.profileImageView.bounds.width
-        header.animate(t: scaleProgress)
+        let height = max(maxHeight - (maxHeight - minHeight) * scaleProgress, minHeight)
         
-        if index == 0 {
-            headerX = header.profileImageView.frame.minX
-            self.headerXOriginal = headerX
-        }
-        
-        self.index = 1
-        
-        if contentOffsetY > 0 && contentOffsetY < 50 {
-            UIView.animate(withDuration: 0.6, animations: {
-              //  header.profileImageView.center.y = contentOffsetY
-             //   header.profileImageView.frame = CGRect(x: self.headerXOriginal, y: contentOffsetY, width: width, height: height)
-            })
-        }
-        
-        
-        if contentOffsetY > 0 {
-            if contentOffsetY >= scrollToScaleDownProfileIconDistance {
-            //    scrollView.bringSubviewToFront(bannerHeader)
-                bannerHeader.animator.fractionComplete = 0
-                return
-            }
-        }
+//        let scaleFactor = (min(self.scrollToScaleDownProfileIconDistance, contentOffsetY))
+//        let sizeVariation = ((header.profileImageView.bounds.height * (1.0 + scaleFactor)) - header.profileImageView.bounds.height) / 2.0
         
         if contentOffsetY <= 0 {
-         //   scrollView.bringSubviewToFront(header)
             bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 180
+            
+        } else if contentOffsetY > 0 && contentOffsetY <= scrollToScaleDownProfileIconDistance && scaleProgress <= 1 {
+            
+            header.profileImageView.frame = CGRect(x: centerX, y: contentOffsetY - 60, width: height, height: height)
+            header.profileImageView.layer.cornerRadius = height / 2
+            
+            print(header.profileImageView.frame.midY)
+            
+            if header.profileImageView.layer.zPosition < bannerHeader.layer.zPosition {
+                bannerHeader.layer.zPosition = 0
+            }
+            
+            return
+        } else {
+            
+            if header.profileImageView.layer.zPosition >= bannerHeader.layer.zPosition {
+                bannerHeader.layer.zPosition = 2
+            }
         }
         
     }

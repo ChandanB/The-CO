@@ -10,8 +10,11 @@ import UIKit
 import LBTAComponents
 import Kingfisher
 import Firebase
+import Spring
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -107,5 +110,115 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         return navController
     }
     
+    let containerView = UIView()
+    
+    func layoutView() {
+        let tb = self.tabBar
+        
+
+        // set the shadow of the view's layer
+        containerView.layer.backgroundColor = UIColor.clear.cgColor
+        containerView.layer.shadowColor = UIColor.black.cgColor
+        containerView.layer.shadowOffset = CGSize(width: 5.0, height: 5.0)
+        containerView.layer.shadowOpacity = 1
+        containerView.layer.shadowRadius = 4.0
+        containerView.layer.cornerRadius = 15
+        containerView.layer.masksToBounds = true
+        
+        self.tabBar.addSubview(containerView)
+        
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.anchor(top: tb.topAnchor, leading: tb.leadingAnchor, bottom: tb.bottomAnchor, trailing: tb.trailingAnchor)
+        
+//        let shadow = containerView.dropShadow(shadowColor: .black, fillColor: .clear, opacity: 1, offset: CGSize(width: 5.0, height: 5.0), radius: 15)
+//
+//        containerView.layer.insertSublayer(shadow, at: 0)
+        
+    }
+    
+    var shadow: CAShapeLayer?
+    
+    override func viewWillLayoutSubviews() {
+        self.shadow = tabBar.dropShadow(shadowColor: .black, fillColor: .clear, opacity: 0.075, offset: CGSize(width: 0, height: 1), radius: 15)
+        guard let shadow = self.shadow else {return}
+        
+        let path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: self.tabBar.frame.width / 1.025, height: self.tabBar.frame.height), cornerRadius: self.tabBar.frame.width / 1.025)
+        let mask = CAShapeLayer()
+        var tabFrame = self.tabBar.frame
+        
+        tabFrame.origin.x = 4.5
+        tabFrame.origin.y = 608
+        self.tabBar.frame = tabFrame
+        self.tabBar.isTranslucent = true
+        self.tabBar.barStyle = .default
+        
+        mask.path = path.cgPath
+        tabBar.layer.mask = mask
+        
+        shadow.path = path.cgPath
+        shadow.frame = self.tabBar.frame
+        self.shadow = shadow
+        tabBar.superview?.layer.insertSublayer(self.shadow!, below: tabBar.layer)
+    }
+    
+    private func addShape(_ tabBar: UITabBar) -> CAShapeLayer {
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = createPathCircle(tabBar)
+        shapeLayer.strokeColor = UIColor.lightGray.cgColor
+        shapeLayer.fillColor = UIColor.white.cgColor
+        shapeLayer.lineWidth = 1.0
+   
+        tabBar.layer.insertSublayer(shapeLayer, at: 0)
+        
+        return shapeLayer
+    }
+    
+    func createPath(_ tabBar: UITabBar) -> CGPath {
+        let height: CGFloat = 37.0
+        let path = UIBezierPath()
+        let centerWidth = tabBar.frame.width / 2
+        
+        path.move(to: CGPoint(x: 0, y: 0)) // start top left
+        path.addLine(to: CGPoint(x: (centerWidth - height * 2), y: 0)) // the beginning of the trough
+        // first curve down
+        path.addCurve(to: CGPoint(x: centerWidth, y: height),
+                      controlPoint1: CGPoint(x: (centerWidth - 30), y: 0), controlPoint2: CGPoint(x: centerWidth - 35, y: height))
+        // second curve up
+        path.addCurve(to: CGPoint(x: (centerWidth + height * 2), y: 0),
+                      controlPoint1: CGPoint(x: centerWidth + 35, y: height), controlPoint2: CGPoint(x: (centerWidth + 30), y: 0))
+        
+        // complete the rect
+        path.addLine(to: CGPoint(x: tabBar.frame.width, y: 0))
+        path.addLine(to: CGPoint(x: tabBar.frame.width, y: tabBar.frame.height))
+        path.addLine(to: CGPoint(x: 0, y: tabBar.frame.height))
+        path.close()
+        
+        return path.cgPath
+    }
+    
+    func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let buttonRadius: CGFloat = 35
+        return abs(tabBar.center.x - point.x) > buttonRadius || abs(point.y) > buttonRadius
+    }
+    
+    func createPathCircle(_ tabBar: UITabBar) -> CGPath {
+        let radius: CGFloat = 37.0
+        let path = UIBezierPath()
+        let centerWidth = tabBar.frame.width / 2
+        
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: (centerWidth - radius * 2), y: 0))
+        path.addArc(withCenter: CGPoint(x: centerWidth, y: 0), radius: radius, startAngle: CGFloat(180).degreesToRadians, endAngle: CGFloat(0).degreesToRadians, clockwise: false)
+        path.addLine(to: CGPoint(x: tabBar.frame.width, y: 0))
+        path.addLine(to: CGPoint(x: tabBar.frame.width, y: tabBar.frame.height))
+        path.addLine(to: CGPoint(x: 0, y: tabBar.frame.height))
+        path.close()
+        return path.cgPath
+    }
+    
+    
+    
     
 }
+

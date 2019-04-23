@@ -130,11 +130,11 @@ class UserBannerHeader: DatasourceCell {
     
     
     fileprivate func setupProfileAndBannerImage() {
-        guard let profileImageUrl = user?.profileImageUrl else { return }
+     //   guard let profileImageUrl = user?.profileImageUrl else { return }
         guard let bannerImageUrl = user?.bannerImageUrl else { return }
         
         DispatchQueue.main.async {
-            self.profileImageView.loadImage(urlString: profileImageUrl)
+     //       self.profileImageView.loadImage(urlString: profileImageUrl)
             self.bannerImageView.loadImage(urlString: bannerImageUrl)
         }
     }

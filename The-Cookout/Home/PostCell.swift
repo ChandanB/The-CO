@@ -50,8 +50,8 @@ class PostCell: DatasourceCell {
     fileprivate func setupAttibutedCaption(_ post: Post) {
         
         let name = post.user.name
-        let font = CustomFont.proximaNovaSemibold.of(size: 14.0)
-        let regular = CustomFont.proximaNovaAlt.of(size: 15.0)
+        let font = CustomFont.proximaNovaSemibold.of(size: 11.0)
+        let regular = CustomFont.proximaNovaAlt.of(size: 14.0)
         
         let nameAttributedText = NSMutableAttributedString(string: (name), attributes: [NSAttributedString.Key.font: font!])
         
@@ -90,6 +90,7 @@ class PostCell: DatasourceCell {
         let iv = CachedImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
+        iv.layer.cornerRadius = 10
         return iv
     }()
     
@@ -231,6 +232,8 @@ class PostCell: DatasourceCell {
     override func setupViews() {
         super.setupViews()
         
+        self.layer.cornerRadius = 10
+        
         backgroundColor = .white
         
         separatorLineView.isHidden = false
@@ -271,8 +274,8 @@ class PostCell: DatasourceCell {
             addSubview(photoImageView)
             photoImageView.addSubview(heartPopup)
             
-            photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: seperatorView.topAnchor, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-    
+            photoImageView.anchor(messageTextView.bottomAnchor, left: nil, bottom: seperatorView.topAnchor, right: nil, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: bounds.width - 30, heightConstant: 0)
+            photoImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
             
             heartPopup.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
             heartPopup.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true

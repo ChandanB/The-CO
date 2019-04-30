@@ -12,8 +12,8 @@ import Kingfisher
 
 class NewMessageController: UITableViewController {
     
+    let database = API.database
     let cellId = "cellId"
-    
     var users = [User]()
     
     override func viewDidLoad() {
@@ -23,37 +23,19 @@ class NewMessageController: UITableViewController {
         
         tableView.register(UserMessageCell.self, forCellReuseIdentifier: cellId)
         
-        fetchUser()
+        fetchFollowing()
     }
     
-    func fetchUser() {
+    func fetchFollowing() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        let ref = Database.database().reference().child("following").child(uid)
         
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            
-            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
-            
-            userIdsDictionary.forEach({ (arg) in
-                let (key, _) = arg
-                Database.fetchUserWithUID(uid: key, completion: { (user) in
-                    self.fetchUsers(user)
-                })
+        self.database.fetchFollowing(userId: uid) { (following) in
+            self.users = [following]
+            DispatchQueue.main.async(execute: {
+                self.tableView.reloadData()
             })
         }
-    }
-    
-    func fetchUsers(_ user: User) {
-        Database.database().reference().child("users").child(user.uid).observe(.value, with: { (snapshot) in
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                let user = User(uid: snapshot.key, dictionary: dictionary)
-                self.users.append(user)
-                print("Second:", user)
-                DispatchQueue.main.async(execute: {
-                    self.tableView.reloadData()
-                })
-            }
-        }, withCancel: nil)
+        
     }
     
     @objc func handleCancel() {

@@ -166,81 +166,42 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func shareImagePost() {
+        guard let user = self.user else { return }
         guard let image = self.selectedImage else { return }
-        guard let uploadData = image.jpegData(compressionQuality: 0.4) else { return }
-        let filename = NSUUID().uuidString
-        
-        let storageRef = Storage.storage().reference().child("posts").child("\(filename).jpg")
-        
-        storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
-            
-            if let err = error {
-                print("Failed to upload post image:", err)
-                return
-            }
-            
-            storageRef.downloadURL(completion: { (url, error) in
-                
-                if let err = error {
-                    print("Failed to get post url:", err)
-                    return
-                }
-                
-                guard let imageUrl = url else { return }
-                guard let user = self.user else { return }
-                
-                let postImageUrl = imageUrl.absoluteString
-                
-                print("Successfully uploaded post image:", postImageUrl)
-                
-                self.saveToDatabaseWithImageUrl(postImageUrl, user: user)
-            })
-        })
-    }
-    
-    fileprivate func saveToDatabaseWithImageUrl(_ imageUrl: String, user: User) {
-        guard let postImage = selectedImage else { return }
         guard let caption = messageTextView?.text else { return }
-        
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let uploadData = image.jpegData(compressionQuality: 0.4) else { return }
+        let userPostRef = Database.database().reference().child("posts").child(user.uid)
         
         var trimmedCaption = caption.trim()
-        
         if trimmedCaption == "What's on your mind?" || trimmedCaption == "Say something about this picture?" {
             trimmedCaption = ""
         }
         
-        var values =
-            ["imageUrl": imageUrl,
-             "caption": trimmedCaption,
-             "imageWidth": postImage.size.width,
-             "imageHeight": postImage.size.height,
-             "creationDate": Date().timeIntervalSince1970,
-             "profileImageUrl": user.profileImageUrl,
-             "name": user.name,
-             "username": user.username, "hasImage": "true"] as [String : Any]
-        
-        if trimmedCaption != "" {
-            values.updateValue("true", forKey: "hasText")
-        }
-        
-        let userPostRef = Database.database().reference().child("posts").child(uid)
-        let ref = userPostRef.childByAutoId()
-        
-        ref.updateChildValues(values) { (err, ref) in
+        HelperService.uploadImageToFirebaseStorage(data: uploadData) { (imageUrl) in
+            let values =
+                ["imageUrl": imageUrl,
+                 "caption": trimmedCaption,
+                 "imageWidth": image.size.width,
+                 "imageHeight": image.size.height,
+                 "creationDate": Date().timeIntervalSince1970,
+                 "profileImageUrl": user.profileImageUrl,
+                 "name": user.name,
+                 "username": user.username, "hasImage": true] as [String : Any]
             
-            if let err = err {
-                self.navigationItem.rightBarButtonItem?.isEnabled = false
-                print("Failed to save post to DB", err)
-                return
-            } else {
+            
+            let ref = userPostRef.childByAutoId()
+            
+            ref.updateChildValues(values) { (err, ref) in
+                
+                if let err = err {
+                    self.navigationItem.rightBarButtonItem?.isEnabled = false
+                    print("Failed to save post to DB", err)
+                    return
+                }
                 HUD.flash(.success)
+                NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
+                self.dismiss(animated: true, completion: nil)
             }
-            
-            NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
-            
-            self.dismiss(animated: true, completion: nil)
-            
         }
     }
     
@@ -249,10 +210,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func shareTextPost(_ user: User) {
         guard let caption = messageTextView?.text else { return }
         
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
         let trimmedCaption = caption.trim()
-        
         if trimmedCaption == ""  {
             return
         }
@@ -261,9 +219,9 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
                       "creationDate": Date().timeIntervalSince1970,
                       "profileImageUrl": user.profileImageUrl,
                       "name": user.name,
-                      "username": user.username, "hasText": "true"] as [String : Any]
+                      "username": user.username, "hasText": true] as [String : Any]
         
-        let userPostRef = Database.database().reference().child("posts").child(uid)
+        let userPostRef = Database.database().reference().child("posts").child(user.uid)
         let ref = userPostRef.childByAutoId()
         
         ref.updateChildValues(values) { (err, ref) in
@@ -274,7 +232,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             }
             
             NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
-            
             print("Successfully saved post to DB")
             self.dismiss(animated: true, completion: nil)
     

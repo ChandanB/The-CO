@@ -34,9 +34,17 @@ class HelperService {
                 HUD.show(.error)
                 return
             }
-           // if let videoUrl = metadata?.downloadURL()?.absoluteString {
-            //    onSuccess(videoUrl)
-           // }
+            
+            storageRef.downloadURL(completion: { (url, error) in
+                if let error = error {
+                    print(error)
+                    return
+                }
+                
+                guard let downloadUrl = url else { return }
+                let videoUrl = downloadUrl.absoluteString
+                onSuccess(videoUrl)
+            })
         }
     }
     
@@ -48,30 +56,38 @@ class HelperService {
                 HUD.show(.error)
                 return
             }
-          //  if let photoUrl = metadata?.downloadURL()?.absoluteString {
-         //       onSuccess(photoUrl)
-          //  }
             
+            storageRef.downloadURL(completion: { (url, error) in
+                if let error = error {
+                    print(error)
+                    return
+                }
+                
+                guard let downloadUrl = url else { return }
+                let photoUrl = downloadUrl.absoluteString 
+                onSuccess(photoUrl)
+            })
         }
     }
     
     static func sendDataToDatabase(photoUrl: String, videoUrl: String? = nil, ratio: CGFloat, caption: String, onSuccess: @escaping () -> Void) {
-        let newPostId = Api.post.postsRef.childByAutoId().key
-        let newPostReference = Api.post.postsRef.child(newPostId ?? "")
+        let newPostId = API.database.postsRef.childByAutoId().key
+        let newPostReference = API.database.postsRef.child(newPostId ?? "")
         
-        guard let currentUser = Api.user.currentUser else { return }
+        guard let currentUser = API.database.currentUser else { return }
         
         let words = caption.components(separatedBy: CharacterSet.whitespacesAndNewlines)
         for var word in words {
             if word.hasPrefix("#") {
                 word = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
                 word = word.trimmingCharacters(in: CharacterSet.symbols)
-                let newHashReference = Api.hashTag.hashtagRef.child(word.lowercased())
+                let newHashReference = API.database.hashtagRef.child(word.lowercased())
                 newHashReference.setValue([newPostId: true])
             }
         }
         
         let currentUserId = currentUser.uid
+        
         var dict = ["uid": currentUserId ,"imageUrl": photoUrl, "caption": caption, "likeCount": 0, "ratio": ratio] as [String : Any]
         if let videoUrl = videoUrl {
             dict["videoUrl"] = videoUrl
@@ -83,9 +99,9 @@ class HelperService {
                 return
             }
             
-            Api.posts.postsRef.child(Api.user.currentUser!.uid).child(newPostId ?? "").setValue(true)
+            API.database.postsRef.child(currentUserId).child(newPostId ?? "").setValue(true)
             
-            let myPostRef = Api.myPosts.myPostsRef.child(currentUserId).child(newPostId ?? "")
+            let myPostRef = API.database.myPostsRef.child(currentUserId).child(newPostId ?? "")
             myPostRef.setValue(true, withCompletionBlock: { (error, ref) in
                 if error != nil {
                     return

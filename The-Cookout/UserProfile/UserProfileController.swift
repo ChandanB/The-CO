@@ -149,7 +149,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                     guard let dictionary = snapshot.value as? [String: Any] else { return }
                     let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                     
-                    if post.hasImage == "true" {
+                    if post.hasImage {
                         self.gridArray.append(post)
                         // let imageUrl = post.imageUrl
                         // self.currentIndex += 1
@@ -201,7 +201,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                     guard let dictionary = snapshot.value as? [String: Any] else { return }
                     let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                     
-                    if post.hasText == "true" && post.hasImage == "false" {
+                    if post.hasText && !post.hasImage {
                         self.listArray.append(post)
                     }
                 })
@@ -262,15 +262,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         if isGridView {
             let post = self.gridArray[indexPath.item]
             
-            //            let h = CGFloat(truncating: post.imageHeight)
-            //            let w = CGFloat(truncating: post.imageWidth)
-            
-            if post.hasText == "true" && post.hasImage == "false" {
+            if post.hasText && !post.hasImage {
                 return .zero
             }
-            let width = (view.frame.width - 2) / 3
             
-            //            let height = h * width / w
+            let width = (view.frame.width - 2) / 3
             
             return CGSize(width: width, height: width)
         }
@@ -278,7 +274,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let post = self.listArray[indexPath.item] 
         let estimatedHeight = estimatedHeightForListText(post.caption)
         
-        if post.hasImage == "true" {
+        if post.hasImage {
             var height: CGFloat = 50 + 8 + 8 + estimatedHeight
             height += view.frame.width
             return CGSize(width: view.frame.width, height: height + 72)
@@ -426,7 +422,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     func didLike(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         
-        var post = self.listArray[indexPath.item]
+        let post = self.listArray[indexPath.item]
         
         guard let postId = post.id else { return }
         
@@ -441,9 +437,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             }
             
             print("Successfully liked post.")
-            
-            post.hasLiked = !post.hasLiked
-            
+                        
             self.listArray[indexPath.item] = post
             
             self.collectionView?.reloadItems(at: [indexPath])

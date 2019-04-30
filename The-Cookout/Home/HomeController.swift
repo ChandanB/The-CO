@@ -10,12 +10,17 @@ import LBTAComponents
 import Firebase
 import Kingfisher
 import UIFontComplete
+import Nora
+import Result
 
 class HomeController: DatasourceController {
+    
+    let database = API.database
     
     let refreshControl = UIRefreshControl()
     let homeDatasource = HomeDatasource()
     var postLikesCount = 0
+    var postCommentsCount = 0
     var isUpdating = false
     var user: User?
 
@@ -30,9 +35,8 @@ class HomeController: DatasourceController {
         
         setupNavigationBarItems()
         setupRefresherControl()
-        fetchAllPosts()
+        fetchUsersForFeed()
     }
-    
     
     fileprivate func setupRefresherControl() {
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
@@ -43,174 +47,56 @@ class HomeController: DatasourceController {
     @objc func handleNewPost() {
         isUpdating = true
         self.homeDatasource.posts.removeAll()
-        fetchAllPosts()
+        fetchPosts()
+        isUpdating = false
     }
     
     @objc override func handleRefresh() {
         refreshControl.beginRefreshing()
         self.homeDatasource.posts.removeAll()
-        self.fetchAllPosts()
+        self.fetchPosts()
         refreshControl.endRefreshing()
     }
     
-    var newPost: Post?
-    fileprivate func updatePage(_ user: User) {
-        isUpdating = false
+    var users = [User]()
+    
+    func fetchUsersForFeed() {
+        guard let currentUser = self.user else {return}
+        self.users.append(currentUser)
         
-        let uid = user.uid
-        let ref = Database.database().reference().child("posts").child(uid)
-        
-        ref.observeSingleEvent(of: .childAdded) { (snapshot) in
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-            post.id = snapshot.key
-            
-            let ref = Database.database().reference().child("likes").child(post.id!)
-            
-            ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
-                
-                if let value = snapshot.value as? Int, value == 1 {
-                    post.hasLiked = true
-                } else {
-                    post.hasLiked = false
-                }
-                
-                self.newPost = post
-            }
+        self.database.fetchFollowing(userId: currentUser.uid) { (user) in
+            self.users.append(user)
         }
-    }
-    
-    func fetchAllPosts() {
-        fetchFollowingUserIds()
-        fetchCurrentUserId()
-    }
-    
-    
-    fileprivate func fetchFollowingUserIds() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("following").child(uid)
         
-        // Followers
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            
-            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
-            
-            userIdsDictionary.forEach({ (key, value) in
-                Database.fetchUserWithUID(uid: key, completion: { (user) in
-                    if self.isUpdating {
-                       self.updatePage(user)
-                    }
-                    
-                    if self.refreshControl.isRefreshing {
-                       self.refreshPostsWithUser(user)
-                       return
-                    }
-                    
-                    self.fetchPostsWithUser(user)
-                    
+        fetchPosts()
+    }
+        
+    func fetchPosts() {
+        if self.refreshControl.isRefreshing || self.isUpdating {
+            self.fetchNewPost(users)
+        }
+                
+        var posts = self.homeDatasource.posts
+        for user in self.users {
+            self.database.queryPosts(user: user, withPosts: posts) { (post) in
+                posts.append(post)
+                
+                posts.sort(by: { (p1, p2) -> Bool in
+                    return p1.creationDate.compare(p2.creationDate) == .orderedDescending
                 })
-            })
+                
+                self.homeDatasource.posts = posts
+                self.collectionView?.reloadData()
+            }
         }
     }
     
-    func fetchCurrentUserId() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        // Current User
-        Database.fetchUserWithUID(uid: uid) { (user) in
-            if self.isUpdating {
-                self.updatePage(user)
+    fileprivate func fetchNewPost(_ users: [User]) {
+        isUpdating = false
+        for user in users {
+            self.database.observeNewPost(user: user) { (post) in
+                self.homeDatasource.posts.append(post)
             }
-            if self.refreshControl.isRefreshing {
-                self.refreshPostsWithUser(user)
-                return
-            }
-            
-            self.fetchPostsWithUser(user)
-        }
-    }
-    
-    fileprivate func refreshPostsWithUser(_ user: User) {
-        refreshControl.endRefreshing()
-        
-        let uid = user.uid
-        let ref = Database.database().reference().child("posts").child(uid)
-        let query = ref.queryOrdered(byChild: "creationDate")
-        
-        query.queryLimited(toFirst: 1).observe( .value) { (snapshot) in
-            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
-            
-            allObjects.reverse()
-            
-            allObjects.forEach({ (snapshot) in
-               // guard let dictionary = snapshot.value as? [String: Any] else { return }
-              //  let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-            
-            })
-        }
-    }
-    
-    
-    fileprivate func fetchPostsWithUser(_ user: User) {
-        
-        var limit = 9
-        let uid = user.uid
-        let ref = Database.database().reference().child("posts").child(uid)
-        var query = ref.queryOrdered(byChild: "creationDate")
-        
-        if self.homeDatasource.posts.last != nil {
-            let value = self.homeDatasource.posts.last?.creationDate.timeIntervalSince1970
-            query = query.queryEnding(atValue: value)
-            limit = 10
-        }
-        
-        query.queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value) { (snapshot) in
-            
-            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
-            
-            allObjects.reverse()
-            
-            if self.homeDatasource.posts.count > 0 && allObjects.count > 0 {
-                allObjects.removeFirst()
-            }
-            
-            allObjects.forEach({ (snapshot) in
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                var post = Post(user: user, dictionary: dictionary as [String : AnyObject])
-                post.id = snapshot.key
-                
-                
-                let ref = Database.database().reference().child("likes").child(post.id!)
-                
-                ref.observe(.value) { (snapshot) in
-                    // guard let dictionary = snapshot.value as? [String: Any] else { return }
-                    post.likeCount = Int(snapshot.childrenCount)
-                    self.postLikesCount = post.likeCount
-                }
-                
-                ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
-                    
-                    if let value = snapshot.value as? Int, value == 1 {
-                        post.hasLiked = true
-                    } else {
-                        post.hasLiked = false
-                    }
-                    
-                    if self.newPost != nil {
-                       self.homeDatasource.posts.append(self.newPost!)
-                    }
-                    
-                    self.newPost = nil
-
-                    self.homeDatasource.posts.append(post)
-                    
-                    self.homeDatasource.posts.sort(by: { (p1, p2) -> Bool in
-                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
-                    })
-                    
-                    self.collectionView?.reloadData()
-                }
-            })
         }
     }
     
@@ -288,10 +174,10 @@ class HomeController: DatasourceController {
         let estimatedImageHeight = estimatedHeightForImage(post.imageHeight, width: post.imageWidth)
         let width = view.frame.width / 1.04
         
-        if post.hasImage == "true" && post.hasText == "true" {
+        if post.hasImage == true && post.hasText == true {
             let height: CGFloat = estimatedImageHeight + estimatedTextHeight
             return CGSize(width: width, height: height + 128)
-        } else if post.hasImage == "true" && post.hasText == "false" {
+        } else if post.hasImage == true && post.hasText == false {
             let height: CGFloat = estimatedImageHeight
             return CGSize(width: width, height: height + 128)
         } else {
@@ -333,7 +219,7 @@ class HomeController: DatasourceController {
     
     func likeButtonSelected(for cell: PostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        var post = self.homeDatasource.posts[indexPath.item]
+        let post = self.homeDatasource.posts[indexPath.item]
         
         guard let postId = post.id else { return }
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -348,9 +234,7 @@ class HomeController: DatasourceController {
             }
             
             print("Successfully liked post.")
-            
-            post.hasLiked = !post.hasLiked
-            
+                        
             self.homeDatasource.posts[indexPath.item] = post
             
             self.collectionView?.reloadItems(at: [indexPath])
@@ -378,6 +262,7 @@ class HomeController: DatasourceController {
     
     @objc func handleMessagesTapped() {
         let messagesController = MessagesController()
+        messagesController.user = self.user
         let navigationController = UINavigationController(rootViewController: messagesController)
         present(navigationController, animated: true, completion: nil)
     }
@@ -398,7 +283,7 @@ class HomeController: DatasourceController {
     }
     
     func loadPosts(_ user: User) {
-        Api.posts.observePostsRemoved(user: user, withId: user.uid) { (post) in
+        API.database.observePostsRemoved(user: user) { (post) in
             self.homeDatasource.posts = self.homeDatasource.posts.filter { $0.id != post.id }
         }
     }
@@ -424,9 +309,7 @@ class HomeController: DatasourceController {
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.row == self.homeDatasource.posts.count - 1 {
-//            let user = self.homeDatasource.posts[indexPath.row].user
-//            fetchPostsWithUser(user)
-            fetchAllPosts()
+            fetchPosts()
         }
     }
     

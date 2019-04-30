@@ -12,6 +12,9 @@ import Firebase
 class MessagesController: UITableViewController {
     
     let cellId = "cellId"
+    let database = API.database
+    
+    var user: User?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +23,23 @@ class MessagesController: UITableViewController {
         
         tableView.register(UserMessageCell.self, forCellReuseIdentifier: cellId)
         tableView.allowsMultipleSelectionDuringEditing = true
+    }
+    
+    func fetchUserAndSetupNavBarTitle() {
+        let image = #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal)
+        let sizedImage = image.resizeImage(targetSize: CGSize(width: 20, height: 20))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: sizedImage, style: .plain, target: self, action: #selector(handleNewMessage))
+        
+        navigationItem.title = "Messages"
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "<", style: .plain, target: self, action: #selector(dismissView))
+        
+        self.database.fetchCurrentUser { (user) in
+            self.user = user
+            self.messages.removeAll()
+            self.messagesDictionary.removeAll()
+            self.observeUserMessages(user)
+        }
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -41,6 +61,7 @@ class MessagesController: UITableViewController {
                 }
                 
                 self.messagesDictionary.removeValue(forKey: chatPartnerId)
+                
                 self.attemptReloadOfTable()
             })
         }
@@ -49,37 +70,35 @@ class MessagesController: UITableViewController {
     var messages = [Message]()
     var messagesDictionary = [String: Message]()
     
-    func observeUserMessages() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
+    func observeUserMessages(_ user: User) {
+        let uid = user.uid
         let ref = Database.database().reference().child("user-messages").child(uid)
-        ref.observe(.childAdded, with: { (snapshot) in
-            
-            let userId = snapshot.key
-            Database.database().reference().child("user-messages").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
-                
+        
+        ref.observe(.childAdded) { (snapshot) in
+            let chatPartnerId = snapshot.key
+            ref.child(chatPartnerId).observe(.childAdded) { (snapshot) in
                 let messageId = snapshot.key
                 self.fetchMessageWithMessageId(messageId)
-                
-            }, withCancel: nil)
-            
-        }, withCancel: nil)
+            }
+        }
         
-        ref.observe(.childRemoved, with: { (snapshot) in
+        ref.observe(.childRemoved) { (snapshot) in
             print(snapshot.key)
             print(self.messagesDictionary)
             
             self.messagesDictionary.removeValue(forKey: snapshot.key)
             self.attemptReloadOfTable()
-            
-        }, withCancel: nil)
+        }
+        
+        DispatchQueue.main.async(execute: {
+            self.tableView.reloadData()
+        })
     }
     
     fileprivate func fetchMessageWithMessageId(_ messageId: String) {
         let messagesReference = Database.database().reference().child("messages").child(messageId)
         
         messagesReference.observeSingleEvent(of: .value, with: { (snapshot) in
-            
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 let message = Message(dictionary: dictionary)
                 
@@ -156,39 +175,13 @@ class MessagesController: UITableViewController {
         present(navController, animated: true, completion: nil)
     }
     
-    func fetchUserAndSetupNavBarTitle() {
-        let image = #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal)
-        let sizedImage = image.resizeImage(targetSize: CGSize(width: 20, height: 20))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: sizedImage, style: .plain, target: self, action: #selector(handleNewMessage))
-        
-        navigationItem.title = "Messages"
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "<", style: .plain, target: self, action: #selector(dismissView))
-        
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("users").child(uid)
-        ref.observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                let user = User(uid: snapshot.key, dictionary: dictionary)
-                self.setupNavBarWithUser(user)
-            }
-            
-        }, withCancel: nil)
-    }
+    
     
     @objc func dismissView() {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func setupNavBarWithUser(_ user: User) {
-        messages.removeAll()
-        messagesDictionary.removeAll()
-        tableView.reloadData()
-        
-        observeUserMessages()
-    }
-    
+   
     func showChatControllerForUser(_ user: User) {
         let chatLogController = ChatLogController()
         chatLogController.user = user

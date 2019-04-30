@@ -11,6 +11,11 @@ import LBTAComponents
 import Spring
 import PKHUD
 
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+    return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     lazy var addPhotoButton: SpringButton = {
@@ -19,38 +24,6 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         button.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
         return button
     }()
-    
-    @objc func openImagePicker() {
-        let picker = UIImagePickerController()
-        picker.allowsEditing = true
-        picker.delegate = self
-        DispatchQueue.main.async {
-            self.present(picker, animated: true, completion: nil)
-        }
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-// Local variable inserted by Swift 4.2 migrator.
-let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
-
-        
-        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
-            addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
-        } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
-            addPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
-        }
-        
-        addPhotoButton.layer.cornerRadius = addPhotoButton.frame.width/2
-        addPhotoButton.layer.masksToBounds = true
-        addPhotoButton.layer.borderColor = UIColor.black.cgColor
-        addPhotoButton.layer.borderWidth = 3
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        print("canceled picker")
-        dismiss(animated: true, completion: nil)
-    }
     
     let usernameTextField: SpringTextField = {
         let tf = SpringTextField()
@@ -112,127 +85,6 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         return button
     }()
     
-    @objc func handleSignUp() {
-        dismissKeyboard()
-        if self.view.frame.origin.y != 0 {
-            self.view.frame.origin.y += 70
-        }
-        HUD.show(.progress)
-        HUD.dimsBackground = true
-        
-        if self.view.frame.origin.y != 0 {
-            self.view.frame.origin.y += 70
-        }
-        
-        guard let name = nameTextField.text else { return }
-        guard let email = emailTextField.text else { return }
-        guard let username = usernameTextField.text else { return }
-        guard let password = passwordTextField.text else { return }
-        
-        Auth.auth().createUser(withEmail: email, password: password, completion: { (user , error) in
-            
-            if let err = error {
-                print("Failed to create user:", err)
-                self.signUpButton.animation = "pop"
-                self.signUpButton.curve = "spring"
-                self.signUpButton.duration = 1.2
-                self.signUpButton.animate()
-                HUD.hide()
-                return
-            }
-            
-            print("Successfully created user:", user?.user.uid ?? "")
-            
-            guard let image = self.addPhotoButton.imageView?.image else { return }
-            
-            guard let uploadData = image.jpegData(compressionQuality: 0.3) else { return }
-            
-            let filename = NSUUID().uuidString
-            
-            let storageRef = Storage.storage().reference().child("profile_images").child("\(filename).jpg")
-            
-            storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
-                
-                if let err = error {
-                    print("Failed to upload profile image:", err)
-                    return
-                }
-                
-                storageRef.downloadURL(completion: { (url, error) in
-                    
-                    if let err = error {
-                        print("Failed to get profile url:", err)
-                        return
-                    }
-                    
-                    guard let downloadUrl = url else { return }
-                    let profileImageUrl = downloadUrl.absoluteString
-                    
-                    print("Successfully uploaded profile image:", profileImageUrl)
-                    
-                    
-                    guard let uid = user?.user.uid else { return }
-                    
-                    let dictionaryValues = ["name": name, "email": email, "username": username, "bio": "New Account 🤐", "profileImageUrl": profileImageUrl]
-                    let values = [uid: dictionaryValues]
-                    
-                    Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
-                        
-                        if let err = err {
-                            print("Failed to save user info into db:", err)
-                            return
-                        }
-                        
-                        print("Successfully saved user info to db")
-                        
-                        guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
-                        mainTabBarController.setupViewControllers()
-                        HUD.hide()
-                        self.handleAnimations()
-                    })
-                })
-            })
-        })
-    }
-    
-    fileprivate func handleAnimations() {
-        addPhotoButton.animation = "zoomOut"
-        addPhotoButton.curve = "easeOut"
-        addPhotoButton.duration = 0.2
-        addPhotoButton.animate()
-        addPhotoButton.animateNext {
-            self.nameTextField.animation = "zoomOut"
-            self.nameTextField.curve = "easeOut"
-            self.nameTextField.duration = 0.2
-            self.nameTextField.animate()
-            self.nameTextField.animateNext {
-                self.usernameTextField.animation = "zoomOut"
-                self.usernameTextField.curve = "easeOut"
-                self.usernameTextField.duration = 0.2
-                self.usernameTextField.animate()
-                self.usernameTextField.animateNext {
-                    self.emailTextField.animation = "zoomOut"
-                    self.emailTextField.curve = "easeOut"
-                    self.emailTextField.duration = 0.2
-                    self.emailTextField.animate()
-                    self.emailTextField.animateNext {
-                        self.passwordTextField.animation = "zoomOut"
-                        self.passwordTextField.curve = "easeOut"
-                        self.passwordTextField.duration = 0.2
-                        self.passwordTextField.animate()
-                        self.passwordTextField.animateNext {
-                            self.signUpButton.animation = "flash"
-                            self.signUpButton.curve = "easeIn"
-                            self.signUpButton.duration = 0.8
-                            self.signUpButton.animate()
-                            self.dismiss(animated: true, completion: nil)
-                        }
-                    }
-                }
-            }
-        }        
-    }
-    
     let alreadyHaveAccountButton: UIButton = {
         let button = UIButton(type: .system)
         let fontStyle = UIFont.systemFont(ofSize: 14)
@@ -246,10 +98,6 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     }()
     
     
-    @objc func handleAlreadyHaveAccount() {
-        _ = navigationController?.popViewController(animated: true)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -260,7 +108,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         alreadyHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
         
         self.hideKeyboardWhenTapped()
-      
+        
         view.backgroundColor = .white
         
         view.addSubview(addPhotoButton)
@@ -269,6 +117,41 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         setupInputFields()
+    }
+    
+    @objc func handleAlreadyHaveAccount() {
+        _ = navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func openImagePicker() {
+        let picker = UIImagePickerController()
+        picker.allowsEditing = true
+        picker.delegate = self
+        DispatchQueue.main.async {
+            self.present(picker, animated: true, completion: nil)
+        }
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+        
+        
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
+        } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            addPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
+        }
+        
+        addPhotoButton.layer.cornerRadius = addPhotoButton.frame.width/2
+        addPhotoButton.layer.masksToBounds = true
+        addPhotoButton.layer.borderColor = UIColor.black.cgColor
+        addPhotoButton.layer.borderWidth = 3
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        print("canceled picker")
+        dismiss(animated: true, completion: nil)
     }
     
     func setupInputFields() {
@@ -383,6 +266,94 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         
     }
     
+}
+
+// MARK: - Handle Sign Up
+extension RegisterController {
+    @objc func handleSignUp() {
+        dismissKeyboard()
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y += 70
+        }
+        HUD.show(.progress)
+        HUD.dimsBackground = true
+        
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y += 70
+        }
+        
+        let bio = "New Account 🤐"
+        guard let name = nameTextField.text else { return }
+        guard let email = emailTextField.text else { return }
+        guard let username = usernameTextField.text else { return }
+        guard let password = passwordTextField.text else { return }
+        guard let image = self.addPhotoButton.imageView?.image else { return }
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        
+        AuthService.signUp(bio: bio, name: name, username: username, email: email, password: password, imageData: imageData, onSuccess: {
+            print("Successfully saved user info to db")
+            
+//            UIApplication.shared.keyWindow?.rootViewController = MainTabBarController()
+//            let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+//            mainTabBarController?.setupViewControllers()
+//            UIApplication.shared.keyWindow?.rootViewController = mainTabBarController
+            HUD.hide()
+            self.handleAnimations()
+            
+        }) { (error) in
+            if let err = error {
+                print("Failed to create user:", err)
+                self.signUpButton.animation = "pop"
+                self.signUpButton.curve = "spring"
+                self.signUpButton.duration = 1.2
+                self.signUpButton.animate()
+                HUD.hide()
+                return
+            }
+        }
+    }
+    
+    fileprivate func handleAnimations() {
+        addPhotoButton.animation = "zoomOut"
+        addPhotoButton.curve = "easeOut"
+        addPhotoButton.duration = 0.2
+        addPhotoButton.animate()
+        addPhotoButton.animateNext {
+            self.nameTextField.animation = "zoomOut"
+            self.nameTextField.curve = "easeOut"
+            self.nameTextField.duration = 0.2
+            self.nameTextField.animate()
+            self.nameTextField.animateNext {
+                self.usernameTextField.animation = "zoomOut"
+                self.usernameTextField.curve = "easeOut"
+                self.usernameTextField.duration = 0.2
+                self.usernameTextField.animate()
+                self.usernameTextField.animateNext {
+                    self.emailTextField.animation = "zoomOut"
+                    self.emailTextField.curve = "easeOut"
+                    self.emailTextField.duration = 0.2
+                    self.emailTextField.animate()
+                    self.emailTextField.animateNext {
+                        self.passwordTextField.animation = "zoomOut"
+                        self.passwordTextField.curve = "easeOut"
+                        self.passwordTextField.duration = 0.2
+                        self.passwordTextField.animate()
+                        self.passwordTextField.animateNext {
+                            self.signUpButton.animation = "flash"
+                            self.signUpButton.curve = "easeIn"
+                            self.signUpButton.duration = 0.8
+                            self.signUpButton.animate()
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+extension RegisterController {
     @objc func keyboardWillShow(notification: NSNotification) {
         if ((notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue) != nil {
             if self.view.frame.origin.y == 0 {
@@ -404,13 +375,4 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-    
-    
-}
-
-
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }

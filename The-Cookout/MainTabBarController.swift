@@ -14,13 +14,17 @@ import Spring
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    
+    var user: User?
+    let homeController = HomeController()
+    let userSearchController = UserSearchController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.delegate = self
-        
+        checkIfLoggedIn()
+    }
+    
+    func checkIfLoggedIn() {
         if Auth.auth().currentUser == nil {
             //show if not logged in
             DispatchQueue.main.async {
@@ -30,22 +34,12 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
             }
             return
         } else {
-            fetchUser()
-        }
-        
-    }
-    
-    var user: User?
-    fileprivate func fetchUser() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.fetchUserWithUID(uid: uid) { (user) in
-            self.user = user
-            self.setupViewControllers()
+            API.database.fetchCurrentUser { (user) in
+                self.user = user
+                self.setupViewControllers()
+            }
         }
     }
-    
-    let homeController = HomeController()
-    let userSearchController = UserSearchController()
 
     func setupViewControllers() {
         
@@ -109,34 +103,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         navController.tabBarItem.selectedImage = selectedImage
         return navController
     }
-    
-    let containerView = UIView()
-    
-    func layoutView() {
-        let tb = self.tabBar
         
-
-        // set the shadow of the view's layer
-        containerView.layer.backgroundColor = UIColor.clear.cgColor
-        containerView.layer.shadowColor = UIColor.black.cgColor
-        containerView.layer.shadowOffset = CGSize(width: 5.0, height: 5.0)
-        containerView.layer.shadowOpacity = 1
-        containerView.layer.shadowRadius = 4.0
-        containerView.layer.cornerRadius = 15
-        containerView.layer.masksToBounds = true
-        
-        self.tabBar.addSubview(containerView)
-        
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        containerView.anchor(top: tb.topAnchor, leading: tb.leadingAnchor, bottom: tb.bottomAnchor, trailing: tb.trailingAnchor)
-        
-//        let shadow = containerView.dropShadow(shadowColor: .black, fillColor: .clear, opacity: 1, offset: CGSize(width: 5.0, height: 5.0), radius: 15)
-//
-//        containerView.layer.insertSublayer(shadow, at: 0)
-        
-    }
-    
     var shadow: CAShapeLayer?
     
     override func viewWillLayoutSubviews() {

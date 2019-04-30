@@ -20,6 +20,8 @@ struct Message {
     let imageWidth: NSNumber?
     let imageHeight: NSNumber?
     
+    let creationDate: Date
+    
     init(dictionary: [String: AnyObject]) {
         self.text = dictionary["text"] as? String
         self.toId = dictionary["toId"] as? String
@@ -29,6 +31,9 @@ struct Message {
         self.timestamp = dictionary["timestamp"] as? NSNumber
         self.imageWidth = dictionary["imageWidth"] as? NSNumber
         self.imageHeight = dictionary["imageHeight"] as? NSNumber
+        
+        let secondsFrom1970 = dictionary["creationDate"] as? Double ?? 0
+        self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
     }
     
     func chatPartnerId() -> String? {

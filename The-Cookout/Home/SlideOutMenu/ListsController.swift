@@ -13,6 +13,12 @@ class ListsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        AuthService.logout(onSuccess: {
+            print("Logged out")
+        }) { (error) in
+            print(error as Any)
+        }
+        
         navigationItem.title = "Lists"
         navigationController?.navigationBar.prefersLargeTitles = true
 

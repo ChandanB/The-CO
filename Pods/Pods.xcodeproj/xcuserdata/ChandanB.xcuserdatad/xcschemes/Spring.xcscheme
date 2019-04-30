@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D516D4EE8730669AF70351DA70ECF54C"
+               BlueprintIdentifier = "026EFAB3D59B98BDE53AAC3378D12E82"
                BuildableName = "Spring.framework"
                BlueprintName = "Spring"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D516D4EE8730669AF70351DA70ECF54C"
+            BlueprintIdentifier = "026EFAB3D59B98BDE53AAC3378D12E82"
             BuildableName = "Spring.framework"
             BlueprintName = "Spring"
             ReferencedContainer = "container:Pods.xcodeproj">

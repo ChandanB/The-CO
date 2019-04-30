@@ -12,6 +12,8 @@ import Spring
 
 class CommentsController: DatasourceController, CommentInputAccessoryViewDelegate {
     
+    let database = API.database
+    
     func didTapComment(post: Post) {
         
     }
@@ -64,24 +66,14 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
          collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
         
         fetchComments()
-        
     }
     
     fileprivate func fetchComments() {
-        guard let postId = self.post?.id else { return }
-        let ref = Database.database().reference().child("comments").child(postId)
-        ref.observe(.childAdded) { (snapshot) in
-            
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            
-            guard let uid = dictionary["uid"] as? String else { return }
-            
-            Database.fetchUserWithUID(uid: uid, completion: { (user) in
-                
-                let comment = Comment(user: user, dictionary: dictionary)
-                self.commentsDatasource.comments.append(comment)
-                self.collectionView?.reloadData()
-            })
+        guard let post = self.post else { return }
+        guard let id = post.id else {return}
+        self.database.observeComments(user: post.user, withPostId: id) { (comment) in
+            self.commentsDatasource.comments.append(comment)
+            self.collectionView?.reloadData()
         }
     }
     
@@ -93,17 +85,15 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        guard let post =  self.post else {
-            return .zero
-        }
+        guard let post =  self.post else { return .zero }
         
         let estimatedTextHeight = estimatedHeightForText(post.caption)
         let estimatedImageHeight = estimatedHeightForImage(post.imageHeight, width: post.imageWidth)
         
-        if post.hasImage == "true" && post.hasText == "true" {
+        if post.hasImage && post.hasText {
             let height: CGFloat = estimatedImageHeight + estimatedTextHeight
             return CGSize(width: view.frame.width, height: height + 128)
-        } else if post.hasImage == "true" && post.hasText == "false" {
+        } else if post.hasImage && !post.hasText {
             let height: CGFloat = estimatedImageHeight
             return CGSize(width: view.frame.width, height: height + 128)
         } else {

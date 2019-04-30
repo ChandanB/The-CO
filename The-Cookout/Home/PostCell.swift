@@ -15,6 +15,7 @@ import LBTAComponents
 import UIFontComplete
 import Spring
 import AVFoundation
+import Kingfisher
 
 protocol UserPostCellDelegate {
     func didLike(for cell: PostCell)
@@ -31,14 +32,16 @@ class PostCell: DatasourceCell {
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
+            let url = post.user.profileImageUrl
             self.post = post
 
             updateView(post)
             setupAttibutedCaption(post)
             
             let fetchImage = FetchImage()
+            
             DispatchQueue.main.async {
-                fetchImage.fetch(with: post.user.profileImageUrl) { (image) in
+                fetchImage.fetch(with: url) { (image) in
                     self.profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
                 }
             }
@@ -270,7 +273,7 @@ class PostCell: DatasourceCell {
         addSubview(seperatorView)
         addSubview(buttonStackView)
         
-        if post.hasImage == "true" {
+        if post.hasImage {
             addSubview(photoImageView)
             photoImageView.addSubview(heartPopup)
             

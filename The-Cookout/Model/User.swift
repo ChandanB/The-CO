@@ -7,9 +7,12 @@
 //
 
 import LBTAComponents
+import Firebase
+import Nora
+
 
 struct User {
-    
+        
     let uid: String
     let bio: String
     let name: String
@@ -17,6 +20,7 @@ struct User {
     let username: String
     let bannerImageUrl: String
     let profileImageUrl: String
+    
     
     var profileImage: UIImage
     var isFollowing = false

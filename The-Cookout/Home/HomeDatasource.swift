@@ -17,6 +17,9 @@ class HomeDatasource: Datasource {
     }
     
     override func item(_ indexPath: IndexPath) -> Any? {
+        if posts.count <= 0 {
+            return 0
+        }
         return posts[indexPath.item]
     }
     

@@ -26,7 +26,6 @@ class VideoPlayerViewController: UIViewController, UIGestureRecognizerDelegate {
     
     let privateVideo = true
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,6 +66,8 @@ class VideoPlayerViewController: UIViewController, UIGestureRecognizerDelegate {
         UIApplication.shared.isStatusBarHidden = false
         navigationController?.isNavigationBarHidden = false
     }
+    
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

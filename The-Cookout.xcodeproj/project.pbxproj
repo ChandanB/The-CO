@@ -41,6 +41,8 @@
 		1F5661B320AEDF9100F8E1B7 /* ProximaNovaThin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661AD20AEDF9100F8E1B7 /* ProximaNovaThin.ttf */; };
 		1F5661B520AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F5661B420AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf */; };
 		1F5661B820AF086C00F8E1B7 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5661B720AF086C00F8E1B7 /* CommentsController.swift */; };
+		1F66476D2276E23800F3F23B /* UsersApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F66476C2276E23800F3F23B /* UsersApi.swift */; };
+		1F66476F22782F0300F3F23B /* SPDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F66476E22782F0300F3F23B /* SPDatabase.swift */; };
 		1F75BEB920ABB0C600BA7AF2 /* FetchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEB820ABB0C500BA7AF2 /* FetchImage.swift */; };
 		1F75BEBC20ABB46200BA7AF2 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F75BEBB20ABB46200BA7AF2 /* Default-568h@2x.png */; };
 		1F75BEC220AC277B00BA7AF2 /* FirebaseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75BEC120AC277B00BA7AF2 /* FirebaseUtils.swift */; };
@@ -86,7 +88,7 @@
 		1FF5078620B39D550092F462 /* heart.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FF5078520B39D540092F462 /* heart.png */; };
 		1FF5078820B39EB90092F462 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5078720B39EB90092F462 /* Color.swift */; };
 		1FF5083520B3EAFA0092F462 /* PostApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083420B3EAFA0092F462 /* PostApi.swift */; };
-		1FF5083720B3EDB20092F462 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083620B3EDB20092F462 /* Api.swift */; };
+		1FF5083720B3EDB20092F462 /* SPAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083620B3EDB20092F462 /* SPAPI.swift */; };
 		1FF5083920B3EE6F0092F462 /* UserApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083820B3EE6F0092F462 /* UserApi.swift */; };
 		1FF5083B20B3F0360092F462 /* FollowApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083A20B3F0360092F462 /* FollowApi.swift */; };
 		1FF5083D20B3F0860092F462 /* MyPostsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5083C20B3F0860092F462 /* MyPostsApi.swift */; };
@@ -96,7 +98,6 @@
 		1FF5084520B3F3AF0092F462 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084420B3F3AF0092F462 /* Config.swift */; };
 		1FF5084720B3F4500092F462 /* HelperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084620B3F4500092F462 /* HelperService.swift */; };
 		1FF5084920B3F69B0092F462 /* FeedApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084820B3F69B0092F462 /* FeedApi.swift */; };
-		1FF5084B20B3F6FB0092F462 /* PostCommentsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */; };
 		1FF5084E20B4216A0092F462 /* ProfileDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */; };
 		78A3DCA0CBF9BAA8550FAE6F /* Pods_The_Cookout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279C9B80BA3C67E5DB339592 /* Pods_The_Cookout.framework */; };
 /* End PBXBuildFile section */
@@ -136,6 +137,8 @@
 		1F5661AD20AEDF9100F8E1B7 /* ProximaNovaThin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaThin.ttf; sourceTree = "<group>"; };
 		1F5661B420AEDF9D00F8E1B7 /* ProximaNovaAltBlack.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProximaNovaAltBlack.ttf; sourceTree = "<group>"; };
 		1F5661B720AF086C00F8E1B7 /* CommentsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
+		1F66476C2276E23800F3F23B /* UsersApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersApi.swift; sourceTree = "<group>"; };
+		1F66476E22782F0300F3F23B /* SPDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPDatabase.swift; sourceTree = "<group>"; };
 		1F75BEB820ABB0C500BA7AF2 /* FetchImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
 		1F75BEBB20ABB46200BA7AF2 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F75BEC120AC277B00BA7AF2 /* FirebaseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUtils.swift; sourceTree = "<group>"; };
@@ -183,7 +186,7 @@
 		1FF5078520B39D540092F462 /* heart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heart.png; sourceTree = "<group>"; };
 		1FF5078720B39EB90092F462 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		1FF5083420B3EAFA0092F462 /* PostApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostApi.swift; sourceTree = "<group>"; };
-		1FF5083620B3EDB20092F462 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		1FF5083620B3EDB20092F462 /* SPAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPAPI.swift; sourceTree = "<group>"; };
 		1FF5083820B3EE6F0092F462 /* UserApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApi.swift; sourceTree = "<group>"; };
 		1FF5083A20B3F0360092F462 /* FollowApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowApi.swift; sourceTree = "<group>"; };
 		1FF5083C20B3F0860092F462 /* MyPostsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPostsApi.swift; sourceTree = "<group>"; };
@@ -193,7 +196,6 @@
 		1FF5084420B3F3AF0092F462 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		1FF5084620B3F4500092F462 /* HelperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperService.swift; sourceTree = "<group>"; };
 		1FF5084820B3F69B0092F462 /* FeedApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedApi.swift; sourceTree = "<group>"; };
-		1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCommentsApi.swift; sourceTree = "<group>"; };
 		1FF5084D20B4216A0092F462 /* ProfileDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDatasource.swift; sourceTree = "<group>"; };
 		279C9B80BA3C67E5DB339592 /* Pods_The_Cookout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_The_Cookout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		824BD3194F23848E66D66DBE /* Pods-The-Cookout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-The-Cookout.release.xcconfig"; path = "Target Support Files/Pods-The-Cookout/Pods-The-Cookout.release.xcconfig"; sourceTree = "<group>"; };
@@ -320,6 +322,29 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		1F66476B2276E20600F3F23B /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				1FF5083320B3EAC60092F462 /* API */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		1F6647702278337900F3F23B /* Old */ = {
+			isa = PBXGroup;
+			children = (
+				1FF5084820B3F69B0092F462 /* FeedApi.swift */,
+				1F66476C2276E23800F3F23B /* UsersApi.swift */,
+				1FF5083420B3EAFA0092F462 /* PostApi.swift */,
+				1FF5083C20B3F0860092F462 /* MyPostsApi.swift */,
+				1FF5083A20B3F0360092F462 /* FollowApi.swift */,
+				1FF5083820B3EE6F0092F462 /* UserApi.swift */,
+				1FF5083E20B3F15D0092F462 /* CommentApi.swift */,
+				1FF5084020B3F1D10092F462 /* HashTagApi.swift */,
+			);
+			path = Old;
+			sourceTree = "<group>";
+		};
 		1F75BEC320AC281700BA7AF2 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -366,6 +391,7 @@
 		1FAB5B4120A7B10A003F9943 /* The-Cookout */ = {
 			isa = PBXGroup;
 			children = (
+				1F66476B2276E20600F3F23B /* Network */,
 				1FF5077220B2564A0092F462 /* Message */,
 				1FF5076D20B15C4F0092F462 /* Comment */,
 				1F5661A620AEA7B200F8E1B7 /* CustomAnimationPresenter */,
@@ -378,7 +404,6 @@
 				1F4FD36420AA5C9B00AB73C1 /* AddPost */,
 				1F2BAA2520A7C52C00350CEC /* Model */,
 				1F2BAA3920A80B9900350CEC /* Utils */,
-				1FF5083320B3EAC60092F462 /* API */,
 				1F4FD35720A9ED4600AB73C1 /* MainTabBarController.swift */,
 				1F9ADD15226D85210070DEE7 /* CustomTabBar.swift */,
 				1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */,
@@ -457,18 +482,12 @@
 		1FF5083320B3EAC60092F462 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				1FF5083620B3EDB20092F462 /* Api.swift */,
-				1FF5083420B3EAFA0092F462 /* PostApi.swift */,
-				1FF5083C20B3F0860092F462 /* MyPostsApi.swift */,
-				1FF5083A20B3F0360092F462 /* FollowApi.swift */,
-				1FF5083820B3EE6F0092F462 /* UserApi.swift */,
-				1FF5083E20B3F15D0092F462 /* CommentApi.swift */,
-				1FF5084020B3F1D10092F462 /* HashTagApi.swift */,
+				1F6647702278337900F3F23B /* Old */,
+				1FF5083620B3EDB20092F462 /* SPAPI.swift */,
+				1F66476E22782F0300F3F23B /* SPDatabase.swift */,
 				1FF5084220B3F23F0092F462 /* AuthService.swift */,
 				1FF5084420B3F3AF0092F462 /* Config.swift */,
 				1FF5084620B3F4500092F462 /* HelperService.swift */,
-				1FF5084820B3F69B0092F462 /* FeedApi.swift */,
-				1FF5084A20B3F6FB0092F462 /* PostCommentsApi.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -613,6 +632,7 @@
 				"${BUILT_PRODUCTS_DIR}/PinterestLayout/PinterestLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/PryntTrimmerView/PryntTrimmerView.framework",
+				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${BUILT_PRODUCTS_DIR}/SCLAlertView/SCLAlertView.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
@@ -642,6 +662,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PinterestLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PryntTrimmerView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCLAlertView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
@@ -686,7 +707,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F4FD36320AA1EE200AB73C1 /* LoginController.swift in Sources */,
-				1FF5084B20B3F6FB0092F462 /* PostCommentsApi.swift in Sources */,
 				1F4FD35D20A9F7E600AB73C1 /* UserProfileHeader.swift in Sources */,
 				1F5661B820AF086C00F8E1B7 /* CommentsController.swift in Sources */,
 				1FF5077F20B25D320092F462 /* MessagesController.swift in Sources */,
@@ -705,6 +725,7 @@
 				1F2BAA2C20A7D50400350CEC /* User.swift in Sources */,
 				1FF152EA217D698D000D5A53 /* CustomMenuHeaderView.swift in Sources */,
 				1F2BAA2820A7C55700350CEC /* UserHeaderFooter.swift in Sources */,
+				1F66476D2276E23800F3F23B /* UsersApi.swift in Sources */,
 				1F4FD36C20AA804F00AB73C1 /* PhotoSelectorCell.swift in Sources */,
 				1FF5076F20B15D2F0092F462 /* CommentInputAccessoryView.swift in Sources */,
 				1F2BAA3D20A80BC800350CEC /* Extensions.swift in Sources */,
@@ -734,6 +755,7 @@
 				1FF5078320B280040092F462 /* MessageDatasource.swift in Sources */,
 				1FF5078120B25E620092F462 /* NewMessageController.swift in Sources */,
 				1F75BEC220AC277B00BA7AF2 /* FirebaseUtils.swift in Sources */,
+				1F66476F22782F0300F3F23B /* SPDatabase.swift in Sources */,
 				1FF5077120B164CC0092F462 /* CommentInputTextView.swift in Sources */,
 				1FF5077A20B25A0B0092F462 /* MessageInputContainerView.swift in Sources */,
 				1FF5084920B3F69B0092F462 /* FeedApi.swift in Sources */,
@@ -747,7 +769,7 @@
 				1FF152DC217D6973000D5A53 /* MenuController.swift in Sources */,
 				1F9ADD1B226EBFF80070DEE7 /* UserProfileList.swift in Sources */,
 				1F4FD36820AA5CE400AB73C1 /* PhotoSelectorController.swift in Sources */,
-				1FF5083720B3EDB20092F462 /* Api.swift in Sources */,
+				1FF5083720B3EDB20092F462 /* SPAPI.swift in Sources */,
 				1FF5084520B3F3AF0092F462 /* Config.swift in Sources */,
 				1F56619A20ADF07D00F8E1B7 /* CameraController.swift in Sources */,
 				1F2BAA3620A7F38D00350CEC /* Post.swift in Sources */,

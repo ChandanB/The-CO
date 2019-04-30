@@ -129,6 +129,11 @@ PODS:
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - Nora (1.1.1):
+    - Firebase/Core
+    - Firebase/Database
+    - Firebase/Storage
+    - Result (~> 3.0)
   - NVActivityIndicatorView (4.6.1):
     - NVActivityIndicatorView/Presenter (= 4.6.1)
   - NVActivityIndicatorView/Presenter (4.6.1)
@@ -136,6 +141,7 @@ PODS:
   - PKHUD (5.2.1)
   - Protobuf (3.7.0)
   - PryntTrimmerView (3.0.0)
+  - Result (3.2.4)
   - SCLAlertView (0.8)
   - SnapKit (4.2.0)
   - Spring (1.0.5)
@@ -160,6 +166,7 @@ DEPENDENCIES:
   - KILabel
   - Kingfisher
   - LBTAComponents
+  - Nora
   - PinterestLayout
   - PKHUD
   - SCLAlertView
@@ -197,11 +204,13 @@ SPEC REPOS:
     - LBTAComponents
     - leveldb-library
     - nanopb
+    - Nora
     - NVActivityIndicatorView
     - PinterestLayout
     - PKHUD
     - Protobuf
     - PryntTrimmerView
+    - Result
     - SCLAlertView
     - SnapKit
     - Spring
@@ -237,11 +246,13 @@ SPEC CHECKSUMS:
   LBTAComponents: c4c8863e0ef6715e378300db148b96a09df656f7
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  Nora: c7dd939e14abb43405df0e377be7339c7fe67fef
   NVActivityIndicatorView: 4ca19fccc84595a78957336a086d00a49be6ce61
   PinterestLayout: f1c7ec0254ffa842d69f1b43e4436c8ded4359b9
   PKHUD: 4e6162c4c39ac367c6934e9855c6b4762ee16256
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
   PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
+  Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
   SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
@@ -249,6 +260,6 @@ SPEC CHECKSUMS:
   UIFontComplete: 5b0f59a83308816c610164b79a2540b3520f9b72
   YPImagePicker: 5dd3814b47b1208e9c8cc8f6ef77fe90db3723b6
 
-PODFILE CHECKSUM: 30884cceda85a790a617522681c2a379967620f7
+PODFILE CHECKSUM: b632269aa7ed6cc06b8d60a534156ebe66d0c526
 
 COCOAPODS: 1.6.1

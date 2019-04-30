@@ -15,7 +15,7 @@ import LBTAComponents
 import UIFontComplete
 import Spring
 import AVFoundation
-
+import Kingfisher
 
 class CommentPostCell: DatasourceCell {
     
@@ -26,6 +26,8 @@ class CommentPostCell: DatasourceCell {
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
+            let url = post.user.profileImageUrl
+
             self.post = post
             
             updateView(post)
@@ -33,7 +35,7 @@ class CommentPostCell: DatasourceCell {
             
             let fetchImage = FetchImage()
             DispatchQueue.main.async {
-                fetchImage.fetch(with: post.user.profileImageUrl) { (image) in
+                fetchImage.fetch(with: url) { (image) in
                     self.profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
                 }
             }
@@ -255,7 +257,7 @@ class CommentPostCell: DatasourceCell {
         addSubview(seperatorView)
         addSubview(buttonStackView)
         
-        if post.hasImage == "true" {
+        if post.hasImage {
             addSubview(photoImageView)
             photoImageView.addSubview(heartPopup)
             

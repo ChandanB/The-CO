@@ -38,14 +38,14 @@ class FetchImage  {
     }
     
     private func fetchImageFromCache(with key: String, completion: @escaping (Image?) -> Void) {
-        ImageCache.default.retrieveImage(forKey: key, options: nil) {
-            image, cacheType in
+        ImageCache.default.retrieveImage(forKey: key, options: nil) { (image, cacheType) in
             completion(image)
         }
     }
     
     private func download(from imageUrl: String, completion: @escaping (Image?) -> Void) {
-        ImageDownloader.default.downloadImage(with: URL(string: imageUrl)!, options: [], progressBlock: nil) {
+        guard let url = URL(string: imageUrl) else {return}
+        ImageDownloader.default.downloadImage(with: url, options: [], progressBlock: nil) {
             (image, error, url, data) in
             completion(image)
         }

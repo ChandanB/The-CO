@@ -11,6 +11,7 @@ import LBTAComponents
 import Spring
 import PKHUD
 
+
 class LoginController: UIViewController {
     
     let logoContainerView: SpringView = {
@@ -81,8 +82,15 @@ class LoginController: UIViewController {
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         
-        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
+        AuthService.signIn(email: email, password: password, onSuccess: {
+            print ("Successfully logged in User")
             
+            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+            
+            mainTabBarController.setupViewControllers()
+            HUD.hide()
+            self.handleAnimations()
+        }) { (error) in
             if let err = error {
                 print("Failed to Sign In:", err)
                 self.loginButton.animation = "pop"
@@ -92,22 +100,7 @@ class LoginController: UIViewController {
                 HUD.hide()
                 return
             }
-            //successfully logged in our user
-            
-            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
-            
-            guard let uid = Auth.auth().currentUser?.uid else { return }
-            Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                print(snapshot.value ?? "")
-                
-                mainTabBarController.setupViewControllers()
-                HUD.hide()
-                self.handleAnimations()
-                
-            }) { (err) in
-                print("Failed to fetch user:", err)
-            }
-        })
+        }
     }
     
     let forgotPasswordButton: SpringButton = {

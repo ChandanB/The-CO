@@ -22,33 +22,6 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
     
     var messages = [Message]()
     
-    func observeMessages() {
-        guard let uid = Auth.auth().currentUser?.uid, let toId = user?.uid else {
-            return
-        }
-        
-        let userMessagesRef = Database.database().reference().child("user-messages").child(uid).child(toId)
-        userMessagesRef.observe(.childAdded, with: { (snapshot) in
-            
-            let messageId = snapshot.key
-            let messagesRef = Database.database().reference().child("messages").child(messageId)
-            messagesRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                
-                guard let dictionary = snapshot.value as? [String: AnyObject] else {
-                    return
-                }
-                let message = Message(dictionary: dictionary)
-                
-                self.messages.append(message)
-                DispatchQueue.main.async(execute: {
-                    self.collectionView?.reloadData()
-                })
-                
-            }, withCancel: nil)
-            
-        }, withCancel: nil)
-    }
-    
     let cellId = "cellId"
     let messageDatasource = MessageDatasource()
     
@@ -64,6 +37,31 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
         collectionView?.keyboardDismissMode = .interactive
         
         setupKeyboardObservers()
+    }
+    
+    func observeMessages() {
+        guard let fromId = Auth.auth().currentUser?.uid, let toId = user?.uid else {
+            return
+        }
+        
+        let userMessagesRef = Database.database().reference().child("user-messages").child(fromId).child(toId)
+        userMessagesRef.observe(.childAdded, with: { (snapshot) in
+            
+            let messageId = snapshot.key
+            let messagesRef = Database.database().reference().child("messages").child(messageId)
+            messagesRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                
+                guard let dictionary = snapshot.value as? [String: AnyObject] else {return}
+                
+                let message = Message(dictionary: dictionary)
+                self.messages.append(message)
+                DispatchQueue.main.async(execute: {
+                    self.collectionView?.reloadData()
+                })
+                
+            }, withCancel: nil)
+            
+        }, withCancel: nil)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -87,9 +85,9 @@ class ChatLogController: DatasourceController, UITextFieldDelegate, UIImagePicke
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-// Local variable inserted by Swift 4.2 migrator.
-let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
-
+        // Local variable inserted by Swift 4.2 migrator.
+        let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+        
         
         if let videoUrl = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.mediaURL)] as? URL {
             handleVideoSelectedForUrl(videoUrl)
@@ -339,12 +337,14 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     }
     
     fileprivate func sendMessageWithProperties(_ properties: [String: AnyObject]) {
+        guard let fromId = Auth.auth().currentUser?.uid else {return}
+        guard let user = self.user else {return}
+        let toId = user.uid
+        
         let ref = Database.database().reference().child("messages")
         let childRef = ref.childByAutoId()
-        guard let toId = user?.uid else {return}
-        guard let fromId = Auth.auth().currentUser?.uid else {return}
-        let timestamp = Int(Date().timeIntervalSince1970)
         
+        let timestamp = Int(Date().timeIntervalSince1970)
         var values: [String: AnyObject] = ["toId": toId as AnyObject, "fromId": fromId as AnyObject, "timestamp": timestamp as AnyObject]
         
         properties.forEach({values[$0] = $1})
@@ -440,10 +440,10 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+    return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
-	return input.rawValue
+    return input.rawValue
 }

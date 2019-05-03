@@ -26,7 +26,8 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
     }
     
     func didTapUser(user: User) {
-        let userProfileController = UserProfileController(collectionViewLayout: UICollectionViewFlowLayout())
+        let layout = StretchyHeaderLayout()
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
         userProfileController.user = user
         navigationController?.pushViewController(userProfileController, animated: true)
     }

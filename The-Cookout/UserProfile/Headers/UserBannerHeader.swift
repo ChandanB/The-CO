@@ -18,7 +18,7 @@ class UserBannerHeader: DatasourceCell {
     
     var user: User? {
         didSet {
-            setupProfileAndBannerImage()
+            reloadData()
         }
     }
     
@@ -53,12 +53,10 @@ class UserBannerHeader: DatasourceCell {
         addSubview(bannerImageView)
         bannerImageView.fillSuperview()
         bannerImageView.frame.origin.y -= bounds.height
-        
-        setupGradientLayer()
       
         //blur
         setupVisualEffectBlur(true)
-     //   setupProfileImage()
+    //    setupProfileImage()
   
     }
     
@@ -69,14 +67,14 @@ class UserBannerHeader: DatasourceCell {
     }
     
     
-    fileprivate func setupGradientLayer() {
+    fileprivate func setupGradientLayer(_ user: User) {
         addSubview(gradientContainerView)
 //        gradientContainerView.addSubview(bannerImageView)
 //        bannerImageView.frame = self.bounds
 //        bannerImageView.frame.origin.y -= bounds.height
         
         gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
-        gradientLayer.locations = [0.3, 1]
+        gradientLayer.locations = [0, 0.5]
         
         gradientContainerView.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
         gradientContainerView.layer.addSublayer(gradientLayer)
@@ -85,24 +83,22 @@ class UserBannerHeader: DatasourceCell {
         gradientLayer.frame.origin.y -= bounds.height
         
         let heavyLabel = UILabel()
-        heavyLabel.text = "Chandan Brown"
+        heavyLabel.text = ""
         heavyLabel.font = .systemFont(ofSize: 24, weight: .heavy)
         heavyLabel.textColor = .white
 
         let descriptionLabel = UILabel()
-        descriptionLabel.text = "DAB ON EM"
+        descriptionLabel.text = "\(user.name)"
         descriptionLabel.font = .systemFont(ofSize: 14, weight: .regular)
         descriptionLabel.textColor = .white
         descriptionLabel.numberOfLines = 0
 
-        let stackView = UIStackView(arrangedSubviews: [
-            heavyLabel, descriptionLabel
-            ])
+        let stackView = UIStackView(arrangedSubviews: [heavyLabel, descriptionLabel])
         stackView.axis = .vertical
         stackView.spacing = 8
         
         addSubview(stackView)
-        stackView.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 16, bottom: 16, right: 16))
+        stackView.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 16, bottom: 12, right: 12))
         
        
     }
@@ -130,10 +126,16 @@ class UserBannerHeader: DatasourceCell {
       //  animator.fractionComplete = 0
     }
     
+    func reloadData() {
+        guard let user = user else { return }
+        setupProfileAndBannerImage(user)
+    }
     
-    fileprivate func setupProfileAndBannerImage() {
-     //   guard let profileImageUrl = user?.profileImageUrl else { return }
-        guard let bannerImageUrl = user?.bannerImageUrl else { return }
+    
+    fileprivate func setupProfileAndBannerImage(_ user: User) {
+        setupGradientLayer(user)
+      //  let profileImageUrl = user.profileImageUrl
+        let bannerImageUrl = user.bannerImageUrl 
         
         DispatchQueue.main.async {
      //       self.profileImageView.loadImage(urlString: profileImageUrl)

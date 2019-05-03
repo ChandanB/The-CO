@@ -449,7 +449,7 @@ extension Database {
     func queryPosts(forUser user: User, posts: [Post], completion: @escaping ([Post]) -> Void) {
         
         var posts = posts
-        var limit: UInt = 8
+        var limit: UInt = 4
         let uid = user.uid
         let ref = Database.database().reference().child("posts").child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")

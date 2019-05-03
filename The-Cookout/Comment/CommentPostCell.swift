@@ -158,7 +158,6 @@ class CommentPostCell: DatasourceCell {
     }()
     
     @objc func handleRepost() {
-      //  (self.controller as? HomeController)?.likeButtonSelected(for: self)
     }
     
     lazy var upvoteButton: SpringButton = {

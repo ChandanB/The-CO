@@ -34,12 +34,28 @@ class StretchyHeaderLayout: UICollectionViewFlowLayout {
                 if contentOffsetY < minimum {
                     attributes.frame = CGRect(x: minimum, y: contentOffsetY, width: width, height: height)
                 } else if contentOffsetY > maximum {
-//                  attributes.frame.origin.y = maximum - 60
+                  attributes.frame.origin.y = maximum - 60
                 } else if contentOffsetY > 60 {
-//                  attributes.frame.origin.y = contentOffsetY - 60
+                  attributes.frame.origin.y = contentOffsetY - 60
                 }
                 
             }
+            
+//            if attributes.representedElementKind == UICollectionView.elementKindSectionHeader && attributes.indexPath.section == 1 {
+//                
+//                guard let collectionView = collectionView else { return }
+//                
+//                let contentOffsetY = collectionView.contentOffset.y
+//                
+//                let maximum: CGFloat = attributes.frame.height
+//                
+//                if contentOffsetY > maximum {
+//               //     attributes.frame.origin.y = maximum
+//                } else if contentOffsetY > maximum {
+//                    attributes.frame.origin.y = contentOffsetY
+//                }
+//                
+//            }
             
         })
         

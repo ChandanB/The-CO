@@ -44,11 +44,13 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
     
     func didChangeToGridView() {
         isGridView = true
+        self.collectionView?.setContentOffset(.zero, animated:true)
         collectionView?.reloadData()
     }
     
     func didChangeToListView() {
         isGridView = false
+        self.collectionView?.setContentOffset(.zero, animated:true)
         collectionView?.reloadData()
     }
     
@@ -101,6 +103,9 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         
         collectionView.contentInsetAdjustmentBehavior = .never
         configureAlertController()
+        
+        guard let bannerHeader = self.bannerHeader else {return}
+        bannerHeader.animator.fractionComplete = 0
     }
     
     private func configureAlertController() {
@@ -140,6 +145,7 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         }
         
         header?.reloadData()
+        bannerHeader?.reloadData()
     }
     
     fileprivate func paginate(array: [Post]) {
@@ -191,25 +197,30 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
             
             switch section {
             case 0:
-                bannerHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UserBannerHeader.cellId, for: indexPath) as? UserBannerHeader
-                bannerHeader?.clipsToBounds = false
-                bannerHeader?.user = self.user
-                bannerHeader?.delegate = self
-                
+                if bannerHeader == nil {
+                    bannerHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UserBannerHeader.cellId, for: indexPath) as? UserBannerHeader
+                    bannerHeader?.clipsToBounds = false
+                    bannerHeader?.user = self.user
+                    bannerHeader?.delegate = self
+                }
                 return bannerHeader!
             default:
-                header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UserProfileHeader.cellId, for: indexPath) as? UserProfileHeader
-                header?.clipsToBounds = false
-                header?.user = self.user
-                header?.delegate = self
-                
+                if header == nil {
+                    header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UserProfileHeader.cellId, for: indexPath) as? UserProfileHeader
+                    header?.clipsToBounds = false
+                    header?.user = self.user
+                    header?.delegate = self
+                }
                 return header!
             }
             
         default:
             return UserProfileHeader()
         }
+        
     }
+    
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         var edgeInsets = UIEdgeInsets()
@@ -381,28 +392,34 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         
         let contentOffsetY = scrollView.contentOffset.y
         
-        let halfWidth = header.frame.width / 2.0
-        let centerX = (halfWidth - (header.profileImageView.frame.width / 2))
+        let halfFrameWidth = header.frame.width / 2.0
+        let halfImageViewWidth = header.profileImageView.frame.width / 2
+        let centerX = (halfFrameWidth - halfImageViewWidth)
         
         let scaleProgress = max(0, min(1, contentOffsetY / self.scrollToScaleDownProfileIconDistance))
         let height = max(maxHeight - (maxHeight - minHeight) * scaleProgress, minHeight)
         
+        
         if contentOffsetY <= 0 {
-            bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 180
+            bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 100
+            header.profileImageView.frame = CGRect(x: centerX, y: -60, width: maxHeight, height: maxHeight)
+            header.profileImageView.layer.cornerRadius = height / 2
             
         } else if contentOffsetY > 0 && contentOffsetY <= scrollToScaleDownProfileIconDistance && scaleProgress <= 1 {
             
-//            header.profileImageView.frame = CGRect(x: centerX, y: contentOffsetY - 60, width: height, height: height)
-//            header.profileImageView.layer.cornerRadius = height / 2
+            header.profileImageView.frame = CGRect(x: centerX, y: contentOffsetY - 60, width: height, height: height)
+            header.profileImageView.layer.cornerRadius = height / 2
 
             if header.profileImageView.layer.zPosition < bannerHeader.layer.zPosition {
                 bannerHeader.layer.zPosition = 0
             }
             
+            bannerHeader.animator.fractionComplete = 0
+            
             return
         } else {
             if header.profileImageView.layer.zPosition >= bannerHeader.layer.zPosition {
-                bannerHeader.layer.zPosition = 0
+                bannerHeader.layer.zPosition = 2
             }
         }
     }

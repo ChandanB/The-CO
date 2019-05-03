@@ -37,7 +37,7 @@ class UserProfileHeader: DatasourceCell {
     let profileImageView: CachedImageView = {
         let iv = CachedImageView()
         iv.clipsToBounds = true
-        iv.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        iv.backgroundColor = .clear
         iv.layer.borderColor = UIColor.white.cgColor
         iv.layer.borderWidth = 0.5
         iv.contentMode = .scaleAspectFill
@@ -294,7 +294,7 @@ class UserProfileHeader: DatasourceCell {
     
     fileprivate func setupProfileAndBannerImage() {
         guard let profileImageUrl = user?.profileImageUrl else { return }
-        
+
         DispatchQueue.main.async {
             self.profileImageView.loadImage(urlString: profileImageUrl)
         }

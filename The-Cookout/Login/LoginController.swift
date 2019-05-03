@@ -82,17 +82,9 @@ class LoginController: UIViewController {
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         
-        AuthService.signIn(email: email, password: password, onSuccess: {
-            print ("Successfully logged in User")
-            
-            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
-            
-            mainTabBarController.setupViewControllers()
-            HUD.hide()
-            self.handleAnimations()
-        }) { (error) in
-            if let err = error {
-                print("Failed to Sign In:", err)
+        Auth.auth().signIn(withEmail: email, password: password) { (result, err) in
+            if let error = err {
+                print("Failed to Sign In:", error)
                 self.loginButton.animation = "pop"
                 self.loginButton.curve = "spring"
                 self.loginButton.duration = 1.2
@@ -100,6 +92,11 @@ class LoginController: UIViewController {
                 HUD.hide()
                 return
             }
+            
+//            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+//            mainTabBarController.setupViewControllers()
+            HUD.hide()
+            self.handleAnimations()
         }
     }
     

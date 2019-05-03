@@ -100,13 +100,7 @@ class HelperService {
             }
             
             API.database.postsRef.child(currentUserId).child(newPostId ?? "").setValue(true)
-            
-            let myPostRef = API.database.myPostsRef.child(currentUserId).child(newPostId ?? "")
-            myPostRef.setValue(true, withCompletionBlock: { (error, ref) in
-                if error != nil {
-                    return
-                }
-            })
+        
             PKHUD.sharedHUD.contentView = PKHUDSuccessView()
             PKHUD.sharedHUD.show()
             onSuccess()

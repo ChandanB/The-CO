@@ -12,7 +12,8 @@ import PinterestLayout
 import AlamofireImage
 
 
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, UserPostCellDelegate, PinterestLayoutDelegate {
+class UserProfileController: HomePostCellViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, PinterestLayoutDelegate {
+    
     
     let lightboxHeaderTitle: UILabel = {
         let label = UILabel()
@@ -68,13 +69,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: #selector(dismissView))
         
         //Observe refresh
-        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: PostController.updateFeedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: NSNotification.Name.updateHomeFeed, object: nil)
         
         // Register header
         collectionView.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerOne)
         collectionView.register(UserBannerHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerTwo)
         collectionView.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView.register(PostCell.self, forCellWithReuseIdentifier: postCellId)
+        collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: postCellId)
         
         
         collectionView.backgroundColor = .white
@@ -293,15 +294,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             return cell
         }
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! HomePostCell
         cell.delegate = self
         cell.datasourceItem = self.listArray[indexPath.item]
         return cell
         
     }
-    
-
-    
+        
     var header: UserProfileHeader?
     var bannerHeader: UserBannerHeader?
     
@@ -324,9 +323,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 header?.clipsToBounds = false
                 header?.user = self.user
                 header?.delegate = self
-                header?.postCount = self.postCount
-                header?.followersCount = self.followersCount
-                header?.followingCount = self.followingCount
                 
                 return header!
             }
@@ -407,11 +403,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.handleRefresh()
     }
     
-    func didTapComment(post: Post) {
-        let commentsController = CommentsController()
-        commentsController.post = post
-        navigationController?.pushViewController(commentsController, animated: true)
-    }
+//    override func didTapComment(post: Post) {
+//        let commentsController = CommentsController()
+//        commentsController.post = post
+//        navigationController?.pushViewController(commentsController, animated: true)
+//    }
     
     func didTapImage(_ post: Post) {
         let commentsController = CommentsController()
@@ -419,30 +415,30 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         navigationController?.pushViewController(commentsController, animated: true)
     }
     
-    func didLike(for cell: PostCell) {
-        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        
-        let post = self.listArray[indexPath.item]
-        
-        guard let postId = post.id else { return }
-        
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        let values = [uid: post.hasLiked == true ? 0 : 1]
-        Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, _) in
-            
-            if let err = err {
-                print("Failed to like post:", err)
-                return
-            }
-            
-            print("Successfully liked post.")
-                        
-            self.listArray[indexPath.item] = post
-            
-            self.collectionView?.reloadItems(at: [indexPath])
-        }
-    }
+//    func didLike(for cell: HomePostCell) {
+//        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+//
+//        let post = self.listArray[indexPath.item]
+//
+//        guard let postId = post.id else { return }
+//
+//        guard let uid = Auth.auth().currentUser?.uid else { return }
+//
+//        let values = [uid: post.repostedByCurrentUser == true ? 0 : 1]
+//        Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, _) in
+//
+//            if let err = err {
+//                print("Failed to like post:", err)
+//                return
+//            }
+//
+//            print("Successfully liked post.")
+//
+//            self.listArray[indexPath.item] = post
+//
+//            self.collectionView?.reloadItems(at: [indexPath])
+//        }
+//    }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if isGridView {

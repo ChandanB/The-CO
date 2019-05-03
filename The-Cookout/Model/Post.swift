@@ -20,9 +20,19 @@ struct Post {
     var hasText: Bool
     let hasImage: Bool
     
-    var hasLiked: Bool
-    var likeCount: Int
-    var likes: Dictionary<String, Any>
+    var repostedByCurrentUser: Bool = false
+    var repostCount: Int = 0
+    var reposts: Dictionary<String, Any>
+    
+    var upvotedByCurrentUser: Bool = false
+    var upvoteCount: Int = 0
+    var upvotes: Dictionary<String, Any>
+    
+    var downvotedByCurrentUser: Bool = false
+    var downvoteCount: Int = 0
+    var downvotes: Dictionary<String, Any>
+    
+    var overallVoteCount: Int = 0
     
     let creationDate: Date
     let timestamp: NSNumber
@@ -33,6 +43,7 @@ struct Post {
     
     init(user: User, dictionary: [String: AnyObject]) {
         self.user = user
+        self.id = dictionary["id"] as? String ?? ""
         
         self.caption = dictionary["caption"] as? String ?? ""
         self.imageUrl = dictionary["imageUrl"] as? String ?? ""
@@ -41,9 +52,19 @@ struct Post {
         self.hasText = dictionary["hasText"] as? Bool ?? false
         self.hasImage = dictionary["hasImage"] as? Bool ?? false
         
-        self.hasLiked = dictionary["hasLiked"] as? Bool ?? false
-        self.likeCount = dictionary["likeCount"] as? Int ?? 0
-        self.likes = dictionary["likes"] as? Dictionary ?? ["": 0]
+        self.repostedByCurrentUser = dictionary["repostedByCurrentUser"] as? Bool ?? false
+        self.repostCount = dictionary["repostCount"] as? Int ?? 0
+        self.reposts = dictionary["reposts"] as? Dictionary ?? ["": 0]
+        
+        self.upvotedByCurrentUser = dictionary["upvotedByCurrentUser"] as? Bool ?? false
+        self.upvoteCount = dictionary["upvoteCount"] as? Int ?? 0
+        self.upvotes = dictionary["upvotes"] as? Dictionary ?? ["": 0]
+        
+        self.downvotedByCurrentUser = dictionary["downvotedByCurrentUser"] as? Bool ?? false
+        self.downvoteCount = dictionary["downvoteCount"] as? Int ?? 0
+        self.downvotes = dictionary["downvotes"] as? Dictionary ?? ["": 0]
+        
+        self.overallVoteCount = dictionary["overallVoteCount"] as? Int ?? 0
         
         let secondsFrom1970 = dictionary["creationDate"] as? Double ?? 0
         self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
@@ -63,11 +84,11 @@ extension Post {
         post.caption = dict["caption"] as? String ?? ""
         post.imageUrl = dict["imageUrl"] as? String ?? ""
         post.videoUrl = dict["videoUrl"] as? String ?? ""
-        post.likeCount = dict["likeCount"] as? Int ?? 0
-        post.likes = dict["likes"] as? Dictionary<String, Any> ?? ["": 0]
+        post.repostCount = dict["repostCount"] as? Int ?? 0
+        post.reposts = dict["reposts"] as? Dictionary<String, Any> ?? ["": 0]
         post.ratio = dict["ratio"] as? CGFloat ?? 0
         if let currentUserId = Auth.auth().currentUser?.uid {
-            post.hasLiked = post.likes[currentUserId] != nil
+            post.repostedByCurrentUser = post.reposts[currentUserId] != nil
         }
         return post
     }

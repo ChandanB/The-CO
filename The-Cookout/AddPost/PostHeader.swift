@@ -10,7 +10,7 @@ import Firebase
 import LBTAComponents
 
 protocol ReturnPostTextDelegate {
-    func returnPostText(text: UITextView)
+    func returnPostText(text: PlaceholderTextView)
 }
 
 class PostHeader: UICollectionViewCell, UITextViewDelegate {
@@ -38,8 +38,8 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         self.postController?.handleOpenGallery()
     }
     
-    let messageTextView: UITextView = {
-        let textView = UITextView()
+    var captionTextView: PlaceholderTextView = {
+        let textView = PlaceholderTextView()
         textView.text = "What's on your mind?"
         textView.textColor = UIColor.lightGray
         textView.font = UIFont.systemFont(ofSize: 18)
@@ -113,7 +113,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
             self.imageDelegate?.returnPostImage(image: imageView.image!)
         }
         
-        self.textdelegate?.returnPostText(text: textView)
+        self.textdelegate?.returnPostText(text: textView as! PlaceholderTextView)
     }
     
     var imageView: UIImageView = {
@@ -130,21 +130,21 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         addSubview(profileImageView)
         profileImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 12, leftConstant: 12, bottomConstant: 0, rightConstant: 0, widthConstant: 30, heightConstant: 30)
         
-        let tvHeight = messageTextView.heightAnchor.constraint(equalToConstant: 0)
+        let tvHeight = captionTextView.heightAnchor.constraint(equalToConstant: 0)
         
-        messageTextView.delegate = self
-        addSubview(messageTextView)
+        captionTextView.delegate = self
+        addSubview(captionTextView)
         
-        let size = messageTextView.sizeThatFits(CGSize(width: messageTextView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-        if size.height != tvHeight.constant && size.height > messageTextView.frame.size.height {
+        let size = captionTextView.sizeThatFits(CGSize(width: captionTextView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+        if size.height != tvHeight.constant && size.height > captionTextView.frame.size.height {
             tvHeight.constant = size.height
-            messageTextView.setContentOffset(CGPoint.zero, animated: false)
+            captionTextView.setContentOffset(CGPoint.zero, animated: false)
         }
         
-        messageTextView.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: tvHeight.constant)
+        captionTextView.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: tvHeight.constant)
         
         addSubview(imageView)
-        imageView.anchor(messageTextView.bottomAnchor, left: messageTextView.leftAnchor, bottom: nil, right: messageTextView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 250, heightConstant: 400)
+        imageView.anchor(captionTextView.bottomAnchor, left: captionTextView.leftAnchor, bottom: nil, right: captionTextView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 250, heightConstant: 400)
         
         let keyboardToolbar = UIToolbar()
         keyboardToolbar.sizeToFit()
@@ -160,7 +160,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         let showCameraButton = UIBarButtonItem(image: image.withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(showCamera))
         
         keyboardToolbar.items = [galleryButton, showCameraButton]
-        messageTextView.inputAccessoryView = keyboardToolbar
+        captionTextView.inputAccessoryView = keyboardToolbar
     }
     
     @objc func showCamera(){
@@ -168,7 +168,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
     }
     
     func showKeyboard() {
-        messageTextView.becomeFirstResponder()
+        captionTextView.becomeFirstResponder()
     }
     
     fileprivate func setupProfileImage() {

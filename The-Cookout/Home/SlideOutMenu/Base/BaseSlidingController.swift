@@ -111,7 +111,7 @@ class BaseSlidingController: UIViewController {
         switch indexPath.row {
         case 0:
             let tabBarController = MainTabBarController()
-            let homeController = UIViewController()
+            let homeController = HomeController()
             homeController.navigationItem.title = "Home"
             let navController = UINavigationController(rootViewController: homeController)
             navController.tabBarItem.title = "Home"

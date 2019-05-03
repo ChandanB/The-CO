@@ -17,181 +17,47 @@ protocol UserProfileHeaderDelegate {
     func didChangeToGridView()
 }
 
-class SphereView: UIView {
-    // iOS 9 specific
-    override var collisionBoundsType: UIDynamicItemCollisionBoundsType {
-        return .ellipse
-    }
-}
-
 class UserProfileHeader: DatasourceCell {
+    
+    var delegate: UserProfileHeaderDelegate?
     
     var user: User? {
         didSet {
-            let font = CustomFont.proximaNovaSemibold.of(size: 15.0)
-            setupProfileAndBannerImage()
-            nameLabel.text = user?.name
-            nameLabel.font = font!
-            usernameLabel.text = "@\(user?.username ?? "")"
-            setupUserBio(user!)
-            setupEditFollowButton()
-        }
-    }
-
-    var delegate: UserProfileHeaderDelegate?
-    
-    var contentOffsetY = 0
-    
-    var postCount: Int? {
-        didSet {
-            let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-            let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
-            attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
-            postsLabel.attributedText = attributedText
+            reloadData()
         }
     }
     
-    var followersCount: Int? {
-        didSet {
-            let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-            let attributedText = NSMutableAttributedString(string: "\(followersCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
-            attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
-            followersLabel.attributedText = attributedText
-        }
-    }
-
-    var followingCount: Int? {
-        didSet {
-            let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-            let attributedText = NSMutableAttributedString(string: "\(followingCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
-            attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
-            followingLabel.attributedText = attributedText
-        }
-    }
+    let profileImageView: CachedImageView = {
+        let iv = CachedImageView()
+        iv.clipsToBounds = true
+        iv.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        iv.layer.borderColor = UIColor.white.cgColor
+        iv.layer.borderWidth = 0.5
+        iv.contentMode = .scaleAspectFill
+        return iv
+    }()
     
-    func setupUserBio(_ user: User) {
-        
-        let bio = user.bio
-        let font = CustomFont.proximaNovaAlt.of(size: 12.0)
-        
-        var style = StringStyle(
-            .font(font!),
-            .lineHeightMultiple(1.8)
-        )
-        
-        style.lineSpacing = 3
-        
-        let attributedString = bio.styled(with: style)
-        
-        bioTextView.attributedText = attributedString
-        bioTextView.textAlignment = .center
-        bioTextView.sizeToFit()
-        bioTextView.isScrollEnabled = false
-    }
+    private let postsLabel = UserProfileStatsLabel(value: 0, title: "posts")
+    private let followersLabel = UserProfileStatsLabel(value: 0, title: "followers")
+    private let followingLabel = UserProfileStatsLabel(value: 0, title: "following")
     
-    func setupEditFollowButton() {
-        
-        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
-        
-        let userId = user?.uid
-        
-        if currentLoggedInUserId == userId {
-            //edit profile
-            
-        } else {
-            // check if following
-            Database.database().reference().child("following").child(currentLoggedInUserId).child(userId!).observeSingleEvent(of: .value) { (snapshot) in
-                
-                if let isFollowing = snapshot.value as? Int, isFollowing == 1 {
-                    UIView.performWithoutAnimation {
-                        self.editProfileFollowButton.setTitle("Unfollow", for: .normal)
-                        self.editProfileFollowButton.layoutIfNeeded()
-                    }
-                } else {
-                    self.setupFollowStyle()
-                }
-            }
-        }
-    }
+//    let fontStyle = UIFont.boldSystemFont(ofSize: 12)
+//    let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
+//    attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
+//    postsLabel.attributedText = attributedText
     
-    fileprivate func setupFollowStyle() {
-        UIView.performWithoutAnimation {
-            self.editProfileFollowButton.setTitle("Follow", for: .normal)
-            self.editProfileFollowButton.layoutIfNeeded()
-        }
-        self.editProfileFollowButton.backgroundColor = UIColor(r: 17, g: 154, b: 237)
-        self.editProfileFollowButton.setTitleColor(.white, for: .normal)
-        self.editProfileFollowButton.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
-    }
-    
-    @objc func handleEditProfileOrFollow() {
-        print("Execute edit profile / follow / unfollow logic...")
-        
-        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
-        
-        guard let userId = user?.uid else { return }
-        
-        if editProfileFollowButton.titleLabel?.text == "Unfollow" {
-            
-            //Unfollow
-            guard let user = self.user else { return }
-            
-            let alertController = UIAlertController(title: "Unfollow \(user.name)?", message: "Are you sure you want to unfollow \(user.name)?", preferredStyle: .actionSheet)
-            
-            alertController.addAction(UIAlertAction(title: "Unfollow", style: .destructive, handler: { (_) in
-                
-                do {
-                    Database.database().reference().child("following").child(currentLoggedInUserId).child(userId).removeValue(completionBlock: { (err, ref) in
-                        if let err = err {
-                            print("Failed to unfollow user:", err)
-                            return
-                        }
-                        
-                        print("Successfully unfollowed user:", self.user?.username ?? "")
-                        
-                        self.setupFollowStyle()
-                    })
-                }
-            }))
-            
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            UIApplication.shared.keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
-
-        } else {
-            
-            //follow
-            let followingRef = Database.database().reference().child("following").child(currentLoggedInUserId)
-    
-            let values = [userId: 1]
-            followingRef.updateChildValues(values) { (err, ref) in
-                if let err = err {
-                    print("Failed to follow user:", err)
-                    return
-                }
-                
-                print("Successfully followed user: ", self.user?.username ?? "")
-                UIView.performWithoutAnimation {
-                    self.editProfileFollowButton.setTitle("Unfollow", for: .normal)
-                    self.editProfileFollowButton.layoutIfNeeded()
-                }
-                self.editProfileFollowButton.backgroundColor = .white
-                self.editProfileFollowButton.setTitleColor(.black, for: .normal)
-                
-                let values = [currentLoggedInUserId: 1]
-                let followerRef = Database.database().reference().child("followers").child((self.user?.uid)!)
-                followerRef.updateChildValues(values) { (err, ref) in
-                    if let err = err {
-                        print("Failed to follow user:", err)
-                        return
-                    }
-                    
-                NotificationCenter.default.post(name: UserProfileHeader.updateFeedNotificationName, object: nil)
-                }
-            }
-        }
-    }
-    
-    static let updateFeedNotificationName = NSNotification.Name(rawValue: "FollowedUser")
+    private lazy var followButton: UserProfileFollowButton = {
+        let button = UserProfileFollowButton(type: .system)
+        button.setTitle("Edit Profile", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.backgroundColor = UIColor.white
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 3
+        button.addTarget(self, action: #selector(handleTap), for: .touchUpInside)
+        return button
+    }()
     
     lazy var likesButton: UIButton = {
         let btn = UIButton(type: .system)
@@ -201,35 +67,22 @@ class UserProfileHeader: DatasourceCell {
         return btn
     }()
     
-    lazy var listButton: UIButton = {
-        let button = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "List_icon").resizeImage(targetSize: CGSize(width: 25, height: 25))
-        button.setImage(image, for: .normal)
-        button.tintColor = UIColor(white: 0, alpha: 0.3)
-        button.addTarget(self, action: #selector(handleChangeToListView), for: .touchUpInside)
-        return button
-    }()
-    
     lazy var gridButton: UIButton = {
         let button = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "grid").resizeImage(targetSize: CGSize(width: 25, height: 25))
+        let image = #imageLiteral(resourceName: "Grid_icon").resizeImage(targetSize: CGSize(width: 25, height: 25))
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(handleChangeToGridView), for: .touchUpInside)
         return button
     }()
     
-    @objc func handleChangeToListView() {
-        print("Changing to list view")
-        listButton.tintColor = twitterBlue
-        gridButton.tintColor = UIColor(white: 0, alpha: 0.4)
-        delegate?.didChangeToListView()
-    }
-    
-    @objc func handleChangeToGridView() {
-        gridButton.tintColor = twitterBlue
-        listButton.tintColor = UIColor(white: 0, alpha: 0.2)
-        delegate?.didChangeToGridView()
-    }
+    lazy var listButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = #imageLiteral(resourceName: "List_icon").resizeImage(targetSize: CGSize(width: 25, height: 25))
+        button.setImage(image, for: .normal)
+        button.tintColor = UIColor(white: 0, alpha: 0.2)
+        button.addTarget(self, action: #selector(handleChangeToListView), for: .touchUpInside)
+        return button
+    }()
     
     let nameLabel: UILabel = {
         let label = UILabel()
@@ -243,62 +96,15 @@ class UserProfileHeader: DatasourceCell {
         return label
     }()
     
-    let postsLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.backgroundColor = .clear
-        return label
+    let bioTextView: UITextView = {
+        let textView = UITextView()
+        textView.backgroundColor = .clear
+        return textView
     }()
     
-    let followersLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.backgroundColor = .clear
-        return label
-    }()
+    private let padding: CGFloat = 12
     
-    let followingLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.backgroundColor = .clear
-        return label
-    }()
-    
-    lazy var editProfileFollowButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Edit Profile", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        button.backgroundColor = UIColor.white
-        button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.borderWidth = 1
-        button.layer.cornerRadius = 3
-        button.addTarget(self, action: #selector(handleEditProfileOrFollow), for: .touchUpInside)
-        return button
-    }()
-
-    let profileImageView: CachedImageView = {
-        let iv = CachedImageView()
-        iv.backgroundColor = .lightGray
-        iv.contentMode = .scaleAspectFill
-        iv.layer.borderColor = UIColor.white.cgColor
-        iv.layer.borderWidth = 1
-        iv.clipsToBounds = true
-        iv.layer.masksToBounds = true
-        return iv
-    }()
-    
-    let bannerImageView: CachedImageView = {
-        let iv = CachedImageView()
-        iv.backgroundColor = twitterBlue
-        iv.contentMode = .scaleAspectFill
-        iv.alpha = 1.0
-        iv.clipsToBounds = true
-        return iv
-    }()
+    static var headerId = "userProfileHeaderId"
     
     let backgroundImageView: UIImageView = {
         let iv = CachedImageView()
@@ -306,64 +112,43 @@ class UserProfileHeader: DatasourceCell {
         return iv
     }()
     
-    let bioTextView: UITextView = {
-        let textView = UITextView()
-        textView.backgroundColor = .clear
-        return textView
-    }()
-    
-    let topDividerView = UIView()
-    let bottomDividerView = UIView()
-    
     var profileImageTopAnchor: NSLayoutConstraint?
     
-    
+    static let updateFeedNotificationName = NSNotification.Name(rawValue: "FollowedUser")
     
     override func setupViews() {
         super.setupViews()
         
         addSubview(backgroundImageView)
-//   addSubview(bannerImageView)
-        addSubview(profileImageView)
-        addSubview(nameLabel)
-        addSubview(bioTextView)
-        addSubview(editProfileFollowButton)
         
         backgroundImageView.fillSuperview()
         
-//        var height = backgroundImageView.frame.height
-        
-//        backgroundImageView.frame = CGRect(x: 0, y: 0, width: self.width, height: height)
-        
-//        bannerImageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 160)
-       
-        
+        addSubview(profileImageView)
         profileImageView.anchor(topAnchor, left: nil, bottom: nil, right: nil, topConstant: 120, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 120, heightConstant: maxHeight)
         profileImageView.layer.cornerRadius = maxHeight / 2
         profileImageView.heightConstraint?.constant = maxHeight
         profileImageView.heightConstraint?.isActive = true
-        
         profileImageView.topAnchor.constraint(equalTo: topAnchor, constant: -60).isActive = true
         profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
+        setupBottomToolBar()
         
-        
+        addSubview(nameLabel)
         nameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         nameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
         
+        addSubview(bioTextView)
         bioTextView.anchor(nameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         bioTextView.centerXAnchor.constraint(equalTo: nameLabel.centerXAnchor).isActive = true
 
         setupUserStatsView()
         
-        editProfileFollowButton.anchor(followersLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-
-        setupBottomToolBar()
+        addSubview(followButton)
+        followButton.anchor(followersLabel.bottomAnchor, left: postsLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
-        //blur
         setupVisualEffectBlur()
     }
-   
+    
     fileprivate func setupUserStatsView() {
         let stackView = UIStackView(arrangedSubviews: [postsLabel, followersLabel, followingLabel])
         stackView.distribution = .fillEqually
@@ -376,8 +161,10 @@ class UserProfileHeader: DatasourceCell {
     }
     
     fileprivate func setupBottomToolBar() {
-        
+        let topDividerView = UIView()
         topDividerView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
+        
+        let bottomDividerView = UIView()
         bottomDividerView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
         let stackView = UIStackView(arrangedSubviews: [gridButton, listButton, likesButton])
@@ -387,13 +174,113 @@ class UserProfileHeader: DatasourceCell {
         addSubview(topDividerView)
         addSubview(bottomDividerView)
         
-        stackView.anchor(nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 25, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
-        
         topDividerView.anchor(stackView.topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
-        
         bottomDividerView.anchor(stackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
+        stackView.anchor(nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 25, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
     }
     
+    func reloadData() {
+        guard let user = user else { return }
+        guard let font = CustomFont.proximaNovaSemibold.of(size: 15.0) else {return}
+        usernameLabel.text = "@\(user.username)"
+        nameLabel.text = user.name
+        nameLabel.font = font
+        setupUserBio(user)
+        setupProfileAndBannerImage()
+        reloadUserStats()
+        reloadFollowButton()
+    }
+    
+    func setupUserBio(_ user: User) {
+        
+        let bio = user.bio
+        guard let font = CustomFont.proximaNovaAlt.of(size: 12.0) else {return}
+        
+        var style = StringStyle(
+            .font(font),
+            .lineHeightMultiple(1.8)
+        )
+        
+        style.lineSpacing = 3
+        
+        let attributedString = bio.styled(with: style)
+        
+        bioTextView.attributedText = attributedString
+        bioTextView.textAlignment = .center
+        bioTextView.sizeToFit()
+        bioTextView.isScrollEnabled = false
+    }
+    
+    
+    func reloadFollowButton() {
+        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        guard let userId = user?.uid else {return}
+        
+        if currentLoggedInUserId == userId {
+            followButton.type = .edit
+            return
+        }
+        
+        let previousButtonType = followButton.type
+        followButton.type = .loading
+        
+        Database.database().isFollowingUser(withUID: userId, completion: { (following) in
+            if following {
+                self.followButton.type = .unfollow
+            } else {
+                self.followButton.type = .follow
+            }
+        }) { (err) in
+            self.followButton.type = previousButtonType
+        }
+    }
+    
+    private func reloadUserStats() {
+        guard let uid = user?.uid else { return }
+        
+        Database.database().numberOfPostsForUser(withUID: uid) { (count) in
+            self.postsLabel.setValue(count)
+        }
+        
+        Database.database().numberOfFollowersForUser(withUID: uid) { (count) in
+            self.followersLabel.setValue(count)
+        }
+        
+        Database.database().numberOfFollowingForUser(withUID: uid) { (count) in
+            self.followingLabel.setValue(count)
+        }
+    }
+    
+    @objc private func handleTap() {
+        guard let userId = user?.uid else { return }
+        if followButton.type == .edit { return }
+        
+        let previousButtonType = followButton.type
+        followButton.type = .loading
+        
+        if previousButtonType == .follow {
+            Database.database().followUser(withUID: userId) { (err) in
+                if err != nil {
+                    self.followButton.type = previousButtonType
+                    return
+                }
+                self.reloadFollowButton()
+                self.reloadUserStats()
+            }
+            
+        } else if previousButtonType == .unfollow {
+            Database.database().unfollowUser(withUID: userId) { (err) in
+                if err != nil {
+                    self.followButton.type = previousButtonType
+                    return
+                }
+                self.reloadFollowButton()
+                self.reloadUserStats()
+            }
+        }
+        
+        NotificationCenter.default.post(name: NSNotification.Name.updateHomeFeed, object: nil)
+    }
     
     fileprivate func setupProfileAndBannerImage() {
         guard let profileImageUrl = user?.profileImageUrl else { return }
@@ -401,6 +288,18 @@ class UserProfileHeader: DatasourceCell {
         DispatchQueue.main.async {
             self.profileImageView.loadImage(urlString: profileImageUrl)
         }
+    }
+    
+    @objc func handleChangeToListView() {
+        listButton.tintColor = twitterBlue
+        gridButton.tintColor = UIColor(white: 0, alpha: 0.4)
+        delegate?.didChangeToListView()
+    }
+    
+    @objc func handleChangeToGridView() {
+        gridButton.tintColor = twitterBlue
+        listButton.tintColor = UIColor(white: 0, alpha: 0.2)
+        delegate?.didChangeToGridView()
     }
     
     var animator: UIViewPropertyAnimator!
@@ -434,6 +333,122 @@ class UserProfileHeader: DatasourceCell {
         profileImageView.heightConstraint?.constant = height
         profileImageView.widthConstraint?.constant = height
     }
-    
 
 }
+
+//MARK: - UserProfileStatsLabel
+private class UserProfileStatsLabel: UILabel {
+    
+    private var value: Int = 0
+    private var title: String = ""
+    
+    init(value: Int, title: String) {
+        super.init(frame: .zero)
+        self.value = value
+        self.title = title
+        sharedInit()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        sharedInit()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        sharedInit()
+    }
+    
+    private func sharedInit() {
+        numberOfLines = 0
+        textAlignment = .center
+        setAttributedText()
+    }
+    
+    func setValue(_ value: Int) {
+        self.value = value
+        setAttributedText()
+    }
+    
+    private func setAttributedText() {
+        let attributedText = NSMutableAttributedString(string: "\(value)\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+        attributedText.append(NSAttributedString(string: title, attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]))
+        self.attributedText = attributedText
+    }
+}
+
+//MARK: - FollowButtonType
+private enum FollowButtonType {
+    case loading, edit, follow, unfollow
+}
+
+//MARK: - UserProfileFollowButton
+private class UserProfileFollowButton: UIButton {
+    
+    var type: FollowButtonType = .loading {
+        didSet {
+            configureButton()
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        sharedInit()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        sharedInit()
+    }
+    
+    private func sharedInit() {
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
+        layer.borderWidth = 1
+        layer.cornerRadius = 3
+        configureButton()
+    }
+    
+    private func configureButton() {
+        switch type {
+        case .loading:
+            setupLoadingStyle()
+        case .edit:
+            setupEditStyle()
+        case .follow:
+            setupFollowStyle()
+        case .unfollow:
+            setupUnfollowStyle()
+        }
+    }
+    
+    private func setupLoadingStyle() {
+        setTitle("Loading", for: .normal)
+        setTitleColor(.black, for: .normal)
+        backgroundColor = .white
+        isUserInteractionEnabled = false
+    }
+    
+    private func setupEditStyle() {
+        setTitle("Edit Profile", for: .normal)
+        setTitleColor(.black, for: .normal)
+        backgroundColor = .white
+        isUserInteractionEnabled = true
+    }
+    
+    private func setupFollowStyle() {
+        setTitle("Follow", for: .normal)
+        setTitleColor(.white, for: .normal)
+        backgroundColor = UIColor(r: 17, g: 154, b: 237)
+        layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
+        isUserInteractionEnabled = true
+    }
+    
+    private func setupUnfollowStyle() {
+        setTitle("Unfollow", for: .normal)
+        setTitleColor(.black, for: .normal)
+        backgroundColor = .white
+        isUserInteractionEnabled = true
+    }
+}
+

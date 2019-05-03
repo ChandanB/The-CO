@@ -12,7 +12,6 @@ import Firebase
 class MessagesController: UITableViewController {
     
     let cellId = "cellId"
-    let database = API.database
     
     var user: User?
     
@@ -34,7 +33,7 @@ class MessagesController: UITableViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "<", style: .plain, target: self, action: #selector(dismissView))
         
-        self.database.fetchCurrentUser { (user) in
+        Database.database().fetchCurrentUser { (user) in
             self.user = user
             self.messages.removeAll()
             self.messagesDictionary.removeAll()

@@ -8,21 +8,21 @@
 
 import LBTAComponents
 
-class ProfileDatasource: Datasource {
-    
-    var gridArray = [Post]()
-    var listArray = [Post]()
-    
-    override func headerClasses() -> [DatasourceCell.Type]? {
-        return [UserBannerHeader.self, UserProfileHeader.self]
-    }
-    
-    override func cellClasses() -> [DatasourceCell.Type] {
-        return [UserProfilePhotoCell.self, PostCell.self]
-    }
-    
-    override func numberOfSections() -> Int {
-        return 2
-    }
-    
-}
+//class ProfileDatasource: Datasource {
+//    
+//    var gridArray = [Post]()
+//    var listArray = [Post]()
+//    
+//    override func headerClasses() -> [DatasourceCell.Type]? {
+//        return [UserBannerHeader.self, UserProfileHeader.self]
+//    }
+//    
+//    override func cellClasses() -> [DatasourceCell.Type] {
+//        return [UserProfilePhotoCell.self, HomePostCell.self]
+//    }
+//    
+//    override func numberOfSections() -> Int {
+//        return 2
+//    }
+//    
+//}

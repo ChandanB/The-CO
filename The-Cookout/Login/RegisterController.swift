@@ -265,8 +265,10 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         }
         
     }
-    
+    let database = API.database
 }
+
+
 
 // MARK: - Handle Sign Up
 extension RegisterController {
@@ -290,18 +292,8 @@ extension RegisterController {
         guard let image = self.addPhotoButton.imageView?.image else { return }
         guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
         
-        AuthService.signUp(bio: bio, name: name, username: username, email: email, password: password, imageData: imageData, onSuccess: {
-            print("Successfully saved user info to db")
-            
-//            UIApplication.shared.keyWindow?.rootViewController = MainTabBarController()
-//            let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
-//            mainTabBarController?.setupViewControllers()
-//            UIApplication.shared.keyWindow?.rootViewController = mainTabBarController
-            HUD.hide()
-            self.handleAnimations()
-            
-        }) { (error) in
-            if let err = error {
+        Auth.auth().signUp(bio: bio, name: name, username: username, email: email, password: password, image: image) { (err) in
+            if err != nil {
                 print("Failed to create user:", err)
                 self.signUpButton.animation = "pop"
                 self.signUpButton.curve = "spring"
@@ -310,6 +302,12 @@ extension RegisterController {
                 HUD.hide()
                 return
             }
+            
+//            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+//            mainTabBarController.setupViewControllers()
+//            mainTabBarController.selectedIndex = 0
+            HUD.hide()
+            self.handleAnimations()
         }
     }
     

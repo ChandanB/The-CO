@@ -12,7 +12,6 @@ import Kingfisher
 
 class NewMessageController: UITableViewController {
     
-    let database = API.database
     let cellId = "cellId"
     var users = [User]()
     
@@ -28,14 +27,12 @@ class NewMessageController: UITableViewController {
     
     func fetchFollowing() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        
-        self.database.fetchFollowing(userId: uid) { (following) in
-            self.users = [following]
-            DispatchQueue.main.async(execute: {
-                self.tableView.reloadData()
-            })
-        }
-        
+//        Database.database().fetchFollowing(userId: uid) { (following) in
+//            self.users = [following]
+//            DispatchQueue.main.async(execute: {
+//                self.tableView.reloadData()
+//            })
+//        }
     }
     
     @objc func handleCancel() {

@@ -30,6 +30,7 @@ class CommentCell: DatasourceCell {
         let iv = CachedImageView()
         iv.clipsToBounds = true
         iv.contentMode = .scaleAspectFill
+        iv.isUserInteractionEnabled = true
         return iv
     }()
     

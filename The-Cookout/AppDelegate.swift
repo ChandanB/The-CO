@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
         window = UIWindow()
         window?.makeKeyAndVisible()
-        window?.rootViewController = BaseSlidingController()
+        window?.rootViewController = MainTabBarController()
         
         return true
     }

@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import Firebase
 
 class ListsController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        AuthService.logout(onSuccess: {
+        Auth.auth().logout(onSuccess: {
             print("Logged out")
         }) { (error) in
             print(error as Any)

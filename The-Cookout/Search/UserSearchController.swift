@@ -17,75 +17,38 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     let searchBar: UISearchBar = {
         let sb = UISearchBar()
         sb.placeholder = "Enter Username"
+        sb.autocorrectionType = .no
+        sb.autocapitalizationType = .none
         sb.barTintColor = .gray
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = UIColor(r: 230, g: 230, b: 230)
         sb.autocapitalizationType = .none
         return sb
     }()
     
-    let placeholderWidth: CGFloat = 200.0
-    var offset = UIOffset()
-
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
-        if searchText.isEmpty {
-            self.searchDatasource.filteredUsers = self.searchDatasource.users
-        } else {
-            self.searchDatasource.filteredUsers = self.searchDatasource.users.filter { (user) -> Bool in
-                return user.username.lowercased().contains(searchText.lowercased())
-            }
-        }
-        
-        self.collectionView?.reloadData()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        searchBar.isHidden = false
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        searchBar.isHidden = true
-        searchBar.resignFirstResponder()
-        
-        let user = self.searchDatasource.filteredUsers[indexPath.item]
-        
-        let layout = StretchyHeaderLayout()
-        let userProfileController = UserProfileController(collectionViewLayout: layout)
-        userProfileController.userId = user.uid
-        userProfileController.user = user
-        navigationController?.pushViewController(userProfileController, animated: true)
-    }
-    
-    let searchDatasource = SearchDataSource()
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
-    }
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let navBar = navigationController?.navigationBar else { return }
+        navigationItem.titleView = searchBar
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem?.tintColor = .black
         
-        navBar.addSubview(searchBar)
-        searchBar.anchor(navBar.topAnchor, left: navBar.leftAnchor, bottom: navBar.bottomAnchor, right: navBar.rightAnchor, topConstant: 0, leftConstant: 8, bottomConstant: 0, rightConstant: 8, widthConstant: 0, heightConstant: 0)
-        
-        offset = UIOffset(horizontal: (searchBar.frame.width + placeholderWidth) / 2, vertical: 0)
-        searchBar.setPositionAdjustment(offset, for: .search)
-        
-        self.datasource = self.searchDatasource
-        self.searchBar.delegate = self
         collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .onDrag
+
+        self.datasource = self.searchDatasource
+        self.searchBar.delegate = self
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView?.refreshControl = refreshControl
         
         fetchUsers()
         fetchTopUsers()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.view.setNeedsLayout()
+        navigationController?.view.layoutIfNeeded()
     }
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
@@ -102,30 +65,39 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
     }
     
     fileprivate func fetchUsers() {
-        let ref = Database.database().reference().child("users")
-        
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            guard let dictionaries = snapshot.value as? [String: AnyObject]
-                else { return }
-            
-            dictionaries.forEach({ (key, value) in
-                
-                if key == Auth.auth().currentUser?.uid {
-                    print("Found myself, omit from list")
-                    return
-                }
-                
-                guard let dictionary = value as? [String: AnyObject] else { return }
-                let user = User(uid: key, dictionary: dictionary)
-                self.searchDatasource.users.append(user)
-            })
-            
-            self.searchDatasource.users.sort(by: { (u1, u2) -> Bool in
-                return u1.username.compare(u2.username) == .orderedAscending
-            })
-            self.searchDatasource.filteredUsers = self.searchDatasource.users
+        Database.database().fetchAllUsers(includeCurrentUser: false, completion: { (users) in
+            self.searchDatasource.users = users
+            self.searchDatasource.filteredUsers = users
+            self.searchBar.text = ""
             self.collectionView?.reloadData()
+            self.collectionView?.refreshControl?.endRefreshing()
+        }) { (err) in
+            print(err.localizedDescription)
+            self.collectionView?.refreshControl?.endRefreshing()
         }
+    }
+    
+    @objc private func handleRefresh() {
+        fetchUsers()
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        searchBar.resignFirstResponder()
+        
+        let layout = StretchyHeaderLayout()
+        let user = self.searchDatasource.filteredUsers[indexPath.item]
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
+        userProfileController.user = self.searchDatasource.filteredUsers[indexPath.item]
+        navigationController?.pushViewController(userProfileController, animated: true)
+    }
+    
+    let searchDatasource = SearchDataSource()
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
     }
     
     fileprivate func fetchTopUsers() {
@@ -200,10 +172,25 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         collectionViewLayout.invalidateLayout()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        searchBar.isHidden = true
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.view.backgroundColor = UIColor.white
+}
+
+//MARK: - UISearchBarDelegate
+extension UserSearchController {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchText.isEmpty {
+            self.searchDatasource.filteredUsers = self.searchDatasource.users
+        } else {
+            self.searchDatasource.filteredUsers = self.searchDatasource.users.filter { (user) -> Bool in
+                return user.username.lowercased().contains(searchText.lowercased())
+            }
+        }
+        
+        self.collectionView?.reloadData()
     }
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
 }

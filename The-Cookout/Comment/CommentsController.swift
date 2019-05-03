@@ -71,9 +71,11 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
     fileprivate func fetchComments() {
         guard let post = self.post else { return }
         guard let id = post.id else {return}
-        self.database.observeComments(user: post.user, withPostId: id) { (comment) in
-            self.commentsDatasource.comments.append(comment)
+        Database.database().fetchCommentsForPost(withId: id, completion: { (comments) in
+            self.commentsDatasource.comments = comments
             self.collectionView?.reloadData()
+        }) { (err) in
+            print("Couldn't fetch comments")
         }
     }
     

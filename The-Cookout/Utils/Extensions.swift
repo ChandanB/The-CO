@@ -10,7 +10,6 @@ import UIKit
 import Firebase
 import UIFontComplete
 
-let imageCache = NSCache<AnyObject, AnyObject>()
 
 enum CustomFont: String, FontRepresentable {
     case proximaNova = "Proxima Nova"
@@ -51,7 +50,8 @@ extension UIImageView
     }
     
     func loadImageUsingCacheWithUrlString(_ urlString: String) {
-        
+        let imageCache = NSCache<AnyObject, AnyObject>()
+
         self.image = nil
         
         //check cache for image first
@@ -211,6 +211,11 @@ extension Date {
         
         let quotient: Int
         let unit: String
+        
+        if secondsAgo == 0 {
+            return "Just now"
+        }
+        
         if secondsAgo < minute {
             quotient = secondsAgo
             unit = "second"
@@ -232,7 +237,30 @@ extension Date {
         }
         
         return "\(quotient) \(unit)\(quotient == 1 ? "" : "s") ago"
+    }
+    
+    func timeAgoDisplayShort() -> String {
+        let secondsAgo = Int(Date().timeIntervalSince(self))
         
+        let minute = 60
+        let hour = 60 * minute
+        let day = 24 * hour
+        let week = 7 * day
+        
+        if secondsAgo == 0 {
+            return "Just now"
+        }
+        if secondsAgo < minute {
+            return "\(secondsAgo)s"
+        } else if secondsAgo < hour {
+            return "\(secondsAgo / minute)m"
+        } else if secondsAgo < day {
+            return "\(secondsAgo / hour)h"
+        } else if secondsAgo < week {
+            return "\(secondsAgo / day)d"
+        }
+        
+        return "\(secondsAgo / week)wk"
     }
 }
 
@@ -274,7 +302,34 @@ extension UIView {
         layer.insertSublayer(shadowLayer, at: 0)
         return shadowLayer
     }
+    
+    func anchor(top: NSLayoutYAxisAnchor? = nil, left: NSLayoutXAxisAnchor? = nil, bottom: NSLayoutYAxisAnchor? = nil, right: NSLayoutXAxisAnchor? = nil, paddingTop: CGFloat = 0, paddingLeft: CGFloat = 0, paddingBottom: CGFloat = 0, paddingRight: CGFloat = 0, width: CGFloat = 0, height: CGFloat = 0) {
+        
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        if let top = top {
+            topAnchor.constraint(equalTo: top, constant: paddingTop).isActive = true
+        }
+        if let left = left {
+            leftAnchor.constraint(equalTo: left, constant: paddingLeft).isActive = true
+        }
+        if let bottom = bottom {
+            bottomAnchor.constraint(equalTo: bottom, constant: -paddingBottom).isActive = true
+        }
+        if let right = right {
+            rightAnchor.constraint(equalTo: right, constant: -paddingRight).isActive = true
+        }
+        if width != 0 {
+            widthAnchor.constraint(equalToConstant: width).isActive = true
+        }
+        if height != 0 {
+            heightAnchor.constraint(equalToConstant: height).isActive = true
+        }
+    }
 }
 
-
+extension NSNotification.Name {
+    static var updateHomeFeed = NSNotification.Name(rawValue: "updateFeed")
+    static var updateUserProfileFeed = NSNotification.Name(rawValue: "updateUserProfileFeed")
+}
 

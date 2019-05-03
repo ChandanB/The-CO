@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 import PKHUD
 import AVKit
 import YPImagePicker
@@ -18,8 +19,21 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     let headerId = "headerId"
     var user: User?
     
-    var selectedImage: UIImage?
-    var messageTextView: UITextView?
+    var selectedImage: UIImage? {
+        didSet {
+            postHeader?.imageView.image = selectedImage
+        }
+    }
+    
+    private var captionTextView: PlaceholderTextView = {
+        let tv = PlaceholderTextView()
+        tv.placeholderLabel.text = "Add a caption..."
+        tv.placeholderLabel.font = UIFont.systemFont(ofSize: 14)
+        tv.font = UIFont.systemFont(ofSize: 14)
+        tv.autocorrectionType = .no
+        return tv
+    }()
+    
     var photoSelectorController: PhotoSelectorController?
     var postHeader: PostHeader?
     var config = YPImagePickerConfiguration()
@@ -105,8 +119,8 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         selectedImage = image
     }
     
-    func returnPostText(text: UITextView) {
-        messageTextView = text
+    func returnPostText(text: PlaceholderTextView) {
+        captionTextView = text
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -136,7 +150,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         header.postController = self
         header.user = self.user
         header.imageView.image = selectedImage
-        self.messageTextView = self.postHeader?.messageTextView
+        self.captionTextView = self.postHeader!.captionTextView
         
         return header
     }
@@ -155,86 +169,61 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     @objc func sharePost() {
+        guard let user = self.user else { return }
         dismissKeyboard()
         
-        if selectedImage != nil {
-            shareImagePost()
-        } else {
-            guard let user = self.user else { return }
+        if selectedImage == nil {
             shareTextPost(user)
+            return
         }
+        
+        shareImagePost(user)
     }
     
-    func shareImagePost() {
-        guard let user = self.user else { return }
-        guard let image = self.selectedImage else { return }
-        guard let caption = messageTextView?.text else { return }
-        guard let uploadData = image.jpegData(compressionQuality: 0.4) else { return }
-        let userPostRef = Database.database().reference().child("posts").child(user.uid)
+    func shareImagePost(_ user: User) {
+        
+        guard let image = selectedImage else { return }
+        guard let caption = captionTextView.text else { return }
         
         var trimmedCaption = caption.trim()
+        
         if trimmedCaption == "What's on your mind?" || trimmedCaption == "Say something about this picture?" {
             trimmedCaption = ""
         }
         
-        HelperService.uploadImageToFirebaseStorage(data: uploadData) { (imageUrl) in
-            let values =
-                ["imageUrl": imageUrl,
-                 "caption": trimmedCaption,
-                 "imageWidth": image.size.width,
-                 "imageHeight": image.size.height,
-                 "creationDate": Date().timeIntervalSince1970,
-                 "profileImageUrl": user.profileImageUrl,
-                 "name": user.name,
-                 "username": user.username, "hasImage": true] as [String : Any]
-            
-            
-            let ref = userPostRef.childByAutoId()
-            
-            ref.updateChildValues(values) { (err, ref) in
-                
-                if let err = err {
-                    self.navigationItem.rightBarButtonItem?.isEnabled = false
-                    print("Failed to save post to DB", err)
-                    return
-                }
-                HUD.flash(.success)
-                NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
-                self.dismiss(animated: true, completion: nil)
+        Database.database().createImagePost(withImage: image, caption: trimmedCaption, user: user, onSuccess: {
+            HUD.flash(.success)
+            NotificationCenter.default.post(name: NSNotification.Name.updateHomeFeed, object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name.updateUserProfileFeed, object: nil)
+            self.dismiss(animated: true, completion: nil)
+        }) { (err) in
+            if let error = err {
+                print("Failed to upload post:", error)
+                return
             }
         }
     }
     
-    static let updateFeedNotificationName = NSNotification.Name(rawValue: "updateFeed")
-
     func shareTextPost(_ user: User) {
-        guard let caption = messageTextView?.text else { return }
+        guard let caption = captionTextView.text else { return }
         
         let trimmedCaption = caption.trim()
+        
         if trimmedCaption == ""  {
             return
         }
-        
-        let values = ["caption": caption.trim(),
-                      "creationDate": Date().timeIntervalSince1970,
-                      "profileImageUrl": user.profileImageUrl,
-                      "name": user.name,
-                      "username": user.username, "hasText": true] as [String : Any]
-        
-        let userPostRef = Database.database().reference().child("posts").child(user.uid)
-        let ref = userPostRef.childByAutoId()
-        
-        ref.updateChildValues(values) { (err, ref) in
-            if let err = err {
-                self.navigationItem.rightBarButtonItem?.isEnabled = false
-                print("Failed to save post to DB", err)
+            
+        Database.database().createPost(withCaption: trimmedCaption, user: user, onSuccess: {
+            NotificationCenter.default.post(name: NSNotification.Name.updateHomeFeed, object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name.updateUserProfileFeed, object: nil)
+            self.dismiss(animated: true, completion: nil)
+        }) { (err) in
+            if let error = err {
+                self.navigationItem.rightBarButtonItem?.isEnabled = true
+                self.captionTextView.isUserInteractionEnabled = true
+                print("Failed to upload post:", error)
                 return
             }
-            
-            NotificationCenter.default.post(name: PostController.updateFeedNotificationName, object: nil)
-            print("Successfully saved post to DB")
-            self.dismiss(animated: true, completion: nil)
-    
         }
     }
     
@@ -302,9 +291,5 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     //    func galleryControllerDidCancel(_ controller: GalleryController) {
     //          dismiss(animated: true, completion: nil)
     //    }
-
-    
     
 }
-
-

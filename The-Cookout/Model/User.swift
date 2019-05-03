@@ -21,7 +21,6 @@ struct User {
     let bannerImageUrl: String
     let profileImageUrl: String
     
-    
     var profileImage: UIImage
     var isFollowing = false
     

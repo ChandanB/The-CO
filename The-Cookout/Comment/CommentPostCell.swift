@@ -19,7 +19,7 @@ import Kingfisher
 
 class CommentPostCell: DatasourceCell {
     
-    var delegate: UserPostCellDelegate?
+    var delegate: HomePostCellDelegate?
     var player: AVPlayer?
     var playerLayer: AVPlayerLayer?
     
@@ -140,25 +140,24 @@ class CommentPostCell: DatasourceCell {
     @objc func handleComment() {
         guard let post = self.datasourceItem as? Post else { return }
         delegate?.didTapComment(post: post)
-        (self.controller as? HomeController)?.didTapComment(post: post)
     }
     
-    lazy var likeButton: SpringButton = {
+    lazy var repostButton: SpringButton = {
         let button = SpringButton()
         button.setImage(#imageLiteral(resourceName: "heart"), for: .normal)
-        button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleRepost), for: .touchUpInside)
         return button
     }()
     
-    let likesCount: UILabel = {
+    let repostsCount: UILabel = {
         let label = UILabel()
         let regular = CustomFont.proximaNovaAlt.of(size: 10.0)
         label.font = regular
-        label.text = "Like"
+        label.text = "Repost"
         return label
     }()
     
-    @objc func handleLike() {
+    @objc func handleRepost() {
       //  delegate?.didLike(for: self)
       //  (self.controller as? HomeController)?.likeButtonSelected(for: self)
     }
@@ -213,8 +212,8 @@ class CommentPostCell: DatasourceCell {
         
         setupBottomButtons(post)
         
-        likeButton.setImage(post.hasLiked == true ? #imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
-        self.likesCount.text = String(post.likeCount)
+        repostButton.setImage(post.repostedByCurrentUser == true ? #imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+        self.repostsCount.text = String(post.repostCount)
         
     }
     
@@ -243,13 +242,13 @@ class CommentPostCell: DatasourceCell {
     fileprivate func setupBottomButtons(_ post: Post) {
         
         let replyButtonContainerView = UIView()
-        let likeButtonContainerView = UIView()
+        let repostButtonContainerView = UIView()
         let upvoteButtonContainerView = UIView()
         let downvoteButtonContainerView = UIView()
         let seperatorView = UIView()
         seperatorView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
-        let buttonStackView = UIStackView(arrangedSubviews: [replyButtonContainerView, upvoteButtonContainerView, downvoteButtonContainerView, likeButtonContainerView])
+        let buttonStackView = UIStackView(arrangedSubviews: [replyButtonContainerView, upvoteButtonContainerView, downvoteButtonContainerView, repostButtonContainerView])
         
         buttonStackView.axis = .horizontal
         buttonStackView.distribution = .fillEqually
@@ -286,8 +285,8 @@ class CommentPostCell: DatasourceCell {
         addSubview(votesCount)
         addSubview(downvoteButton)
         
-        addSubview(likeButton)
-        addSubview(likesCount)
+        addSubview(repostButton)
+        addSubview(repostsCount)
         
         replyButton.anchor(replyButtonContainerView.topAnchor, left: replyButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
         repliesCount.anchor(replyButtonContainerView.topAnchor, left: replyButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 70, heightConstant: 20)
@@ -296,17 +295,17 @@ class CommentPostCell: DatasourceCell {
         downvoteButton.anchor(downvoteButtonContainerView.topAnchor, left: downvoteButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 8, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
         votesCount.anchor(upvoteButtonContainerView.topAnchor, left: nil, bottom: nil, right: upvoteButtonContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 7, widthConstant: 20, heightConstant: 20)
         
-        likeButton.anchor(likeButtonContainerView.topAnchor, left: likeButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
-        likesCount.anchor(likeButtonContainerView.topAnchor, left: likeButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 40, heightConstant: 20)
+        repostButton.anchor(repostButtonContainerView.topAnchor, left: repostButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
+        repostsCount.anchor(repostButtonContainerView.topAnchor, left: repostButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 40, heightConstant: 20)
     }
     
     @objc func imageTapped()
     {
-        let tappedImage = self.heartPopup
-        (self.controller as? HomeController)?.likeAnimation(tappedImage)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
-          //  (self.controller as? HomeController)?.likeButtonSelected(for: self)
-        })
+//        let tappedImage = self.heartPopup
+//        (self.controller as? HomeController)?.repostAnimation(tappedImage)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+//          //  (self.controller as? HomeController)?.repostButtonSelected(for: self)
+//        })
     }
     
 }

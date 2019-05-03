@@ -9,9 +9,10 @@
 import Foundation
 
 struct Comment {
-    let text: String
-    let uid: String
+    
     let user: User
+    let uid: String
+    let text: String
     let creationDate: Date
     
     init(user: User, dictionary: [String: Any]) {

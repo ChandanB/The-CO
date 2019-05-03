@@ -18,7 +18,8 @@ protocol PhotoCellDelegate {
 class UserProfilePhotoCell: DatasourceCell {
     
     var delegate: PhotoCellDelegate?
-    
+    static var cellId = "userProfilePhotoGridCellId"
+
     override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         super.apply(layoutAttributes)
         if let attributes = layoutAttributes as? PinterestLayoutAttributes {

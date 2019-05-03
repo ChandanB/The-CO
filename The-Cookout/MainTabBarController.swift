@@ -25,7 +25,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         } else {
             Database.database().fetchCurrentUser { (user) in
                 self.user = user
-                self.setupViewControllers()
+                self.setupViewControllers(user)
             }
         }
     }
@@ -38,16 +38,16 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         }
     }
     
-    func setupViewControllers() {
-        guard let user = self.user else { return }
+    func setupViewControllers(_ user: User) {
+        
         let homeNavController = self.templateNavController(unselectedImage: #imageLiteral(resourceName: "home_unselected"), selectedImage: #imageLiteral(resourceName: "home_selected"), rootViewController: HomeController(collectionViewLayout: UICollectionViewFlowLayout()))
         let searchNavController = self.templateNavController(unselectedImage: #imageLiteral(resourceName: "search_unselected"), selectedImage: #imageLiteral(resourceName: "search_selected"), rootViewController: UserSearchController())
         let plusNavController = self.templateNavController(unselectedImage: #imageLiteral(resourceName: "plus_unselected"), selectedImage: #imageLiteral(resourceName: "plus_unselected"))
         let likeNavController = self.templateNavController(unselectedImage: #imageLiteral(resourceName: "like_unselected"), selectedImage: #imageLiteral(resourceName: "like_selected").withRenderingMode(.alwaysTemplate))
         
-        let userProfileController = UserProfileController(collectionViewLayout: UICollectionViewFlowLayout())
+        let layout = StretchyHeaderLayout()
+        let userProfileController = UserProfileController(collectionViewLayout: layout)
         let userProfileNavController = self.templateNavController(unselectedImage: #imageLiteral(resourceName: "profile_unselected"), selectedImage: #imageLiteral(resourceName: "profile_selected"), rootViewController: userProfileController)
-        
         userProfileController.user = user
         viewControllers = [homeNavController, searchNavController, plusNavController, likeNavController, userProfileNavController]
         
@@ -67,7 +67,6 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         navController.tabBarItem.imageInsets = UIEdgeInsets(top: 4, left: 0, bottom: -4, right: 0)
         return navController
     }
-
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         let index = viewControllers?.firstIndex(of: viewController)

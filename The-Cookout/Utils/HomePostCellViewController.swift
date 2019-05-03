@@ -86,16 +86,16 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
         return action
     }
     
-    func didLike(for cell: HomePostCell) {
+    func didRepost(for cell: HomePostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         var post = posts[indexPath.item]
         
         if post.repostedByCurrentUser {
-            Database.database().reference().child("likes").child(post.id ?? "").child(uid).removeValue { (err, _) in
+            Database.database().reference().child("reposts").child(post.id ?? "").child(uid).removeValue { (err, _) in
                 if let err = err {
-                    print("Failed to unlike post:", err)
+                    print("Failed to unrepost post:", err)
                     return
                 }
                 post.repostedByCurrentUser = false
@@ -107,9 +107,9 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
             }
         } else {
             let values = [uid : 1]
-            Database.database().reference().child("likes").child(post.id ?? "").updateChildValues(values) { (err, _) in
+            Database.database().reference().child("reposts").child(post.id ?? "").updateChildValues(values) { (err, _) in
                 if let err = err {
-                    print("Failed to like post:", err)
+                    print("Failed to repost post:", err)
                     return
                 }
                 post.repostedByCurrentUser = true

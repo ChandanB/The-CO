@@ -51,19 +51,6 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         navigationController?.view.layoutIfNeeded()
     }
     
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        let noOffset = UIOffset(horizontal: 0, vertical: 0)
-        searchBar.setPositionAdjustment(noOffset, for: .search)
-        
-        return true
-    }
-    
-    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-        searchBar.setPositionAdjustment(offset, for: .search)
-        
-        return true
-    }
-    
     fileprivate func fetchUsers() {
         Database.database().fetchAllUsers(includeCurrentUser: false, completion: { (users) in
             self.searchDatasource.users = users
@@ -77,7 +64,7 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         }
     }
     
-    @objc private func handleRefresh() {
+    @objc override func handleRefresh() {
         fetchUsers()
     }
     
@@ -85,9 +72,10 @@ class UserSearchController : DatasourceController, UISearchBarDelegate {
         searchBar.resignFirstResponder()
         
         let layout = StretchyHeaderLayout()
-        let user = self.searchDatasource.filteredUsers[indexPath.item]
         let userProfileController = UserProfileController(collectionViewLayout: layout)
-        userProfileController.user = self.searchDatasource.filteredUsers[indexPath.item]
+        let user = self.searchDatasource.filteredUsers[indexPath.item]
+        userProfileController.user = user
+        
         navigationController?.pushViewController(userProfileController, animated: true)
     }
     

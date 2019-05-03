@@ -12,12 +12,19 @@ import Firebase
 import BonMot
 import UIFontComplete
 
+//    let fontStyle = UIFont.boldSystemFont(ofSize: 12)
+//    let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
+//    attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
+//    postsLabel.attributedText = attributedText
+
 protocol UserProfileHeaderDelegate {
     func didChangeToListView()
     func didChangeToGridView()
 }
 
 class UserProfileHeader: DatasourceCell {
+    
+    static var cellId = "userProfileHeaderCellId"
     
     var delegate: UserProfileHeaderDelegate?
     
@@ -41,11 +48,6 @@ class UserProfileHeader: DatasourceCell {
     private let followersLabel = UserProfileStatsLabel(value: 0, title: "followers")
     private let followingLabel = UserProfileStatsLabel(value: 0, title: "following")
     
-//    let fontStyle = UIFont.boldSystemFont(ofSize: 12)
-//    let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
-//    attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
-//    postsLabel.attributedText = attributedText
-    
     private lazy var followButton: UserProfileFollowButton = {
         let button = UserProfileFollowButton(type: .system)
         button.setTitle("Edit Profile", for: .normal)
@@ -57,14 +59,6 @@ class UserProfileHeader: DatasourceCell {
         button.layer.cornerRadius = 3
         button.addTarget(self, action: #selector(handleTap), for: .touchUpInside)
         return button
-    }()
-    
-    lazy var likesButton: UIButton = {
-        let btn = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "Like_icon").resizeImage(targetSize: CGSize(width: 25, height: 20))
-        btn.setImage(image, for: .normal)
-        btn.tintColor = UIColor(white: 0, alpha: 0.3)
-        return btn
     }()
     
     lazy var gridButton: UIButton = {
@@ -81,6 +75,21 @@ class UserProfileHeader: DatasourceCell {
         button.setImage(image, for: .normal)
         button.tintColor = UIColor(white: 0, alpha: 0.2)
         button.addTarget(self, action: #selector(handleChangeToListView), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var repostsButton: UIButton = {
+        let btn = UIButton(type: .system)
+        let image = #imageLiteral(resourceName: "circular-arrow").resizeImage(targetSize: CGSize(width: 25, height: 20))
+        btn.setImage(image, for: .normal)
+        btn.tintColor = UIColor(white: 0, alpha: 0.3)
+        return btn
+    }()
+    
+    private let bookmarkButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "bookmarks"), for: .normal)
+        button.tintColor = UIColor(white: 0, alpha: 0.2)
         return button
     }()
     
@@ -102,6 +111,7 @@ class UserProfileHeader: DatasourceCell {
         return textView
     }()
     
+    
     private let padding: CGFloat = 12
     
     static var headerId = "userProfileHeaderId"
@@ -120,7 +130,6 @@ class UserProfileHeader: DatasourceCell {
         super.setupViews()
         
         addSubview(backgroundImageView)
-        
         backgroundImageView.fillSuperview()
         
         addSubview(profileImageView)
@@ -134,10 +143,11 @@ class UserProfileHeader: DatasourceCell {
         setupBottomToolBar()
         
         addSubview(nameLabel)
+        addSubview(bioTextView)
+        
         nameLabel.anchor(profileImageView.bottomAnchor, left: nil, bottom: bioTextView.topAnchor, right: nil, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         nameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
         
-        addSubview(bioTextView)
         bioTextView.anchor(nameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 0, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         bioTextView.centerXAnchor.constraint(equalTo: nameLabel.centerXAnchor).isActive = true
 
@@ -167,16 +177,16 @@ class UserProfileHeader: DatasourceCell {
         let bottomDividerView = UIView()
         bottomDividerView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         
-        let stackView = UIStackView(arrangedSubviews: [gridButton, listButton, likesButton])
+        let stackView = UIStackView(arrangedSubviews: [gridButton, listButton, repostsButton, bookmarkButton])
         stackView.distribution = .fillEqually
         
         addSubview(stackView)
         addSubview(topDividerView)
         addSubview(bottomDividerView)
         
+        stackView.anchor(nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 25, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
         topDividerView.anchor(stackView.topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
         bottomDividerView.anchor(stackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
-        stackView.anchor(nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 25, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
     }
     
     func reloadData() {
@@ -307,9 +317,7 @@ class UserProfileHeader: DatasourceCell {
     fileprivate func setupVisualEffectBlur() {
         animator = UIViewPropertyAnimator(duration: 3.0, curve: .linear, animations: { [weak self] in
             
-          //  self?.profileImageView.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
-            
-            // treat this area as the end state of your animation
+            // treat this area as the end state of animation
             let blurEffect = UIBlurEffect(style: .regular)
             let visualEffectView = UIVisualEffectView(effect: blurEffect)
             self?.backgroundImageView.addSubview(visualEffectView)

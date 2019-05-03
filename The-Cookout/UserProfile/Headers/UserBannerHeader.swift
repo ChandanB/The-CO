@@ -22,6 +22,8 @@ class UserBannerHeader: DatasourceCell {
         }
     }
     
+    static var cellId = "userBannerHeaderCellId"
+    
     let bannerImageView: CachedImageView = {
         let iv = CachedImageView()
         iv.backgroundColor = twitterBlue

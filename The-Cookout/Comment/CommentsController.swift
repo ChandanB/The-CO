@@ -18,7 +18,7 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         
     }
     
-    func didLike(for cell: CommentPostCell) {
+    func didRepost(for cell: CommentPostCell) {
         
     }
     

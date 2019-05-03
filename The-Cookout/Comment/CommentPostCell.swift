@@ -158,7 +158,6 @@ class CommentPostCell: DatasourceCell {
     }()
     
     @objc func handleRepost() {
-      //  delegate?.didLike(for: self)
       //  (self.controller as? HomeController)?.likeButtonSelected(for: self)
     }
     
@@ -193,7 +192,6 @@ class CommentPostCell: DatasourceCell {
     }()
     
     @objc func handleDownvote() {
-        //   (self.controller as? HomeController)?.didLike(for: self)
     }
     
     var nameLabel: UILabel = {

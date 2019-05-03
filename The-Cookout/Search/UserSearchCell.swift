@@ -14,19 +14,7 @@ class UserSearchCell: DatasourceCell {
     override var datasourceItem: Any? {
         didSet {
             guard let user = datasourceItem as? User else { return }
-            let url = URL(string: user.profileImageUrl)
-            profileImageView.kf.setImage(with: url)
-            
-            let nameAttributedText = NSMutableAttributedString(string: (user.name), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)])
-            
-            let usernameString = "@\(user.username)"
-            
-            nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
-            
-            nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), .foregroundColor: UIColor.gray]))
-            
-            nameLabel.attributedText = nameAttributedText
-            
+            configureCell(user)
         }
     }
     
@@ -49,9 +37,6 @@ class UserSearchCell: DatasourceCell {
         super.setupViews()
         backgroundColor = .white
         
-//        separatorLineView.isHidden = false
-//        separatorLineView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
-        
         addSubview(profileImageView)
         addSubview(nameLabel)
         
@@ -61,5 +46,19 @@ class UserSearchCell: DatasourceCell {
         nameLabel.anchor(profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: -8, leftConstant: 8, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
     }
+    
+    func configureCell(_ user: User) {
+        let url = URL(string: user.profileImageUrl)
+        profileImageView.kf.setImage(with: url)
+        
+        let nameAttributedText = NSMutableAttributedString(string: (user.name), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)])
+        let usernameString = "@\(user.username)"
+        
+        nameAttributedText.append(NSAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
+        nameAttributedText.append(NSAttributedString(string: usernameString, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), .foregroundColor: UIColor.gray]))
+        
+        nameLabel.attributedText = nameAttributedText
+    }
+    
     
 }

@@ -21,7 +21,7 @@ protocol HomePostCellDelegate {
     func didTapComment(post: Post)
     func didTapUser(user: User)
     func didTapOptions(post: Post)
-    func didLike(for cell: HomePostCell)
+    func didRepost(for cell: HomePostCell)
     func didUpvote(for cell: HomePostCell)
     func didDownvote(for cell: HomePostCell)
 }
@@ -69,7 +69,7 @@ class HomePostCell: DatasourceCell {
     lazy var repostButton: SpringButton = {
         let button = SpringButton()
         button.setImage(#imageLiteral(resourceName: "heart"), for: .normal)
-        button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleRepost), for: .touchUpInside)
         return button
     }()
     
@@ -417,8 +417,8 @@ class HomePostCell: DatasourceCell {
         delegate?.didDownvote(for: self)
     }
     
-    @objc func handleLike() {
-        delegate?.didLike(for: self)
+    @objc func handleRepost() {
+        delegate?.didRepost(for: self)
     }
     
     @objc func handleComment() {
@@ -443,7 +443,6 @@ class HomePostCell: DatasourceCell {
     @objc func imageDoubleTapped()
     {
 //        let tappedImage = self.heartPopup
-//        delegate?.didLike(for: post)
 //        (self.controller as? HomeController)?.likeAnimation(tappedImage)
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
 //            (self.controller as? HomeController)?.likeButtonSelected(for: self)

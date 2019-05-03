@@ -486,6 +486,112 @@ extension Database {
         }
     }
     
+    func queryGrid(forUser user: User, posts: [Post], finishedPaging: Bool, completion: @escaping ([Post], Bool) -> Void) {
+        
+        var isFinished = false
+        var posts = posts
+        var limit: UInt = 9
+        let uid = user.uid
+        let ref = Database.database().reference().child("posts").child(uid)
+        var query = ref.queryOrdered(byChild: "creationDate")
+        
+        if posts.last != nil {
+            let value = posts.last?.creationDate.timeIntervalSince1970
+            query = query.queryEnding(atValue: value)
+            limit = 10
+        }
+        
+        query.queryLimited(toLast: limit).observeSingleEvent(of: .value) { (snapshot) in
+            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else {
+                completion([], true)
+                return
+            }
+            
+            allObjects.reverse()
+            
+            if !finishedPaging {
+                if allObjects.count < limit {
+                    isFinished = true
+                }
+            } else {
+                if allObjects.count > limit {
+                    isFinished = false
+                }
+            }
+            
+            if posts.count > 0 && allObjects.count > 0 {
+                allObjects.removeFirst()
+            }
+            
+            allObjects.forEach({ (snapshot) in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                
+                if post.hasImage {
+                    posts.append(post)
+                    posts.sort(by: { (p1, p2) -> Bool in
+                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                    })
+                }
+                
+                completion(posts, isFinished)
+            })
+        }
+    }
+    
+    func queryList(forUser user: User, posts: [Post], finishedPaging: Bool, completion: @escaping ([Post], Bool) -> Void) {
+        
+        var isFinished = false
+        var posts = posts
+        var limit: UInt = 10
+        let uid = user.uid
+        let ref = Database.database().reference().child("posts").child(uid)
+        var query = ref.queryOrdered(byChild: "creationDate")
+        
+        if posts.last != nil {
+            let value = posts.last?.creationDate.timeIntervalSince1970
+            query = query.queryEnding(atValue: value)
+            limit = 12
+        }
+        
+        query.queryLimited(toLast: limit).observeSingleEvent(of: .value) { (snapshot) in
+            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else {
+                completion([], true)
+                return
+            }
+            
+            allObjects.reverse()
+            
+            if !finishedPaging {
+                if allObjects.count < limit {
+                    isFinished = true
+                }
+            } else {
+                if allObjects.count > limit {
+                    isFinished = false
+                }
+            }
+            
+            if posts.count > 0 && allObjects.count > 0 {
+                allObjects.removeFirst()
+            }
+            
+            allObjects.forEach({ (snapshot) in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
+                
+                if !post.hasImage {
+                    posts.append(post)
+                    posts.sort(by: { (p1, p2) -> Bool in
+                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                    })
+                }
+                
+                completion(posts, isFinished)
+            })
+        }
+    }
+    
     func fetchTopPosts(forUser user: User, completion: @escaping (Post) -> Void) {
         let ref = Database.database().reference().child("posts").child(user.uid)
         

@@ -13,7 +13,11 @@ import LBTAComponents
 
 class HomePostCellViewController: UICollectionViewController, HomePostCellDelegate {
    
-    var posts = [Post]()
+    var posts: [Post] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     func showEmptyStateViewIfNeeded() {}
     
@@ -60,11 +64,17 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
             alert.addAction(UIAlertAction(title: "Delete", style: .default, handler: { (_) in
                 
                 Database.database().deletePost(withUID: currentLoggedInUserId, postId: post.id ?? "") { (_) in
-                    if let postIndex = self.posts.firstIndex(where: {$0.id == post.id}) {
+                    if let postIndex = self.posts.firstIndex(where: { (item) -> Bool in
+                        if item.id == post.id {
+                            return true
+                        }
+                        return false
+                    }) {
                         self.posts.remove(at: postIndex)
                         self.collectionView?.reloadData()
                         self.showEmptyStateViewIfNeeded()
                     }
+                  
                 }
             }))
             self.present(alert, animated: true, completion: nil)
@@ -77,7 +87,12 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
             
             let uid = post.user.uid
             Database.database().unfollowUser(withUID: uid, completion: { (_) in
-                let filteredPosts = self.posts.filter({$0.user.uid != uid})
+                let filteredPosts = self.posts.filter({ (item) -> Bool in
+                    if item.user.uid != uid {
+                        return true
+                    }
+                    return false
+                })
                 self.posts = filteredPosts
                 self.collectionView?.reloadData()
                 self.showEmptyStateViewIfNeeded()
@@ -90,7 +105,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         guard let uid = CURRENT_USER?.uid else { return }
         
-        var post = posts[indexPath.item]
+        let post = posts[indexPath.item]
         
         if post.repostedByCurrentUser {
             Database.database().reference().child("reposts").child(post.id ?? "").child(uid).removeValue { (err, _) in
@@ -126,7 +141,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         guard let uid = CURRENT_USER?.uid else { return }
         
-        var post = posts[indexPath.item]
+        let post = posts[indexPath.item]
         
         if post.upvotedByCurrentUser {
             Database.database().reference().child("upvotes").child(post.id ?? "").child(uid).removeValue { (err, _) in
@@ -171,7 +186,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         guard let uid = CURRENT_USER?.uid else { return }
         
-        var post = posts[indexPath.item]
+        let post = posts[indexPath.item]
         
         if post.downvotedByCurrentUser {
             Database.database().reference().child("downvotes").child(post.id ?? "").child(uid).removeValue { (err, _) in

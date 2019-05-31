@@ -11,7 +11,7 @@ import LBTAComponents
 import Firebase
 import UIFontComplete
 
-class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLayout {
+class HomeController: HomePostCellViewController {
     
     var user: User? {
         didSet {
@@ -20,6 +20,16 @@ class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLa
             fetchAllPosts()
         }
     }
+    
+    var datasource: [Content] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
+    // Fields
+    fileprivate let transition = CircularTransition()
+
     
     var viewSinglePost = false
     var post: Post?
@@ -97,8 +107,17 @@ class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLa
     }
     
     private func setupCollectionView() {
-        collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
-        collectionView?.register(HomePostTextCell.self, forCellWithReuseIdentifier: HomePostTextCell.cellId)
+        collectionView.backgroundColor = fbBg
+        
+        // UICollectionViewCell
+        collectionView.register(HistoriesContentViewCell.self, forCellWithReuseIdentifier: HistoriesContentViewCell.identifier())
+        collectionView.register(CommunityPostContentViewCell.self, forCellWithReuseIdentifier: CommunityPostContentViewCell.identifier())
+        collectionView.register(HomePostTextCell.self, forCellWithReuseIdentifier: HomePostTextCell.identifier())
+        
+        // UICollectionReusableView
+        collectionView.register(UserNewPostViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserNewPostViewCell.identifier())
+        
+  //    collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         collectionView?.backgroundView = HomeEmptyStateView()
         collectionView?.backgroundView?.alpha = 0
     }
@@ -133,15 +152,30 @@ class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLa
     }
     
     private func queryPosts(forUser user: User) {
-        Database.database().queryPosts(forUser: user, posts: self.posts, finishedPaging: isFinishedPaging, completion: { (posts, isPagingFinished) in
-            
+        Database.database().queryPosts(forUser: user, posts: self.posts, finishedPaging: isFinishedPaging, completion: { (newPosts, isPagingFinished) in
+
             self.isFinishedPaging = isPagingFinished
-            self.posts = posts
-            self.posts.sort(by: { (post1, post2) -> Bool in
-                return post1.creationDate > post2.creationDate
-            })
             
-            self.collectionView?.reloadData()
+            if self.posts.isEmpty {
+                self.posts = newPosts
+                self.posts.sort(by: { (post1, post2) -> Bool in
+                    return post1.creationDate > post2.creationDate
+                })
+                self.collectionView.reloadSections(IndexSet(integer: 0))
+            } else {
+                if newPosts.count < 4 {
+                    self.isFinishedPaging = true
+                }
+                self.posts = newPosts
+                self.posts.sort(by: { (post1, post2) -> Bool in
+                    return post1.creationDate > post2.creationDate
+                })
+                
+                self.collectionView?.reloadData()
+            }
+        
+          //  self.datasource.append(contentsOf: self.posts)
+            
             self.collectionView?.refreshControl?.endRefreshing()
         })
     }
@@ -162,6 +196,7 @@ class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLa
     }
     
     @objc private func handleRefresh() {
+        datasource.removeAll(keepingCapacity: false)
         posts.removeAll(keepingCapacity: false)
         self.currentKey = nil
         fetchAllPosts()
@@ -188,16 +223,6 @@ class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLa
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 1.5
-    }
-    
-    private func estimatedHeightForText(_ text: String) -> CGFloat {
-        let approximateWidthOfTextView = view.frame.width - 16 - 50 - 16 - 4
-        let size = CGSize(width: approximateWidthOfTextView, height: 1000)
-        let attributes = [NSAttributedString.Key.font: CustomFont.proximaNovaAlt.of(size: 16.0)!]
-        
-        let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
-        
-        return estimatedFrame.height
     }
     
     private func estimatedHeightForImage(_ height: NSNumber, width: NSNumber) -> CGFloat {
@@ -239,32 +264,29 @@ class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLa
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let post = posts[indexPath.item]
+        let item = self.posts[indexPath.row]
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostTextCell.cellId, for: indexPath) as! HomePostTextCell
-        cell.delegate = self
-        cell.post = post
-        cell.hasImage = post.hasImage
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let posts = self.posts
-        let post = posts[indexPath.item]
-        
-        let estimatedTextHeight = estimatedHeightForText(post.caption)
-        let width = view.frame.width / 1.04
-        
-        if post.hasImage {
-            let estimatedImageHeight = estimatedHeightForImage(post.imageHeight, width: post.imageWidth)
-            let height: CGFloat = estimatedImageHeight + estimatedTextHeight
-            return CGSize(width: width, height: height + 128)
-        } else {
-            return CGSize(width: width, height: estimatedTextHeight + 128)
+        switch item.contentType {
+        case .histories:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HistoriesContentViewCell.identifier(), for: indexPath) as! HistoriesContentViewCell
+            cell.data = item as? HistoriesContent
+            cell.delegate = self as HistoryDelegate
+            return cell
+        case .community:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CommunityPostContentViewCell.identifier(), for: indexPath) as! CommunityPostContentViewCell
+            cell.data = item as? CommunityPost
+            return cell
+        case .post:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostTextCell.identifier(), for: indexPath) as! HomePostTextCell
+            cell.data = item as? Post
+            cell.delegate = self
+            cell.hasImage = post?.hasImage
+            return cell
+        default:
+            return UICollectionViewCell()
         }
     }
-    
+
     private func configureNavigationBar(_ user: User) {
         
         // Left
@@ -324,8 +346,86 @@ class HomeController: HomePostCellViewController, UICollectionViewDelegateFlowLa
     
 }
 
-extension HomeController {
-    func handleHashtagTapped(forCell cell: HomePostTextCell) {
+extension HomeController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let width = view.frame.width / 1.04
+        
+        let item = self.posts[indexPath.row]
+        
+        switch item.contentType {
+        case .histories:
+            return CGSize(width: view.bounds.width, height: 210)
+        case .community:
+            guard let post = item as? CommunityPost else { return .zero }
+            let estimatedTextHeight = post.calculateViewHeight(withView: view, viewOffset: 128)
+
+            return CGSize(width: view.bounds.width, height: estimatedTextHeight)
+        case .post:
+            guard let post = item as? Post else { return .zero }
+            
+            let estimatedTextHeight = post.calculateViewHeight(withView: view, viewOffset: 128)
+            
+            if post.hasImage {
+                let estimatedImageHeight = estimatedHeightForImage(post.imageHeight, width: post.imageWidth)
+                let height: CGFloat = estimatedImageHeight + estimatedTextHeight
+                return CGSize(width: width, height: height)
+            } else {
+                return CGSize(width: width, height: estimatedTextHeight)
+            }
+            
+        default:
+            return CGSize(width: view.bounds.width, height: 60)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.bounds.width - 32, height: 100)
+    }
+    
+    // MARK: - UIScrollViewDelegate
+    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        if velocity.y > 0 {
+            UIView.animate(withDuration: 2.5, delay: 0, options: [], animations: {
+                self.navigationController?.setNavigationBarHidden(true, animated: true)
+            }, completion: nil)
+            
+        } else {
+            UIView.animate(withDuration: 2.5, delay: 0, options: [], animations: {
+                self.navigationController?.setNavigationBarHidden(false, animated: true)
+            }, completion: nil)
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let viewCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UserNewPostViewCell.identifier(), for: indexPath) as! UserNewPostViewCell
+        return viewCell
+    }
+    
+}
+
+
+extension HomeController: UIViewControllerTransitioningDelegate {
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.transitionMode = .present
+        transition.startingPoint = (presented as! StoryViewController).data.position
+        transition.circleColor = fbBlueLight
+        
+        return transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.transitionMode = .dismiss
+        transition.startingPoint = (dismissed as! StoryViewController).data.position
+        transition.circleColor = fbBlueLight
+        
+        return transition
+    }
+    
+    func handleHashtagTapped(forCell cell: HomePostTextCell<Post>) {
         cell.captionLabel.handleHashtagTap { (hashtag) in
             let hashtagController = HashtagController(collectionViewLayout: UICollectionViewFlowLayout())
             hashtagController.hashtag = hashtag.lowercased()
@@ -333,10 +433,22 @@ extension HomeController {
         }
     }
     
-    func handleMentionTapped(forCell cell: HomePostTextCell) {
+    func handleMentionTapped(forCell cell: HomePostTextCell<Post>) {
         cell.captionLabel.handleMentionTap { (username) in
             self.getMentionedUser(withUsername: username)
         }
+    }
+}
+
+
+extension HomeController: HistoryDelegate {
+    func didSelectHistory(history: HistoryTransitionObject) {
+        let storyViewController = StoryViewController()
+        storyViewController.data = history
+        storyViewController.transitioningDelegate = self
+        storyViewController.modalPresentationStyle = .custom
+        
+        present(storyViewController, animated: true, completion: nil)
     }
 }
 

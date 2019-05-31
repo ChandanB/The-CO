@@ -8,27 +8,28 @@
 
 import Firebase
 import LBTAComponents
+import LBTATools
 import Spring
 import PKHUD
 
 
-class LoginController: UIViewController {
+class LoginController: LBTAFormController {
     
     let logoContainerView: SpringView = {
         let view = SpringView()
-        
         let logoImageView = UIImageView(image: #imageLiteral(resourceName: "cookout_logo"))
         logoImageView.contentMode = .scaleAspectFill
         view.addSubview(logoImageView)
         logoImageView.anchor(widthConstant: 300, heightConstant: 80)
         logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
+
         return view
     }()
     
     private lazy var emailTextField: SpringTextField = {
         let tf = SpringTextField()
+        tf.constrainHeight(60)
         tf.autocorrectionType = .no
         tf.autocapitalizationType = .none
         tf.keyboardType = .emailAddress
@@ -43,6 +44,7 @@ class LoginController: UIViewController {
     
     private lazy var passwordTextField: SpringTextField = {
         let tf = SpringTextField()
+        tf.constrainHeight(60)
         tf.placeholder = "Password"
         tf.isSecureTextEntry = true
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -55,6 +57,8 @@ class LoginController: UIViewController {
     
     let loginButton: SpringButton = {
         let button = SpringButton(type: .system)
+        button.constrainHeight(60)
+        
         button.setTitle("Login", for: .normal)
         button.backgroundColor = UIColor(r: 149, g: 204, b: 244)
         button.layer.cornerRadius = 5
@@ -123,7 +127,7 @@ class LoginController: UIViewController {
     }
     
     @objc func handleShowRegister() {
-        let registerController = RegisterController()
+        let registerController = RegisterController(alignment: .center)
         navigationController?.pushViewController(registerController, animated: true)
     }
     
@@ -132,35 +136,30 @@ class LoginController: UIViewController {
         
         navigationController?.isNavigationBarHidden = true
         view.backgroundColor = .white
-
         
         view.addSubview(logoContainerView)
-        logoContainerView.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 200)
-        
-        
-        view.addSubview(dontHaveAccountButton)
-        dontHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
+        logoContainerView.anchor(bottom: formContainerStackView.topAnchor, heightConstant: 200)
+        logoContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         setupInputFields()
     }
     
     func setupInputFields() {
+        formContainerStackView.layoutMargins = .init(top: 0, left: 24, bottom: 0, right: 24)
+        formContainerStackView.axis = .vertical
+        formContainerStackView.spacing = 12
         
-        let topStackView = UIStackView(arrangedSubviews: [emailTextField, passwordTextField])
+        formContainerStackView.addArrangedSubview(emailTextField)
+        formContainerStackView.addArrangedSubview(passwordTextField)
         
-        topStackView.distribution = .fillEqually
-        topStackView.axis = .vertical
-        topStackView.spacing = 10
-        
-        view.addSubview(topStackView)
         view.addSubview(forgotPasswordButton)
+        forgotPasswordButton.anchor(formContainerStackView.bottomAnchor, right: formContainerStackView.rightAnchor, topConstant: 12, rightConstant: 36, heightConstant: 12)
+        
         view.addSubview(loginButton)
+        loginButton.anchor(forgotPasswordButton.bottomAnchor, left: formContainerStackView.leftAnchor, right: formContainerStackView.rightAnchor, topConstant: 12, leftConstant: 24, rightConstant: 24, heightConstant: 60)
         
-        topStackView.anchor(logoContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 18, bottomConstant: 10, rightConstant: 18, widthConstant: 0, heightConstant: 110)
-        
-        forgotPasswordButton.anchor(topStackView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 20, leftConstant: 260, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 10)
-        
-        loginButton.anchor(forgotPasswordButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 18, bottomConstant: 0, rightConstant: 18, widthConstant: 0, heightConstant: 50)
+        view.addSubview(dontHaveAccountButton)
+        dontHaveAccountButton.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 24, rightConstant: 0, widthConstant: 0, heightConstant: 60)
         
     }
     

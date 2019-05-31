@@ -114,7 +114,7 @@ class GeneralTabBarController: UITabBarController {
   
   func presentOnboardingController() {
     guard CURRENT_USER == nil else { return }
-    let destination = LoginController()
+    let destination = LoginController(alignment: .center)
     let newNavigationController = UINavigationController(rootViewController: destination)
     newNavigationController.navigationBar.shadowImage = UIImage()
     newNavigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)

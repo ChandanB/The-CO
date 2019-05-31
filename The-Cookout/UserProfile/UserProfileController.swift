@@ -93,7 +93,7 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         collectionView.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserProfileHeader.cellId)
         collectionView.register(UserBannerHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserBannerHeader.cellId)
         collectionView.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: UserProfilePhotoCell.cellId)
-        collectionView.register(HomePostTextCell.self, forCellWithReuseIdentifier: HomePostTextCell.cellId)
+        collectionView.register(HomePostTextCell.self, forCellWithReuseIdentifier: HomePostTextCell.identifier())
         collectionView?.register(UserProfileEmptyStateCell.self, forCellWithReuseIdentifier: UserProfileEmptyStateCell.cellId)
         
         let refreshControl = UIRefreshControl()
@@ -115,7 +115,7 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         let logOutAction = UIAlertAction(title: "Log Out", style: .default) { (_) in
             do {
                 try Auth.auth().signOut()
-                let loginController = LoginController()
+                let loginController = LoginController(alignment: .center)
                 let navController = UINavigationController(rootViewController: loginController)
                 self.present(navController, animated: true, completion: nil)
             } catch let err {
@@ -182,9 +182,9 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
             return cell
         }
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostTextCell.cellId, for: indexPath) as! HomePostTextCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostTextCell.identifier(), for: indexPath) as! HomePostTextCell
         cell.delegate = self
-        cell.post = self.listArray[indexPath.item]
+        cell.data = self.listArray[indexPath.item]
         return cell
     }
     

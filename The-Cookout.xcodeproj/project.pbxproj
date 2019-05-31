@@ -239,6 +239,17 @@
 		1FA899572281BB0B005DB194 /* MessageNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA899562281BB0B005DB194 /* MessageNotificationView.swift */; };
 		1FA899592281E92C005DB194 /* HashTagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA899582281E92C005DB194 /* HashTagController.swift */; };
 		1FA8995B2281EB34005DB194 /* HashTagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8995A2281EB34005DB194 /* HashTagCell.swift */; };
+		1FA8997422A181CF005DB194 /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8997322A181CF005DB194 /* StoryViewController.swift */; };
+		1FA8997622A182AE005DB194 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8997522A182AE005DB194 /* UIButton+Extension.swift */; };
+		1FA8997822A1832C005DB194 /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8997722A1832C005DB194 /* Content.swift */; };
+		1FA8997A22A1836A005DB194 /* HistoryTransitionObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8997922A1836A005DB194 /* HistoryTransitionObject.swift */; };
+		1FA8997C22A1838F005DB194 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8997B22A1838F005DB194 /* History.swift */; };
+		1FA8997E22A183B8005DB194 /* CommunityPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8997D22A183B8005DB194 /* CommunityPost.swift */; };
+		1FA8998122A187B8005DB194 /* UserNewPostViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8998022A187B8005DB194 /* UserNewPostViewCell.swift */; };
+		1FA8998322A18857005DB194 /* ContentViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8998222A18857005DB194 /* ContentViewCell.swift */; };
+		1FA8998522A1886F005DB194 /* HistoriesContentViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8998422A1886F005DB194 /* HistoriesContentViewCell.swift */; };
+		1FA8998722A18893005DB194 /* HistoryViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8998622A18893005DB194 /* HistoryViewCell.swift */; };
+		1FA8998922A188C6005DB194 /* CommunityPostViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8998822A188C6005DB194 /* CommunityPostViewCell.swift */; };
 		1FAB5B4320A7B10A003F9943 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */; };
 		1FAB5B4A20A7B10F003F9943 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4920A7B10F003F9943 /* Assets.xcassets */; };
 		1FAB5B4D20A7B10F003F9943 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAB5B4B20A7B10F003F9943 /* LaunchScreen.storyboard */; };
@@ -288,7 +299,7 @@
 		1F2BAA2920A7C57D00350CEC /* HomeDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDatasource.swift; sourceTree = "<group>"; };
 		1F2BAA2B20A7D50400350CEC /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		1F2BAA2D20A7D8F500350CEC /* UserCell(2).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserCell(2).swift"; sourceTree = "<group>"; };
-		1F2BAA3120A7EF5700350CEC /* HomePostTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePostTextCell.swift; sourceTree = "<group>"; };
+		1F2BAA3120A7EF5700350CEC /* HomePostTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomePostTextCell.swift; path = "../New Group/HomePostTextCell.swift"; sourceTree = "<group>"; };
 		1F2BAA3520A7F38D00350CEC /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		1F2BAA3720A8058600350CEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1F2BAA3C20A80BC800350CEC /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -516,6 +527,17 @@
 		1FA899562281BB0B005DB194 /* MessageNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageNotificationView.swift; sourceTree = "<group>"; };
 		1FA899582281E92C005DB194 /* HashTagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashTagController.swift; sourceTree = "<group>"; };
 		1FA8995A2281EB34005DB194 /* HashTagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashTagCell.swift; sourceTree = "<group>"; };
+		1FA8997322A181CF005DB194 /* StoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
+		1FA8997522A182AE005DB194 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
+		1FA8997722A1832C005DB194 /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
+		1FA8997922A1836A005DB194 /* HistoryTransitionObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTransitionObject.swift; sourceTree = "<group>"; };
+		1FA8997B22A1838F005DB194 /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
+		1FA8997D22A183B8005DB194 /* CommunityPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPost.swift; sourceTree = "<group>"; };
+		1FA8998022A187B8005DB194 /* UserNewPostViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNewPostViewCell.swift; sourceTree = "<group>"; };
+		1FA8998222A18857005DB194 /* ContentViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewCell.swift; sourceTree = "<group>"; };
+		1FA8998422A1886F005DB194 /* HistoriesContentViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoriesContentViewCell.swift; sourceTree = "<group>"; };
+		1FA8998622A18893005DB194 /* HistoryViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewCell.swift; sourceTree = "<group>"; };
+		1FA8998822A188C6005DB194 /* CommunityPostViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPostViewCell.swift; sourceTree = "<group>"; };
 		1FAB5B3F20A7B10A003F9943 /* The-Cookout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The-Cookout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FAB5B4220A7B10A003F9943 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1FAB5B4920A7B10F003F9943 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -586,6 +608,10 @@
 				1F65A607227CB357005353E3 /* Conversation.swift */,
 				1F65A609227CB53F005353E3 /* MediaObject.swift */,
 				1FA899542280C1EE005DB194 /* Notification.swift */,
+				1FA8997722A1832C005DB194 /* Content.swift */,
+				1FA8997922A1836A005DB194 /* HistoryTransitionObject.swift */,
+				1FA8997B22A1838F005DB194 /* History.swift */,
+				1FA8997D22A183B8005DB194 /* CommunityPost.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -623,14 +649,13 @@
 		1F4FD35E20A9FA7B00AB73C1 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				1F65A5EE227AE75E005353E3 /* HomePostCellViewController.swift */,
+				1FA8997F22A18704005DB194 /* ViewCells */,
 				1F2BAA2220A7BF0200350CEC /* HomeController.swift */,
-				1F2BAA3120A7EF5700350CEC /* HomePostTextCell.swift */,
-				1F65A5F4227AE913005353E3 /* HomePostCellHeader.swift */,
+				1F65A5EE227AE75E005353E3 /* HomePostCellViewController.swift */,
 				1F65A5F2227AE86E005353E3 /* HomeEmptyStateView.swift */,
 				1F2BAA2920A7C57D00350CEC /* HomeDatasource.swift */,
 				1FA899582281E92C005DB194 /* HashTagController.swift */,
-				1FA8995A2281EB34005DB194 /* HashTagCell.swift */,
+				1FA8997322A181CF005DB194 /* StoryViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -704,6 +729,7 @@
 				1F65A61B227CBF13005353E3 /* Date+Extension.swift */,
 				1F65A61D227CBF75005353E3 /* UIView+Extension.swift */,
 				1F65A61F227CBFF3005353E3 /* UIImage+Extension.swift */,
+				1FA8997522A182AE005DB194 /* UIButton+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1494,6 +1520,21 @@
 			path = Notification;
 			sourceTree = "<group>";
 		};
+		1FA8997F22A18704005DB194 /* ViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				1F2BAA3120A7EF5700350CEC /* HomePostTextCell.swift */,
+				1F65A5F4227AE913005353E3 /* HomePostCellHeader.swift */,
+				1FA8995A2281EB34005DB194 /* HashTagCell.swift */,
+				1FA8998022A187B8005DB194 /* UserNewPostViewCell.swift */,
+				1FA8998222A18857005DB194 /* ContentViewCell.swift */,
+				1FA8998422A1886F005DB194 /* HistoriesContentViewCell.swift */,
+				1FA8998622A18893005DB194 /* HistoryViewCell.swift */,
+				1FA8998822A188C6005DB194 /* CommunityPostViewCell.swift */,
+			);
+			path = ViewCells;
+			sourceTree = "<group>";
+		};
 		1FAB5B3620A7B10A003F9943 = {
 			isa = PBXGroup;
 			children = (
@@ -1746,7 +1787,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PODS_ROOT}/SwiftLint/swiftlint\n";
 		};
 		C07F4686B60EA3D9F45906D3 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1769,11 +1810,11 @@
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/LBTAComponents/LBTAComponents.framework",
+				"${BUILT_PRODUCTS_DIR}/LBTATools/LBTATools.framework",
 				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/PryntTrimmerView/PryntTrimmerView.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
-				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
 				"${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework",
 				"${BUILT_PRODUCTS_DIR}/UIFontComplete/UIFontComplete.framework",
@@ -1798,11 +1839,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LBTAComponents.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LBTATools.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PryntTrimmerView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stevia.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIFontComplete.framework",
@@ -1857,6 +1898,7 @@
 				1F4FD36320AA1EE200AB73C1 /* LoginController.swift in Sources */,
 				1F65A6C7227CD2A8005353E3 /* UserInfoPhoneNumberTableViewCell.swift in Sources */,
 				1F65A704227CDDB6005353E3 /* AnnouncementFactory.swift in Sources */,
+				1FA8997422A181CF005DB194 /* StoryViewController.swift in Sources */,
 				1F4FD35D20A9F7E600AB73C1 /* UserProfileHeader.swift in Sources */,
 				1F65A5FF227C8A8A005353E3 /* Channel.swift in Sources */,
 				1F65A741227CDFAA005353E3 /* SwiftSiriWaveformView.swift in Sources */,
@@ -1871,6 +1913,7 @@
 				1F2BAA2A20A7C57D00350CEC /* HomeDatasource.swift in Sources */,
 				1F65A7A0227CE548005353E3 /* SwitchTableViewCell.swift in Sources */,
 				1FF152D6217D6973000D5A53 /* ListsController.swift in Sources */,
+				1FA8997E22A183B8005DB194 /* CommunityPost.swift in Sources */,
 				1F56619F20AEA19800F8E1B7 /* SideMenu.swift in Sources */,
 				1F65A79A227CE548005353E3 /* AccountSettingsController.swift in Sources */,
 				1F65A6A7227CD0A1005353E3 /* ChatInputContainer+AttachedImagesCollectionConfig.swift in Sources */,
@@ -1893,6 +1936,7 @@
 				1F65A62A227CCA5E005353E3 /* ChatsTableViewController+TableRowActionHandlers.swift in Sources */,
 				1FF5083520B3EAFA0092F462 /* PostApi.swift in Sources */,
 				1F65A6DD227CDBB8005353E3 /* INSPhotosTransitionAnimator.swift in Sources */,
+				1FA8998722A18893005DB194 /* HistoryViewCell.swift in Sources */,
 				1FF152EC217D71F3000D5A53 /* BaseSlidingController.swift in Sources */,
 				1F4FD36E20AA838E00AB73C1 /* PhotoSelectorHeader.swift in Sources */,
 				1FF5077620B2568A0092F462 /* UserMessageCell.swift in Sources */,
@@ -1934,6 +1978,7 @@
 				1F65A61E227CBF75005353E3 /* UIView+Extension.swift in Sources */,
 				1F2BAA3D20A80BC800350CEC /* Extensions.swift in Sources */,
 				1F65A6AA227CD0A1005353E3 /* SelectedMediaCollectionCell+timerHandlers.swift in Sources */,
+				1FA8997C22A1838F005DB194 /* History.swift in Sources */,
 				1FF152E6217D698D000D5A53 /* ProfileImageView.swift in Sources */,
 				1F65A7A5227CE548005353E3 /* AccountSettingsAvatarOpenerDelegate.swift in Sources */,
 				1F65A735227CDE61005353E3 /* SelectNewAdminTableViewController.swift in Sources */,
@@ -1957,6 +2002,7 @@
 				1FA899572281BB0B005DB194 /* MessageNotificationView.swift in Sources */,
 				1FEE32BB225D4EF100B93FD5 /* StretchyHeaderLayout.swift in Sources */,
 				1F65A623227CC406005353E3 /* UserDefaultsManager.swift in Sources */,
+				1FA8997622A182AE005DB194 /* UIButton+Extension.swift in Sources */,
 				1FEE32BD225D545A00B93FD5 /* UserBannerHeader.swift in Sources */,
 				1FF5083F20B3F15D0092F462 /* CommentApi.swift in Sources */,
 				1F65A783227CE286005353E3 /* ContactsDetailController.swift in Sources */,
@@ -1970,8 +2016,10 @@
 				1F65A61C227CBF13005353E3 /* Date+Extension.swift in Sources */,
 				1F65A79D227CE548005353E3 /* ChangeNumberVerificationController.swift in Sources */,
 				1FA899532280C1A4005DB194 /* NotificationCell.swift in Sources */,
+				1FA8998522A1886F005DB194 /* HistoriesContentViewCell.swift in Sources */,
 				1FF5077820B257B90092F462 /* ChatMessageCell.swift in Sources */,
 				1F65A72C227CDE2F005353E3 /* SelectCountryCodeController.swift in Sources */,
+				1FA8997A22A1836A005DB194 /* HistoryTransitionObject.swift in Sources */,
 				1F65A6E0227CDBB8005353E3 /* INSScalingImageView.swift in Sources */,
 				1F65A6A8227CD0A1005353E3 /* ChatInputContainerView.swift in Sources */,
 				1F65A79C227CE548005353E3 /* ChangePhoneNumberController.swift in Sources */,
@@ -1986,6 +2034,7 @@
 				1F65A64F227CCDF5005353E3 /* GroupAdminControlsTableViewCell.swift in Sources */,
 				1F65A701227CDDB6005353E3 /* UIView+Extensions.swift in Sources */,
 				1F65A693227CCFED005353E3 /* BaseVoiceMessageCell.swift in Sources */,
+				1FA8998922A188C6005DB194 /* CommunityPostViewCell.swift in Sources */,
 				1F65A6DE227CDBB8005353E3 /* INSPhotosInteractionAnimator.swift in Sources */,
 				1F65A72F227CDE2F005353E3 /* Country.swift in Sources */,
 				1F9ADD16226D85210070DEE7 /* CustomTabBar.swift in Sources */,
@@ -2060,6 +2109,7 @@
 				1F65A780227CE286005353E3 /* ViewPlaceholder.swift in Sources */,
 				1FF5084E20B4216A0092F462 /* ProfileDatasource.swift in Sources */,
 				1FF5083D20B3F0860092F462 /* MyPostsApi.swift in Sources */,
+				1FA8998122A187B8005DB194 /* UserNewPostViewCell.swift in Sources */,
 				1FF152E5217D698D000D5A53 /* MenuItemCell.swift in Sources */,
 				1F65A729227CDE2F005353E3 /* EnterVerificationContainerView+timerHandlers.swift in Sources */,
 				1F65A744227CDFC3005353E3 /* CenteredCollectionViewFlowLayout.swift in Sources */,
@@ -2070,6 +2120,7 @@
 				1F65A6F8227CDCC9005353E3 /* SelectedParticipantsCollectionViewCell.swift in Sources */,
 				1F65A6AC227CD0A1005353E3 /* MediaPicerControllerNew+ImagePicker.swift in Sources */,
 				1F65A697227CCFED005353E3 /* BaseMessageCell.swift in Sources */,
+				1FA8997822A1832C005DB194 /* Content.swift in Sources */,
 				1F65A72D227CDE2F005353E3 /* EnterPhoneNumberController.swift in Sources */,
 				1F65A755227CE0E4005353E3 /* SplashScreenContainer.swift in Sources */,
 				1F65A695227CCFED005353E3 /* BaseMediaMessageCell.swift in Sources */,
@@ -2088,6 +2139,7 @@
 				1F65A620227CBFF3005353E3 /* UIImage+Extension.swift in Sources */,
 				1F65A702227CDDB6005353E3 /* AnnouncementShowing.swift in Sources */,
 				1F65A72B227CDE2F005353E3 /* EnterVerificationContainerView.swift in Sources */,
+				1FA8998322A18857005DB194 /* ContentViewCell.swift in Sources */,
 				1F4FD37220AAFA5200AB73C1 /* UserProfilePhotoCell.swift in Sources */,
 				1F65A6F2227CDCC9005353E3 /* ParticipantTableViewCell.swift in Sources */,
 				1F65A68E227CCFED005353E3 /* TimestampView.swift in Sources */,

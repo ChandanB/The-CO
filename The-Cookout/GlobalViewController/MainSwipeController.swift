@@ -9,7 +9,6 @@
 import UIKit
 import EZSwipeController
 import Firebase
-import SkeletonView
 
 extension NSNotification.Name {
     static let scrollToMessages = NSNotification.Name(Bundle.main.bundleIdentifier! + ".scrollToMessages")
@@ -45,7 +44,6 @@ class MainSwipeController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
          super.viewDidLoad()
-        self.view.isSkeletonable = true
         self.screenSize = UIScreen.main.bounds
         
         if CURRENT_USER == nil {
@@ -150,7 +148,7 @@ class MainSwipeController: UIViewController, UIScrollViewDelegate {
     
     private func presentLoginController() {
         DispatchQueue.main.async { // wait until MainTabBarController is inside UI
-            let loginController = LoginController()
+            let loginController = LoginController(alignment: .center)
             let navController = UINavigationController(rootViewController: loginController)
             self.present(navController, animated: true, completion: nil)
         }

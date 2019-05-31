@@ -247,3 +247,10 @@ struct SocialPointPalette {
     static let dismissRed = UIColor(red:1.00, green:0.23, blue:0.19, alpha:1.0)
     static let appStoreGrey = UIColor(red:0.94, green:0.94, blue:0.96, alpha:1.0)
 }
+
+let fbBlueDark: UIColor = UIColor(red: 0.192, green: 0.318, blue: 0.549, alpha: 1)
+let fbBlueLight: UIColor = UIColor(red: 0.255, green: 0.404, blue: 0.698, alpha: 1)
+let fbBluetSearch: UIColor = UIColor(red: 0.573, green: 0.616, blue: 0.741, alpha: 1)
+let fbBg: UIColor = UIColor(red: 0.796, green: 0.816, blue: 0.827, alpha: 1)
+let fbGray: UIColor = UIColor(red: 0.922, green: 0.925, blue: 0.937, alpha: 1)
+let fbDarkGray: UIColor = UIColor(red: 0.298, green: 0.322, blue: 0.373, alpha: 1)

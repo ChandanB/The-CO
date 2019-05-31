@@ -8,6 +8,7 @@
 
 import Firebase
 import LBTAComponents
+import LBTATools
 import Spring
 import PKHUD
 
@@ -16,7 +17,7 @@ fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [U
     return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
 
-class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     lazy var addPhotoButton: SpringButton = {
         let button = SpringButton(type: .system)
@@ -27,6 +28,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     let usernameTextField: SpringTextField = {
         let tf = SpringTextField()
+        tf.constrainHeight(60)
+
         let leftLabel = UILabel(frame: CGRect(x: 4, y: 0, width: 20, height: 20))
         leftLabel.text = " @"
         leftLabel.textColor = .black
@@ -44,6 +47,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     let nameTextField: SpringTextField = {
         let tf = SpringTextField()
+        tf.constrainHeight(60)
+        
         tf.placeholder = "Name"
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -54,6 +59,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     let emailTextField: SpringTextField = {
         let tf = SpringTextField()
+        tf.constrainHeight(60)
+        
         tf.placeholder = "Email"
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -64,6 +71,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     let passwordTextField: SpringTextField = {
         let tf = SpringTextField()
+        tf.constrainHeight(60)
+        
         tf.placeholder = "Password"
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -75,6 +84,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     let signUpButton: SpringButton = {
         let button = SpringButton(type: .system)
+        button.constrainHeight(60)
+        
         button.setTitle("Sign Up", for: .normal)
         button.backgroundColor = UIColor(r: 149, g: 204, b: 244)
         button.layer.cornerRadius = 5
@@ -105,16 +116,11 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         NotificationCenter.default.addObserver(self, selector: #selector(LoginController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         view.addSubview(alreadyHaveAccountButton)
-        alreadyHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
+        alreadyHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 24, rightConstant: 0, widthConstant: 0, heightConstant: 60)
         
         self.hideKeyboardWhenTappedAround()
         
         view.backgroundColor = .white
-        
-        view.addSubview(addPhotoButton)
-        
-        addPhotoButton.anchor(view.topAnchor, left: nil, bottom: nil, right: nil, topConstant: 50, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 140, heightConstant: 140)
-        addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         setupInputFields()
     }
@@ -155,13 +161,21 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func setupInputFields() {
-        let stackView = UIStackView(arrangedSubviews: [nameTextField, usernameTextField, emailTextField, passwordTextField, signUpButton])
-        stackView.distribution = .fillEqually
-        stackView.axis = .vertical
-        stackView.spacing = 10
         
-        view.addSubview(stackView)
-        stackView.anchor(addPhotoButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 18, bottomConstant: 0, rightConstant: 18, widthConstant: 0, heightConstant: 280)
+        formContainerStackView.layoutMargins = .init(top: 0, left: 24, bottom: 0, right: 24)
+        formContainerStackView.axis = .vertical
+        formContainerStackView.spacing = 12
+        
+        formContainerStackView.addArrangedSubview(nameTextField)
+        formContainerStackView.addArrangedSubview(usernameTextField)
+        formContainerStackView.addArrangedSubview(emailTextField)
+        formContainerStackView.addArrangedSubview(passwordTextField)
+        formContainerStackView.addArrangedSubview(signUpButton)
+        
+        view.addSubview(addPhotoButton)
+        addPhotoButton.anchor(bottom: formContainerStackView.topAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 24, rightConstant: 0, widthConstant: 140, heightConstant: 140)
+        addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
     }
     
     private func resetInputFields() {

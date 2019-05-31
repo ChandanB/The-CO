@@ -6,6 +6,8 @@ target 'The-Cookout' do
   use_frameworks!
 
   # Pods for The-Cookout
+  
+  pod 'SwiftLint'
 
   pod 'LBTAComponents'
   pod 'LBTATools'
@@ -26,7 +28,6 @@ target 'The-Cookout' do
   pod 'PKHUD'
   pod 'YPImagePicker', '~> 3.5.2'
   pod 'UIImageColors'
-  pod 'SkeletonView'
   
   pod 'SDWebImage', '~> 5.0'
   pod 'CropViewController'

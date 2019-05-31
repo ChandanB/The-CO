@@ -88,7 +88,6 @@ class NotificationViewController: UITableViewController, NotificationCellDelegat
     }
     
     func handlePostTapped(for cell: NotificationCell) {
-        
         guard let post = cell.notification?.post else {return}
         let homeController = HomeController(collectionViewLayout : UICollectionViewFlowLayout())
         homeController.viewSinglePost = true

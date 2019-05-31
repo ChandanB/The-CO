@@ -10,7 +10,6 @@ import UIKit
 import LBTAComponents
 import Firebase
 import Spring
-import SkeletonView
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
@@ -23,13 +22,12 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.isSkeletonable = true
         delegate = self
     }
     
     private func presentLoginController() {
         DispatchQueue.main.async { // wait until MainTabBarController is inside UI
-            let loginController = LoginController()
+            let loginController = LoginController(alignment: .center)
             let navController = UINavigationController(rootViewController: loginController)
             self.present(navController, animated: true, completion: nil)
         }
@@ -37,8 +35,12 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     func setupViewControllers(_ user: User) {
         
-        let layout = UICollectionViewFlowLayout()
-        let homeController = HomeController(collectionViewLayout: layout)
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.minimumLineSpacing = 8
+        flowLayout.minimumInteritemSpacing = 10
+        flowLayout.sectionInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        
+        let homeController = HomeController(collectionViewLayout: flowLayout)
         let homeNavController = self.templateNavController(unselectedImage: #imageLiteral(resourceName: "home_unselected"), selectedImage: #imageLiteral(resourceName: "home_selected"), rootViewController: homeController)
         homeController.user = user
         

@@ -144,13 +144,11 @@ extension UIViewController {
         let words = text.components(separatedBy: .whitespacesAndNewlines)
         
         var mentionIntegerValue: Int!
-        
         if isForComment {
             mentionIntegerValue = COMMENT_MENTION_INT_VALUE
         } else {
             mentionIntegerValue = POST_MENTION_INT_VALUE
         }
-        
         for var word in words {
             if word.hasPrefix("@") {
                 word = word.trimmingCharacters(in: .symbols)
@@ -158,10 +156,8 @@ extension UIViewController {
                 
                 USER_REF.observe(.childAdded, with: { (snapshot) in
                     let uid = snapshot.key
-                    
                     USER_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                         guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
-                        
                         if word == dictionary["username"] as? String {
                             let notificationValues = ["postId": postId,
                                                       "uid": currentUid,

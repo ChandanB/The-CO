@@ -9,7 +9,8 @@
 import LBTAComponents
 import Firebase
 
-struct Post {
+class Post: Content {
+    var contentType: ContentType
     var id: String?
     var userId: String?
     let user: User
@@ -43,6 +44,7 @@ struct Post {
     let imageHeight: NSNumber
     
     init(user: User, dictionary: [String: AnyObject]) {
+        self.contentType = .post
         self.user = user
         self.id = dictionary["id"] as? String ?? ""
         self.userId = dictionary["userId"] as? String ?? ""
@@ -81,7 +83,7 @@ struct Post {
 
 extension Post {
     static func transformPostPhoto(user: User, dict: [String: Any], key: String) -> Post {
-        var post = Post(user: user, dictionary: dict as [String : AnyObject])
+        let post = Post(user: user, dictionary: dict as [String : AnyObject])
         post.id = key
         post.caption = dict["caption"] as? String ?? ""
         post.imageUrl = dict["imageUrl"] as? String ?? ""
@@ -93,5 +95,15 @@ extension Post {
             post.repostedByCurrentUser = post.reposts[currentUserId] != nil
         }
         return post
+    }
+    
+    func calculateViewHeight(withView view: UIView, viewOffset: Int) -> CGFloat {
+        let approxContentLabelSize = view.frame.width - 20
+        let size = CGSize(width: approxContentLabelSize, height: 1000)
+        let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)]
+        
+        let estimatedFrame = NSString(string: caption).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
+        
+        return estimatedFrame.height + CGFloat(viewOffset)
     }
 }

@@ -230,7 +230,7 @@ class AccountSettingsController: UITableViewController {
             AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
             UIApplication.shared.applicationIconBadgeNumber = 0
             
-            let destination = LoginController()
+            let destination = LoginController(alignment: .center)
             
             let newNavigationController = UINavigationController(rootViewController: destination)
             newNavigationController.navigationBar.shadowImage = UIImage()

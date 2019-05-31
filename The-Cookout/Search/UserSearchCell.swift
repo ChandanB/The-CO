@@ -48,8 +48,9 @@ class UserSearchCell: DatasourceCell {
     }
     
     func configureCell(_ user: User) {
+        
         let url = URL(string: user.profileImageUrl)
-        profileImageView.kf.setImage(with: url)
+        profileImageView.sd_setImage(with: url, completed: nil)
         
         let nameAttributedText = NSMutableAttributedString(string: (user.name), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)])
         let usernameString = "@\(user.username)"

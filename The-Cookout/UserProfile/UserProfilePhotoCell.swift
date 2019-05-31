@@ -6,9 +6,7 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import Kingfisher
 import LBTAComponents
-import PinterestLayout
 
 protocol PhotoCellDelegate {
     func presentLightBox(for cell: UserProfilePhotoCell)
@@ -19,14 +17,6 @@ class UserProfilePhotoCell: DatasourceCell {
     
     var delegate: PhotoCellDelegate?
     static var cellId = "userProfilePhotoGridCellId"
-
-    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
-        super.apply(layoutAttributes)
-        if let attributes = layoutAttributes as? PinterestLayoutAttributes {
-            //change image view height by changing its constraint
-            photoImageView.heightAnchor.constraint(equalToConstant: attributes.imageHeight).isActive = true
-        }
-    }
     
     var post: Post?
     override var datasourceItem: Any? {
@@ -34,7 +24,7 @@ class UserProfilePhotoCell: DatasourceCell {
             guard let post = datasourceItem as? Post else { return }
             self.post = post
             let url = URL(string: post.imageUrl)
-            photoImageView.kf.setImage(with: url)
+            photoImageView.sd_setImage(with: url, completed: nil)
         }
     }
     

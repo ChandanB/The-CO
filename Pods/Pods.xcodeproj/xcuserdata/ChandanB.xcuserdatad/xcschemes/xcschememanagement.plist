@@ -4,17 +4,12 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Alamofire.xcscheme</key>
+		<key>ARSLineProgress.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>AlamofireImage.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>BMPlayer.xcscheme</key>
+		<key>ActiveLabel.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -24,7 +19,27 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>BonMot.xcscheme</key>
+		<key>CropViewController-TOCropViewControllerBundle.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>CropViewController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>EZSwipeController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>FLAnimatedImage.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>FTPopOverMenu_Swift.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -79,6 +94,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>FirebaseMessaging.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>FirebasePerformance.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -114,11 +134,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>KILabel.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>Kingfisher.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -129,27 +144,12 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>NVActivityIndicatorView.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>Nora.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>PKHUD-PKHUDResources.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 		<key>PKHUD.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>PinterestLayout.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -169,17 +169,12 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Result.xcscheme</key>
+		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SCLAlertView.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>SnapKit.xcscheme</key>
+		<key>SkeletonView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -195,6 +190,11 @@
 			<false/>
 		</dict>
 		<key>UIFontComplete.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>UIImageColors.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

@@ -46,48 +46,48 @@ extension Auth {
     }
     
     private func uploadUser(withUID uid: String, bio: String, name: String, username: String, email: String, profileImageUrl: String? = nil, completion: @escaping (() -> ())) {
+        
         var dictionaryValues = ["name": name, "email": email, "username": username, "username_lowercase": username.lowercased(), "bio": bio]
+        
         if profileImageUrl != nil {
             dictionaryValues["profileImageUrl"] = profileImageUrl
+            dictionaryValues["thumbnailPhotoURL"] = profileImageUrl
         }
         
         let values = [uid: dictionaryValues]
-        Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
+        USER_REF.updateChildValues(values, withCompletionBlock: { (err, ref) in
             if let err = err {
                 print("Failed to upload user to database:", err)
                 return
             }
             completion()
         })
+        
     }
     
     static func setUserInfomation(bio: String, name: String, profileImageUrl: String, username: String, email: String, uid: String, onSuccess: @escaping () -> Void) {
-        let ref = Database.database().reference()
-        let usersReference = ref.child("users")
-        
         let dictionaryValues = ["name": name, "email": email, "username": username, "username_lowercase": username.lowercased(), "bio": bio, "profileImageUrl": profileImageUrl]
         let values = [uid: dictionaryValues]
-        usersReference.setValue(values)
+        USER_REF.setValue(values)
         
         onSuccess()
     }
     
     static func updateUserInfo(username: String, email: String, imageData: Data, onSuccess: @escaping () -> Void, onError:  @escaping (_ errorMessage: String?) -> Void) {
         
-        API.database.currentUser?.updateEmail(to: email, completion: { (error) in
+        CURRENT_USER?.updateEmail(to: email, completion: { (error) in
             if error != nil {
                 onError(error!.localizedDescription)
             }else {
                 
-                let uid = API.database.currentUser?.uid
+                let uid = CURRENT_USER?.uid
                 
-                let storageRef = Storage.storage().reference(forURL: Configuration.storageRoofRef).child("profile_image").child(uid!)
+                let storageRef = Storage.storage().reference(forURL: Configuration.storageRoofRef).child("profile_images").child(uid!)
                 
                 storageRef.putData(imageData, metadata: nil, completion: { (metadata, error) in
                     if error != nil {
                         return
                     }
-                    
                     
                     storageRef.downloadURL(completion: { (url, error) in
                         if let error = error {
@@ -137,7 +137,7 @@ extension Storage {
     fileprivate func uploadUserProfileImage(image: UIImage, completion: @escaping (String) -> ()) {
         guard let uploadData = image.jpegData(compressionQuality: 1) else { return } //changed from 0.3
         
-        let storageRef = Storage.storage().reference().child("profile_images").child(NSUUID().uuidString)
+        let storageRef = STORAGE_PROFILE_IMAGES_REF.child(NSUUID().uuidString)
         
         storageRef.putData(uploadData, metadata: nil, completion: { (_, err) in
             if let err = err {
@@ -159,7 +159,8 @@ extension Storage {
     fileprivate func uploadPostImage(image: UIImage, filename: String, completion: @escaping (String) -> ()) {
         guard let uploadData = image.jpegData(compressionQuality: 1) else { return } //changed from 0.5
         
-        let storageRef = Storage.storage().reference().child("post_images").child(filename)
+        let storageRef = STORAGE_POST_IMAGES_REF.child(filename)
+        
         storageRef.putData(uploadData, metadata: nil, completion: { (_, err) in
             if let err = err {
                 print("Failed to upload post image:", err)
@@ -184,7 +185,7 @@ extension Database {
     
     //MARK: Users
     func fetchUser(withUID uid: String, completion: @escaping (User) -> ()) {
-        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        USER_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let userDictionary = snapshot.value as? [String: Any] else { return }
             let user = User(uid: uid, dictionary: userDictionary as [String : AnyObject])
             completion(user)
@@ -194,9 +195,9 @@ extension Database {
     }
     
     func fetchCurrentUser(completion: @escaping (User) -> Void) {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
+        guard let uid = CURRENT_USER?.uid else {return}
         
-        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+        USER_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in
             guard let userDictionary = snapshot.value as? [String: Any] else { return }
             let user = User(uid: uid, dictionary: userDictionary as [String : AnyObject])
             completion(user)
@@ -204,8 +205,7 @@ extension Database {
     }
     
     func fetchAllUsers(includeCurrentUser: Bool = true, completion: @escaping ([User]) -> (), withCancel cancel: ((Error) -> ())?) {
-        let ref = Database.database().reference().child("users")
-        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+        USER_REF.observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionaries = snapshot.value as? [String: Any] else {
                 completion([])
                 return
@@ -214,7 +214,7 @@ extension Database {
             var users = [User]()
             
             dictionaries.forEach({ (key, value) in
-                if !includeCurrentUser, key == Auth.auth().currentUser?.uid {
+                if !includeCurrentUser, key == CURRENT_USER?.uid {
                     completion([])
                     return
                 }
@@ -235,7 +235,7 @@ extension Database {
     }
     
     func fetchUserByUsername(uid: String, username: String, completion: @escaping (User) -> Void) {
-        Database.database().reference().child("users").queryOrdered(byChild: "username").queryEqual(toValue: username).observeSingleEvent(of: .childAdded) { (snapshot) in
+        USER_REF.queryOrdered(byChild: "username").queryEqual(toValue: username).observeSingleEvent(of: .childAdded) { (snapshot) in
             print(snapshot)
             guard let userDictionary = snapshot.value as? [String: Any] else { return }
             let user = User(uid: snapshot.key, dictionary: userDictionary as [String : AnyObject])
@@ -244,7 +244,7 @@ extension Database {
     }
     
     func queryUsers(withText text: String, completion: @escaping (User) -> Void) {
-        Database.database().reference().child("users").queryOrdered(byChild: "username").queryStarting(atValue: text).queryEnding(atValue: text+"\u{f8ff}").queryLimited(toFirst: 10).observeSingleEvent(of: .value) { (snapshot) in
+        USER_REF.queryOrdered(byChild: "username").queryStarting(atValue: text).queryEnding(atValue: text+"\u{f8ff}").queryLimited(toFirst: 10).observeSingleEvent(of: .value) { (snapshot) in
             
             snapshot.children.forEach({ (s) in
                 let child = s as! DataSnapshot
@@ -256,9 +256,9 @@ extension Database {
     }
     
     func isFollowingUser(withUID uid: String, completion: @escaping (Bool) -> (), withCancel cancel: ((Error) -> ())?) {
-        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        guard let currentLoggedInUserId = CURRENT_USER?.uid else { return }
         
-        Database.database().reference().child("following").child(currentLoggedInUserId).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        USER_FOLLOWING_REF.child(currentLoggedInUserId).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             if let isFollowing = snapshot.value as? Bool, isFollowing == true {
                 completion(true)
             } else {
@@ -272,7 +272,7 @@ extension Database {
     }
     
     func fetchFollowers(userId: String, completion: @escaping (User) -> Void) {
-        Database.database().reference().child("followers").child(userId).observeSingleEvent(of: .value) { (snapshot) in
+        USER_FOLLOWER_REF.child(userId).observeSingleEvent(of: .value) { (snapshot) in
             guard let followersDictionary = snapshot.value as? [String: Any] else { return }
             followersDictionary.forEach({ (key, value) in
                 self.fetchUser(withUID: key, completion: { (user) in
@@ -283,7 +283,7 @@ extension Database {
     }
     
     func fetchFollowing(userId: String, completion: @escaping (User) -> Void) {
-        Database.database().reference().child("following").child(userId).observeSingleEvent(of: .value) { (snapshot) in
+        USER_FOLLOWING_REF.child(userId).observeSingleEvent(of: .value) { (snapshot) in
             guard let followingDictionary = snapshot.value as? [String: Any] else { return }
             followingDictionary.forEach({ (key, value) in
                 self.fetchUser(withUID: key, completion: { (user) in
@@ -293,18 +293,31 @@ extension Database {
         }
     }
     
+    func fetchArrayOfFollowing(userId: String, completion: @escaping ([User]) -> Void) {
+        USER_FOLLOWING_REF.child(userId).observeSingleEvent(of: .value) { (snapshot) in
+            guard let followingDictionary = snapshot.value as? [String: Any] else { return }
+            var followersArray = [User]()
+            followingDictionary.forEach({ (key, value) in
+                self.fetchUser(withUID: key, completion: { (user) in
+                    followersArray.append(user)
+                    completion(followersArray)
+                })
+            })
+        }
+    }
+    
     func followUser(withUID uid: String, completion: @escaping (Error?) -> ()) {
-        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        guard let currentLoggedInUserId = CURRENT_USER?.uid else { return }
         
         let values = [uid: true]
-        Database.database().reference().child("following").child(currentLoggedInUserId).updateChildValues(values) { (err, ref) in
+        USER_FOLLOWING_REF.child(currentLoggedInUserId).updateChildValues(values) { (err, ref) in
             if let err = err {
                 completion(err)
                 return
             }
             
             let values = [currentLoggedInUserId: true]
-            Database.database().reference().child("followers").child(uid).updateChildValues(values) { (err, ref) in
+            USER_FOLLOWER_REF.child(uid).updateChildValues(values) { (err, ref) in
                 if let err = err {
                     completion(err)
                     return
@@ -315,16 +328,16 @@ extension Database {
     }
     
     func unfollowUser(withUID uid: String, completion: @escaping (Error?) -> ()) {
-        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        guard let currentLoggedInUserId = CURRENT_USER?.uid else { return }
         
-        Database.database().reference().child("following").child(currentLoggedInUserId).child(uid).removeValue { (err, _) in
+        USER_FOLLOWING_REF.child(currentLoggedInUserId).child(uid).removeValue { (err, _) in
             if let err = err {
                 print("Failed to remove user from following:", err)
                 completion(err)
                 return
             }
             
-            Database.database().reference().child("followers").child(uid).child(currentLoggedInUserId).removeValue(completionBlock: { (err, _) in
+            USER_FOLLOWER_REF.child(uid).child(currentLoggedInUserId).removeValue(completionBlock: { (err, _) in
                 if let err = err {
                     print("Failed to remove user from followers:", err)
                     completion(err)
@@ -337,11 +350,11 @@ extension Database {
     
     
     //MARK: Posts
-    func createImagePost(withImage image: UIImage, caption: String, user: User,  onSuccess: @escaping () -> Void, onError:  @escaping (_ errorMessage: String?) -> Void) {
-        let userPostRef = Database.database().reference().child("posts").child(user.uid).childByAutoId()
-        guard let postId = userPostRef.key else { return }
+    func createImagePost(withImage image: UIImage, caption: String, user: User,  onSuccess: @escaping (String) -> Void, onError:  @escaping (_ errorMessage: String?) -> Void) {
+        let userPostRef = POSTS_REF.child(user.uid).childByAutoId()
         
-        print(user.uid)
+        guard let postId = userPostRef.key else {return}
+        
         Storage.storage().uploadPostImage(image: image, filename: postId) { (postImageUrl) in
             
             let values = ["imageUrl": postImageUrl,
@@ -351,6 +364,7 @@ extension Database {
                           "creationDate": Date().timeIntervalSince1970,
                           "id": postId,
                           "hasImage": true,
+                          "userId": user.uid,
                           "hasText": true] as [String : Any]
             
             userPostRef.updateChildValues(values) { (err, ref) in
@@ -359,21 +373,23 @@ extension Database {
                     onError(error.localizedDescription)
                     return
                 }
-                onSuccess()
+                print("Successfully saved post to database")
+                onSuccess(postId)
             }
         }
     }
     
-    func createPost(withCaption caption: String, user: User,  onSuccess: @escaping () -> Void, onError:  @escaping (_ errorMessage: String?) -> Void) {
+    func createPost(withCaption caption: String, user: User,  onSuccess: @escaping (String) -> Void, onError:  @escaping (_ errorMessage: String?) -> Void) {
         
-        let userPostRef = Database.database().reference().child("posts").child(user.uid).childByAutoId()
+        let userPostRef = POSTS_REF.child(user.uid).childByAutoId()
         guard let postId = userPostRef.key else { return }
         
         let values = ["caption": caption,
                       "creationDate": Date().timeIntervalSince1970,
                       "hasText": true,
                       "hasImage": false,
-                      "id": postId] as [String : Any]
+                      "userId": user.uid,
+                      "postId": postId] as [String : Any]
         
         print(user.uid)
         userPostRef.updateChildValues(values) { (err, ref) in
@@ -382,92 +398,82 @@ extension Database {
                 onError(error.localizedDescription)
                 return
             }
-            onSuccess()
+            onSuccess(postId)
         }
     }
     
-    func fetchPost(withUID uid: String, postId: String, completion: @escaping (Post) -> (), withCancel cancel: ((Error) -> ())? = nil) {
-        guard let currentLoggedInUser = Auth.auth().currentUser?.uid else { return }
-        
-        let ref = Database.database().reference().child("posts").child(uid).child(postId)
-        
-        ref.observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            guard let postDictionary = snapshot.value as? [String: Any] else { return }
-            
-            Database.database().fetchUser(withUID: uid, completion: { (user) in
-                var post = Post(user: user, dictionary: postDictionary as [String : AnyObject])
-                post.id = postId
-                
-                //check reposts
-                Database.database().reference().child("reposts").child(postId).child(currentLoggedInUser).observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let value = snapshot.value as? Int, value == 1 {
-                        post.repostedByCurrentUser = true
-                    } else {
-                        post.repostedByCurrentUser = false
-                    }
-                    
-                    Database.database().numberOfRepostsForPost(withPostId: postId, completion: { (count) in
-                        post.repostCount = count
-                        completion(post)
-                    })
-                }, withCancel: { (err) in
-                    print("Failed to fetch repost info for post:", err)
-                    cancel?(err)
+    func fetchPost(with postId: String, completion: @escaping(Post) -> ()) {
+        POSTS_REF.child(postId).observeSingleEvent(of: .value) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
+            if let userId = dictionary["userId"] {
+                self.fetchUser(withUID: userId as! String, completion: { (user) in
+                    let post = Post(user: user, dictionary: dictionary)
+                    completion(post)
                 })
-            })
-        })
+            }
+        }
     }
     
     func fetchAllPosts(withUID uid: String, completion: @escaping ([Post]) -> (), withCancel cancel: ((Error) -> ())?) {
-        let ref = Database.database().reference().child("posts").child(uid)
-        
-        ref.observeSingleEvent(of: .value, with: { (snapshot) in
-            guard let dictionaries = snapshot.value as? [String: Any] else {
-                completion([])
-                return
-            }
-            
-            var posts = [Post]()
-            
-            dictionaries.forEach({ (postId, value) in
-                Database.database().fetchPost(withUID: uid, postId: postId, completion: { (post) in
-                    posts.append(post)
-                    
-                    if posts.count == dictionaries.count {
-                        completion(posts)
-                    }
-                })
-            })
-            
-        }) { (err) in
-            print("Failed to fetch posts:", err)
-            cancel?(err)
-        }
+//        let ref = Database.database().reference().child("posts").child(uid)
+//        
+//        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+//            guard let dictionaries = snapshot.value as? [String: Any] else {
+//                completion([])
+//                return
+//            }
+//            
+//            var posts = [Post]()
+//            
+//            dictionaries.forEach({ (postId, value) in
+//                Database.database().fetchPost(withUID: uid, postId: postId, completion: { (post) in
+//                    posts.append(post)
+//                    
+//                    if posts.count == dictionaries.count {
+//                        completion(posts)
+//                    }
+//                })
+//            })
+//            
+//        }) { (err) in
+//            print("Failed to fetch posts:", err)
+//            cancel?(err)
+//        }
     }
     
-    func queryPosts(forUser user: User, posts: [Post], completion: @escaping ([Post]) -> Void) {
+    func queryPosts(forUser user: User, posts: [Post], finishedPaging: Bool, completion: @escaping ([Post], Bool) -> Void) {
         
+        var isFinished = finishedPaging
         var posts = posts
-        var limit: UInt = 4
+        var limit: UInt = 3
         let uid = user.uid
-        let ref = Database.database().reference().child("posts").child(uid)
+        let ref = POSTS_REF.child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
         
         if posts.last != nil {
             let value = posts.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
-            limit = 10
+            limit = 4
         }
         
         query.queryLimited(toLast: limit).observeSingleEvent(of: .value) { (snapshot) in
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else {
-                completion([])
+                completion([], isFinished)
                 return
             }
             
             allObjects.reverse()
-            
+        
+            if !isFinished {
+                if allObjects.count < limit {
+                    isFinished = true
+                }
+            } else {
+                if allObjects.count > limit {
+                    isFinished = false
+                }
+            }
+
             if posts.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
             }
@@ -477,11 +483,8 @@ extension Database {
                 let post = Post(user: user, dictionary: dictionary as [String : AnyObject])
                 
                 posts.append(post)
-                posts.sort(by: { (p1, p2) -> Bool in
-                    return p1.creationDate.compare(p2.creationDate) == .orderedDescending
-                })
-                
-                completion(posts)
+           
+                completion(posts, isFinished)
             })
         }
     }
@@ -490,9 +493,9 @@ extension Database {
         
         var isFinished = false
         var posts = posts
-        var limit: UInt = 9
+        var limit: UInt = 6
         let uid = user.uid
-        let ref = Database.database().reference().child("posts").child(uid)
+        let ref = POSTS_REF.child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
         
         if posts.last != nil {
@@ -509,15 +512,17 @@ extension Database {
             
             allObjects.reverse()
             
-            if !finishedPaging {
-                if allObjects.count < limit {
-                    isFinished = true
-                }
-            } else {
-                if allObjects.count > limit {
-                    isFinished = false
-                }
-            }
+            isFinished = false
+            
+//            if !finishedPaging {
+//                if allObjects.count < limit {
+//                    isFinished = true
+//                }
+//            } else {
+//                if allObjects.count > limit {
+//                    isFinished = false
+//                }
+//            }
             
             if posts.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
@@ -532,9 +537,8 @@ extension Database {
                     posts.sort(by: { (p1, p2) -> Bool in
                         return p1.creationDate.compare(p2.creationDate) == .orderedDescending
                     })
+                    completion(posts, isFinished)
                 }
-                
-                completion(posts, isFinished)
             })
         }
     }
@@ -545,7 +549,7 @@ extension Database {
         var posts = posts
         var limit: UInt = 10
         let uid = user.uid
-        let ref = Database.database().reference().child("posts").child(uid)
+        let ref = POSTS_REF.child(uid)
         var query = ref.queryOrdered(byChild: "creationDate")
         
         if posts.last != nil {
@@ -562,16 +566,18 @@ extension Database {
             
             allObjects.reverse()
             
-            if !finishedPaging {
-                if allObjects.count < limit {
-                    isFinished = true
-                }
-            } else {
-                if allObjects.count > limit {
-                    isFinished = false
-                }
-            }
+            isFinished = false
             
+//            if !finishedPaging {
+//                if allObjects.count < limit {
+//                    isFinished = true
+//                }
+//            } else {
+//                if allObjects.count > limit {
+//                    isFinished = false
+//                }
+//            }
+//
             if posts.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
             }
@@ -585,15 +591,14 @@ extension Database {
                     posts.sort(by: { (p1, p2) -> Bool in
                         return p1.creationDate.compare(p2.creationDate) == .orderedDescending
                     })
+                    completion(posts, isFinished)
                 }
-                
-                completion(posts, isFinished)
             })
         }
     }
     
     func fetchTopPosts(forUser user: User, completion: @escaping (Post) -> Void) {
-        let ref = Database.database().reference().child("posts").child(user.uid)
+        let ref = POSTS_REF.child(user.uid)
         
         ref.queryOrdered(byChild: "overallVoteCount").observeSingleEvent(of: .value) { (snapshot) in
             let arraySnapshot = (snapshot.children.allObjects as! [DataSnapshot]).reversed()
@@ -608,14 +613,14 @@ extension Database {
 
     
     func deletePost(withUID uid: String, postId: String, completion: ((Error?) -> ())? = nil) {
-        Database.database().reference().child("posts").child(uid).child(postId).removeValue { (err, _) in
+        POSTS_REF.child(uid).child(postId).removeValue { (err, _) in
             if let err = err {
                 print("Failed to delete post:", err)
                 completion?(err)
                 return
             }
             
-            Database.database().reference().child("comments").child(postId).removeValue(completionBlock: { (err, _) in
+            COMMENT_REF.child(postId).removeValue(completionBlock: { (err, _) in
                 if let err = err {
                     print("Failed to delete comments on post:", err)
                     completion?(err)
@@ -644,11 +649,11 @@ extension Database {
     }
     
     func addCommentToPost(withId postId: String, text: String, completion: @escaping (Error?) -> ()) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let uid = CURRENT_USER?.uid else { return }
         
         let values = ["text": text, "creationDate": Date().timeIntervalSince1970, "uid": uid] as [String: Any]
         
-        let commentsRef = Database.database().reference().child("comments").child(postId).childByAutoId()
+        let commentsRef = COMMENT_REF.child(postId).childByAutoId()
         commentsRef.updateChildValues(values) { (err, _) in
             if let err = err {
                 print("Failed to add comment:", err)
@@ -660,7 +665,7 @@ extension Database {
     }
     
     func fetchCommentsForPost(withId postId: String, completion: @escaping ([Comment]) -> (), withCancel cancel: ((Error) -> ())?) {
-        let commentsReference = Database.database().reference().child("comments").child(postId)
+        let commentsReference = COMMENT_REF.child(postId)
         
         commentsReference.observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionaries = snapshot.value as? [String: Any] else {
@@ -674,7 +679,7 @@ extension Database {
                 guard let commentDictionary = value as? [String: Any] else { return }
                 guard let uid = commentDictionary["uid"] as? String else { return }
                 
-                Database.database().fetchUser(withUID: uid) { (user) in
+                self.fetchUser(withUID: uid) { (user) in
                     let comment = Comment(user: user, dictionary: commentDictionary)
                     comments.append(comment)
                     
@@ -696,7 +701,7 @@ extension Database {
     //MARK: Utilities
     
     func numberOfPostsForUser(withUID uid: String, completion: @escaping (Int) -> ()) {
-        Database.database().reference().child("posts").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+        POSTS_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in
             if let dictionaries = snapshot.value as? [String: Any] {
                 completion(dictionaries.count)
             } else {
@@ -706,7 +711,7 @@ extension Database {
     }
     
     func numberOfFollowersForUser(withUID uid: String, completion: @escaping (Int) -> ()) {
-        Database.database().reference().child("followers").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+        USER_FOLLOWER_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in
             if let dictionaries = snapshot.value as? [String: Any] {
                 completion(dictionaries.count)
             } else {
@@ -716,7 +721,7 @@ extension Database {
     }
     
     func numberOfFollowingForUser(withUID uid: String, completion: @escaping (Int) -> ()) {
-        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+        USER_FOLLOWING_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in
             if let dictionaries = snapshot.value as? [String: Any] {
                 completion(dictionaries.count)
             } else {

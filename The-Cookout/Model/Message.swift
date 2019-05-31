@@ -9,35 +9,84 @@
 import LBTAComponents
 import Firebase
 
-struct Message {
+struct MessageSubtitle {
+    static let video = "Attachment: Video"
+    static let image = "Attachment: Image"
+    static let audio = "Audio message"
+    static let empty = "No messages here yet."
+}
+
+class Message: NSObject  {
     
-    let text: String?
-    let toId: String?
-    let fromId: String?
-    let imageUrl: String?
-    let videoUrl: String?
-    let timestamp: NSNumber?
-    let imageWidth: NSNumber?
-    let imageHeight: NSNumber?
+    var messageUID: String?
+    var isInformationMessage: Bool?
     
-    let creationDate: Date
+    var fromId: String?
+    var text: String?
+    var toId: String?
+    var timestamp: NSNumber?
+    var convertedTimestamp: String?
     
-    init(dictionary: [String: AnyObject]) {
-        self.text = dictionary["text"] as? String
-        self.toId = dictionary["toId"] as? String
-        self.fromId = dictionary["fromId"] as? String
-        self.imageUrl = dictionary["imageUrl"] as? String
-        self.videoUrl = dictionary["videoUrl"] as? String
-        self.timestamp = dictionary["timestamp"] as? NSNumber
-        self.imageWidth = dictionary["imageWidth"] as? NSNumber
-        self.imageHeight = dictionary["imageHeight"] as? NSNumber
-        
-        let secondsFrom1970 = dictionary["creationDate"] as? Double ?? 0
-        self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
-    }
+    var status: String?
+    var seen: Bool!
+    
+    var imageUrl: String?
+    var imageHeight: NSNumber?
+    var imageWidth: NSNumber?
+    
+    var localImage: UIImage?
+    
+    var localVideoUrl: String?
+    
+    var voiceData: Data?
+    var voiceDuration: String?
+    var voiceStartTime: Int?
+    var voiceEncodedString: String?
+    
+    var videoUrl: String?
+    
+    var estimatedFrameForText:CGRect?
+    var imageCellHeight: NSNumber?
+    
+    var senderName: String? //local only, group messages only
     
     func chatPartnerId() -> String? {
-        return fromId == Auth.auth().currentUser?.uid ? toId : fromId
+        return fromId == CURRENT_USER?.uid ? toId : fromId
+    }
+    
+    init(dictionary: [String: AnyObject]) {
+        super.init()
+        
+        messageUID = dictionary["messageUID"] as? String
+        isInformationMessage = dictionary["isInformationMessage"] as? Bool
+        fromId = dictionary["fromId"] as? String
+        text = dictionary["text"] as? String
+        toId = dictionary["toId"] as? String
+        timestamp = dictionary["timestamp"] as? NSNumber
+        
+        convertedTimestamp = dictionary["convertedTimestamp"] as? String
+        
+        status = dictionary["status"] as? String
+        seen = dictionary["seen"] as? Bool
+        
+        imageUrl = dictionary["imageUrl"] as? String
+        imageHeight = dictionary["imageHeight"] as? NSNumber
+        imageWidth = dictionary["imageWidth"] as? NSNumber
+        
+        videoUrl = dictionary["videoUrl"] as? String
+        
+        localImage = dictionary["localImage"] as? UIImage
+        localVideoUrl = dictionary["localVideoUrl"] as? String
+        
+        voiceEncodedString = dictionary["voiceEncodedString"] as? String
+        voiceData = dictionary["voiceData"] as? Data //unused
+        voiceDuration = dictionary["voiceDuration"] as? String
+        voiceStartTime = dictionary["voiceStartTime"] as? Int
+        
+        estimatedFrameForText = dictionary["estimatedFrameForText"] as? CGRect
+        imageCellHeight = dictionary["imageCellHeight"] as? NSNumber
+        
+        senderName = dictionary["senderName"] as? String
     }
     
 }

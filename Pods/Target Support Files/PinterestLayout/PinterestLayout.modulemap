@@ -1,6 +1,0 @@
-framework module PinterestLayout {
-  umbrella header "PinterestLayout-umbrella.h"
-
-  export *
-  module * { export * }
-}

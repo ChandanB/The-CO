@@ -8,8 +8,6 @@
 
 import Firebase
 import LBTAComponents
-import PinterestLayout
-import AlamofireImage
 
 
 class UserProfileController: HomePostCellViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate {
@@ -42,6 +40,10 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
     var listArray = [Post]()
     var gridArray = [Post]()
     
+    var isFinishedPagingGrid = false
+    var isFinishedPagingList = false
+
+    
     func didChangeToGridView() {
         isGridView = true
         self.collectionView?.setContentOffset(.zero, animated:true)
@@ -54,8 +56,6 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         collectionView?.reloadData()
     }
     
-    var isFinishedPaging = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
@@ -64,7 +64,7 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
     private func configureUser() {
         guard let user = self.user else { return }
         
-        if user.uid == Auth.auth().currentUser?.uid {
+        if user.uid == CURRENT_USER?.uid {
             navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "follow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleSettings))
         } else {
             let optionsButton = UIBarButtonItem(title: "•••", style: .plain, target: nil, action: nil)
@@ -93,7 +93,7 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         collectionView.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserProfileHeader.cellId)
         collectionView.register(UserBannerHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserBannerHeader.cellId)
         collectionView.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: UserProfilePhotoCell.cellId)
-        collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: HomePostCell.cellId)
+        collectionView.register(HomePostTextCell.self, forCellWithReuseIdentifier: HomePostTextCell.cellId)
         collectionView?.register(UserProfileEmptyStateCell.self, forCellWithReuseIdentifier: UserProfileEmptyStateCell.cellId)
         
         let refreshControl = UIRefreshControl()
@@ -134,12 +134,13 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
     }
     
     @objc private func handleRefresh() {
-        isFinishedPaging = false
         
         if isGridView {
+            isFinishedPagingGrid = false
             gridArray.removeAll()
             paginate(array: gridArray)
         } else {
+            isFinishedPagingList = false
             listArray.removeAll()
             paginate(array: listArray)
         }
@@ -152,8 +153,8 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         guard let user = self.user else { return }
         
         if isGridView {
-            Database.database().queryGrid(forUser: user, posts: array, finishedPaging: isFinishedPaging) { (posts, isPagingDone) in
-                self.isFinishedPaging = isPagingDone
+            Database.database().queryGrid(forUser: user, posts: array, finishedPaging: isFinishedPagingGrid) { (posts, isPagingDone) in
+                self.isFinishedPagingGrid = isPagingDone
                 self.gridArray = posts
                 self.collectionView?.reloadData()
                 self.collectionView?.refreshControl?.endRefreshing()
@@ -161,8 +162,8 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
             }
         }
       
-        Database.database().queryList(forUser: user, posts: array, finishedPaging: isFinishedPaging) { (posts, isPagingDone) in
-            self.isFinishedPaging = isPagingDone
+        Database.database().queryList(forUser: user, posts: array, finishedPaging: isFinishedPagingList) { (posts, isPagingDone) in
+            self.isFinishedPagingList = isPagingDone
             self.listArray = posts
             self.collectionView?.reloadData()
             self.collectionView?.refreshControl?.endRefreshing()
@@ -181,9 +182,9 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
             return cell
         }
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostCell.cellId, for: indexPath) as! HomePostCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostTextCell.cellId, for: indexPath) as! HomePostTextCell
         cell.delegate = self
-        cell.datasourceItem = self.listArray[indexPath.item]
+        cell.post = self.listArray[indexPath.item]
         return cell
     }
     
@@ -284,12 +285,12 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if isGridView {
-            if indexPath.row + 1 == self.gridArray.count && !isFinishedPaging {
+            if indexPath.row + 1 == self.gridArray.count && !isFinishedPagingGrid {
                 self.paginate(array: gridArray)
                 return
             }
         } else if !isGridView {
-            if indexPath.row + 1 == self.listArray.count && !isFinishedPaging {
+            if indexPath.row + 1 == self.listArray.count && !isFinishedPagingList {
                 self.paginate(array: listArray)
             }
         }
@@ -399,29 +400,35 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         let scaleProgress = max(0, min(1, contentOffsetY / self.scrollToScaleDownProfileIconDistance))
         let height = max(maxHeight - (maxHeight - minHeight) * scaleProgress, minHeight)
         
+        bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 100
         
-        if contentOffsetY <= 0 {
+        if header.profileImageView.layer.zPosition < bannerHeader.layer.zPosition {
+            bannerHeader.layer.zPosition = 0
+        }
+        
+        if contentOffsetY < 0 {
             bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 100
-            header.profileImageView.frame = CGRect(x: centerX, y: -60, width: maxHeight, height: maxHeight)
-            header.profileImageView.layer.cornerRadius = height / 2
-            
-        } else if contentOffsetY > 0 && contentOffsetY <= scrollToScaleDownProfileIconDistance && scaleProgress <= 1 {
-            
-            header.profileImageView.frame = CGRect(x: centerX, y: contentOffsetY - 60, width: height, height: height)
-            header.profileImageView.layer.cornerRadius = height / 2
+//            bannerHeader.animator.fractionComplete = (abs(contentOffsetY) * 2) / 100
+//            header.profileImageView.frame = CGRect(x: centerX, y: -60, width: maxHeight, height: maxHeight)
+//            header.profileImageView.layer.cornerRadius = height / 2
 
-            if header.profileImageView.layer.zPosition < bannerHeader.layer.zPosition {
-                bannerHeader.layer.zPosition = 0
-            }
+        } else if contentOffsetY >= 0 && contentOffsetY <= scrollToScaleDownProfileIconDistance && scaleProgress <= 1 {
+
+//            header.profileImageView.frame = CGRect(x: centerX, y: contentOffsetY - 60, width: height, height: height)
+//            header.profileImageView.layer.cornerRadius = height / 2
+
+//            bannerHeader.animator.fractionComplete = 0
             
             bannerHeader.animator.fractionComplete = 0
-            
+
             return
         } else {
-            if header.profileImageView.layer.zPosition >= bannerHeader.layer.zPosition {
-                bannerHeader.layer.zPosition = 2
-            }
+            //   bannerHeader.animator.fractionComplete = 0
+//            if header.profileImageView.layer.zPosition >= bannerHeader.layer.zPosition {
+//                bannerHeader.layer.zPosition = 2
+//            }
         }
     }
+    
     
 }

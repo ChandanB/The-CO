@@ -8,6 +8,7 @@
 
 import Firebase
 import LBTAComponents
+import SDWebImage
 
 protocol ReturnPostTextDelegate {
     func returnPostText(text: PlaceholderTextView)
@@ -155,7 +156,7 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
         galleryButton.tintColor = .black
         
         let camera = #imageLiteral(resourceName: "Camera3")
-        let image = camera.resizeImage(targetSize: CGSize(width: 36, height: 36))
+        let image = camera.scaleImageToSize(newSize: CGSize(width: 36, height: 36))
         
         let showCameraButton = UIBarButtonItem(image: image.withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(showCamera))
         
@@ -172,13 +173,10 @@ class PostHeader: UICollectionViewCell, UITextViewDelegate {
     }
     
     fileprivate func setupProfileImage() {
-        guard let url = user?.profileImageUrl else { return }
-        self.profileImageView.loadImage(urlString: url)
-        
-        DispatchQueue.main.async {
-            self.profileImageView.loadImage(urlString: url)
-            self.showKeyboard()
-        }
+        guard let profileImageUrl = user?.profileImageUrl else { return }
+        let url = URL(string: profileImageUrl)
+        profileImageView.sd_setImage(with: url, completed: nil)
+        self.showKeyboard()
     }
     
     required init?(coder aDecoder: NSCoder) {

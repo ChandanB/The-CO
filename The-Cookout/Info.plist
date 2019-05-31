@@ -2,20 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>UIAppFonts</key>
-	<array>
-		<string>ProximaNovaAltCondSemibold.ttf</string>
-		<string>ProximaNovaAltBlack.ttf</string>
-		<string>ProximaNovaAltBold.ttf</string>
-		<string>ProximaNovaAltRegular.ttf</string>
-		<string>ProximaNovaSemibold.ttf</string>
-		<string>ProximaNovaThin.ttf</string>
-		<string>ProximaNovaScOsfThin.ttf</string>
-	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>We would like to user your camera now</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -34,8 +20,30 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>To select a profile photo or send photo or video via message</string>
+	<key>NSCameraUsageDescription</key>
+	<string>To take photos and videos and send them via messages or posts</string>
+	<key>NSContactsUsageDescription</key>
+	<string>To find your friends who also use Social Point</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>To get access to your chats</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To record video with the sound and send voice recordings</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>To save selected media to your photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We&apos;d like access to your photos right now.</string>
+	<string>To select a profile photo or send photo or video via message</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>ProximaNovaAltCondSemibold.ttf</string>
+		<string>ProximaNovaAltBlack.ttf</string>
+		<string>ProximaNovaAltBold.ttf</string>
+		<string>ProximaNovaAltRegular.ttf</string>
+		<string>ProximaNovaSemibold.ttf</string>
+		<string>ProximaNovaThin.ttf</string>
+		<string>ProximaNovaScOsfThin.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -55,5 +63,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>

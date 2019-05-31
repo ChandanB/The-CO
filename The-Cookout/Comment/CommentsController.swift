@@ -10,45 +10,13 @@ import LBTAComponents
 import Firebase
 import Spring
 
-class CommentsController: DatasourceController, CommentInputAccessoryViewDelegate {
+class CommentsController: DatasourceController {
     
-    let database = API.database
-    
-    func didTapComment(post: Post) {
-        
-    }
-    
-    func didRepost(for cell: CommentPostCell) {
-        
-    }
-    
-    func didSubmit(for comment: String) {
-        print("Trying to insert comment into Firebase")
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        print("post id:", self.post?.id ?? "")
-        
-        print("Inserting comment:", comment)
-        
-        
-        let postId = self.post?.id ?? ""
-        let values = ["text": comment, "creationDate": Date().timeIntervalSince1970, "uid": uid] as [String : Any]
-        
-        Database.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
-            
-            if let err = err {
-                print("Failed to insert comment:", err)
-                return
-            }
-            
-            print("Successfully inserted comment.")
-            
-            self.containerView.clearCommentTextField()
-            self.dismissKeyboard()
+    var post: Post? {
+        didSet {
+            fetchComments()
         }
     }
-    
-    var post: Post?
     
     let commentsDatasource = CommentsDatasource()
     
@@ -56,31 +24,39 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         super.viewDidLoad()
         
         navigationItem.title = "Comments"
+        
         self.datasource = commentsDatasource
+        
         collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .interactive
         
         collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -80, right: 0)
         
-         collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
+        collectionView?.register(CommentPostCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CommentCell.cellId)
         
-        fetchComments()
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(fetchComments), for: .valueChanged)
+        collectionView?.refreshControl = refreshControl
+        
     }
     
-    fileprivate func fetchComments() {
+    @objc fileprivate func fetchComments() {
         guard let post = self.post else { return }
         guard let id = post.id else {return}
+        collectionView?.refreshControl?.beginRefreshing()
         Database.database().fetchCommentsForPost(withId: id, completion: { (comments) in
             self.commentsDatasource.comments = comments
             self.collectionView?.reloadData()
+            self.collectionView?.refreshControl?.endRefreshing()
         }) { (err) in
             print("Couldn't fetch comments")
+            self.collectionView?.refreshControl?.endRefreshing()
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath) as! CommentPostCell
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommentCell.cellId, for: indexPath) as! CommentPostCell
         header.post = self.post
         header.datasourceItem = self.post
         return header
@@ -147,7 +123,7 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
         self.tabBarController?.tabBar.isHidden = false
     }
     
-    lazy var containerView: CommentInputAccessoryView = {
+    lazy var commentInputAccessoryView: CommentInputAccessoryView = {
         let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
         let commentInputAccessoryView = CommentInputAccessoryView(frame: frame)
         commentInputAccessoryView.delegate = self
@@ -156,12 +132,35 @@ class CommentsController: DatasourceController, CommentInputAccessoryViewDelegat
     
     override var inputAccessoryView: UIView? {
         get {
-            return containerView
+            return commentInputAccessoryView
         }
     }
     
     override var canBecomeFirstResponder: Bool {
         return true
+    }
+}
+
+extension CommentsController: CommentInputAccessoryViewDelegate {
+    func didSubmit(comment: String) {
+        guard let postId = post?.id else { return }
+        Database.database().addCommentToPost(withId: postId, text: comment) { (err) in
+            if err != nil {
+                return
+            }
+            self.commentInputAccessoryView.clearCommentTextField()
+            self.dismissKeyboard()
+            self.fetchComments()
+        }
+    }
+}
+
+//MARK: - CommentCellDelegate
+extension CommentsController: CommentCellDelegate {
+    func didTapUser(user: User) {
+        let userProfileController = UserProfileController(collectionViewLayout: UICollectionViewFlowLayout())
+        userProfileController.user = user
+        navigationController?.pushViewController(userProfileController, animated: true)
     }
 }
 

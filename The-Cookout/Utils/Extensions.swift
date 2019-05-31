@@ -30,6 +30,67 @@ extension String
     }
 }
 
+//for avatars
+func dataImageFromString(pictureString: String, withBlock: (_ image: Data?) -> Void) {
+    let imageData = NSData(base64Encoded: pictureString, options: NSData.Base64DecodingOptions(rawValue: 0))
+    withBlock(imageData as Data?)
+}
+
+func timeElapsed(date: Date) -> String {
+    
+    let seconds = NSDate().timeIntervalSince(date)
+    var elapsed: String?
+    
+    if (seconds < 60) {
+        elapsed = "Just now"
+    } else if (seconds < 60 * 60) {
+        let minutes = Int(seconds / 60)
+        
+        var minText = "min"
+        if minutes > 1 {
+            minText = "mins"
+        }
+        elapsed = "\(minutes) \(minText)"
+        
+    } else if (seconds < 24 * 60 * 60) {
+        let hours = Int(seconds / (60 * 60))
+        var hourText = "hour"
+        if hours > 1 {
+            hourText = "hours"
+        }
+        elapsed = "\(hours) \(hourText)"
+    } else {
+        let currentDateFormater = dateFormatter()
+        currentDateFormater.dateFormat = "dd/MM/YYYY"
+        
+        elapsed = "\(currentDateFormater.string(from: date))"
+    }
+    
+    return elapsed!
+}
+
+func formatCallTime(date: Date) -> String {
+    let seconds = NSDate().timeIntervalSince(date)
+    var elapsed: String?
+    
+    if (seconds < 60) {
+        elapsed = "Just now"
+    }  else if (seconds < 24 * 60 * 60) {
+        
+        let currentDateFormater = dateFormatter()
+        currentDateFormater.dateFormat = "HH:mm"
+        
+        elapsed = "\(currentDateFormater.string(from: date))"
+    } else {
+        let currentDateFormater = dateFormatter()
+        currentDateFormater.dateFormat = "dd/MM/YYYY"
+        
+        elapsed = "\(currentDateFormater.string(from: date))"
+    }
+    
+    return elapsed!
+}
+
 extension UIImageView
 {
     func addBlurEffect()
@@ -107,20 +168,43 @@ extension UIViewController {
 }
 
 extension UIImage {
-    func resizeImage(targetSize: CGSize) -> UIImage {
-        let size = self.size
-        let widthRatio  = targetSize.width  / size.width
-        let heightRatio = targetSize.height / size.height
-        let newSize = widthRatio > heightRatio ?  CGSize(width: size.width * heightRatio, height: size.height * heightRatio) : CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
-        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+    
+    var isPortrait:  Bool    { return size.height > size.width }
+    var isLandscape: Bool    { return size.width > size.height }
+    var breadth:     CGFloat { return min(size.width, size.height) }
+    var breadthSize: CGSize  { return CGSize(width: breadth, height: breadth) }
+    var breadthRect: CGRect  { return CGRect(origin: .zero, size: breadthSize) }
+    
+    var circleMasked: UIImage? {
+        UIGraphicsBeginImageContextWithOptions(breadthSize, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        guard let cgImage = cgImage?.cropping(to: CGRect(origin: CGPoint(x: isLandscape ? floor((size.width - size.height) / 2) : 0, y: isPortrait  ? floor((size.height - size.width) / 2) : 0), size: breadthSize)) else { return nil }
+        UIBezierPath(ovalIn: breadthRect).addClip()
+        UIImage(cgImage: cgImage).draw(in: breadthRect)
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+    
+    func scaleImageToSize(newSize: CGSize) -> UIImage {
+        var scaledImageRect = CGRect.zero
         
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
-        self.draw(in: rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        let aspectWidth = newSize.width/size.width
+        let aspectheight = newSize.height/size.height
+        
+        let aspectRatio = max(aspectWidth, aspectheight)
+        
+        scaledImageRect.size.width = size.width * aspectRatio;
+        scaledImageRect.size.height = size.height * aspectRatio;
+        scaledImageRect.origin.x = (newSize.width - scaledImageRect.size.width) / 2.0;
+        scaledImageRect.origin.y = (newSize.height - scaledImageRect.size.height) / 2.0;
+        
+        UIGraphicsBeginImageContext(newSize)
+        draw(in: scaledImageRect)
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        return newImage!
+        return scaledImage!
     }
+    
 }
 
 extension UIViewController {
@@ -331,5 +415,22 @@ extension UIView {
 extension NSNotification.Name {
     static var updateHomeFeed = NSNotification.Name(rawValue: "updateFeed")
     static var updateUserProfileFeed = NSNotification.Name(rawValue: "updateUserProfileFeed")
+}
+
+//MARK: GLOBAL FUNCTIONS
+private let dateFormat = "yyyyMMddHHmmss"
+
+func dateFormatter() -> DateFormatter {
+    let dateFormatter = DateFormatter()
+    dateFormatter.timeZone = TimeZone(secondsFromGMT: TimeZone.current.secondsFromGMT())
+    dateFormatter.dateFormat = dateFormat
+    return dateFormatter
+}
+
+func imageFromData(pictureData: String, withBlock: (_ image: UIImage?) -> Void) {
+    var image: UIImage?
+    let decodedData = NSData(base64Encoded: pictureData, options: NSData.Base64DecodingOptions(rawValue: 0))
+    image = UIImage(data: decodedData! as Data)
+    withBlock(image)
 }
 

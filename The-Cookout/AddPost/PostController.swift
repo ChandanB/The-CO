@@ -13,11 +13,27 @@ import PKHUD
 import AVKit
 import YPImagePicker
 
-class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate {
+class PostController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ReturnPostImageDelegate, ReturnPostTextDelegate, UITextViewDelegate {
     
     let cellId = "cellId"
     let headerId = "headerId"
     var user: User?
+    
+    var uploadAction: UploadAction!
+    var postToEdit: Post?
+    
+    enum UploadAction: Int {
+        case UploadPost
+        case SaveChanges
+        
+        init(index: Int) {
+            switch index {
+            case 0: self = .UploadPost
+            case 1: self = .SaveChanges
+            default: self = .UploadPost
+            }
+        }
+    }
     
     var selectedImage: UIImage? {
         didSet {
@@ -48,14 +64,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         button.addTarget(self, action: #selector(sharePost), for: .touchUpInside)
         return button
     }()
-   
-//    func handleOpenPhotoSelector() {
-//        let layout = UICollectionViewFlowLayout()
-//        self.photoSelectorController = PhotoSelectorController(collectionViewLayout: layout)
-//        self.photoSelectorController?.delegate = self
-//        let navController = UINavigationController(rootViewController: photoSelectorController!)
-//        self.present(navController, animated: true, completion: nil)
-//    }
     
     func handleOpenGallery() {
         
@@ -89,17 +97,18 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             self.present(picker, animated: true, completion: nil)
         }
     }
-    
-    
-    func handleShowCamera() {
-        
-    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureViewComponents()
         
-        self.hideKeyboardWhenTapped()
-
+        captionTextView.delegate = self
+    }
+    
+    func configureViewComponents() {
+        self.hideKeyboardWhenTappedAround()
+        
         self.postHeader?.textdelegate = self
         self.postHeader?.imageDelegate = self
         
@@ -112,7 +121,6 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(PostHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
-        
     }
     
     func returnPostImage(image: UIImage) {
@@ -182,19 +190,38 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func shareImagePost(_ user: User) {
         
-        guard let image = selectedImage else { return }
-        guard let caption = captionTextView.text else { return }
+        guard
+            let caption = captionTextView.text,
+            let image = selectedImage else { return }
         
-        var trimmedCaption = caption.trim()
+        let trimmedCaption = caption.trim()
         
-        if trimmedCaption == "What's on your mind?" || trimmedCaption == "Say something about this picture?" {
-            trimmedCaption = ""
+        if trimmedCaption == ""  {
+            return
         }
-        
-        Database.database().createImagePost(withImage: image, caption: trimmedCaption, user: user, onSuccess: {
+       
+        Database.database().createImagePost(withImage: image, caption: trimmedCaption, user: user, onSuccess: { (postId) in
+            
+            // update user-post structure
+            let userPostsRef = USER_POSTS_REF.child(user.uid)
+            userPostsRef.updateChildValues([postId: 1])
+            
+            // update user-feed structure
+            self.updateUserFeeds(with: postId)
+            
+            // upload hashtag to server
+            if caption.contains("#") {
+                self.uploadHashtagToServer(withPostId: postId)
+            }
+            
+            // upload mention notification to server
+            if caption.contains("@") {
+                self.uploadMentionNotification(forPostId: postId, withText: caption, isForComment: false)
+            }
+            
             HUD.flash(.success)
-            NotificationCenter.default.post(name: NSNotification.Name.updateHomeFeed, object: nil)
-            NotificationCenter.default.post(name: NSNotification.Name.updateUserProfileFeed, object: nil)
+            NotificationCenter.default.post(name: .updateHomeFeed, object: nil)
+            NotificationCenter.default.post(name: .updateUserProfileFeed, object: nil)
             self.dismiss(animated: true, completion: nil)
         }) { (err) in
             if let error = err {
@@ -213,9 +240,26 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
             return
         }
             
-        Database.database().createPost(withCaption: trimmedCaption, user: user, onSuccess: {
-            NotificationCenter.default.post(name: NSNotification.Name.updateHomeFeed, object: nil)
-            NotificationCenter.default.post(name: NSNotification.Name.updateUserProfileFeed, object: nil)
+        Database.database().createPost(withCaption: trimmedCaption, user: user, onSuccess: { (postId) in
+            // update user-post structure
+            let userPostsRef = USER_POSTS_REF.child(user.uid)
+            userPostsRef.updateChildValues([postId: 1])
+            
+            // update user-feed structure
+            self.updateUserFeeds(with: postId)
+            
+            // upload hashtag to server
+            if caption.contains("#") {
+                self.uploadHashtagToServer(withPostId: postId)
+            }
+            
+            // upload mention notification to server
+            if caption.contains("@") {
+                self.uploadMentionNotification(forPostId: postId, withText: caption, isForComment: false)
+            }
+            
+            NotificationCenter.default.post(name: .updateHomeFeed, object: nil)
+            NotificationCenter.default.post(name: .updateUserProfileFeed, object: nil)
             self.dismiss(animated: true, completion: nil)
         }) { (err) in
             if let error = err {
@@ -227,10 +271,36 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
+    func updateUserFeeds(with postId: String) {
+        guard let currentUid = CURRENT_USER?.uid else { return }
+        let values = [postId: 1]
+        
+        USER_FOLLOWER_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            let followerUid = snapshot.key
+            USER_FEED_REF.child(followerUid).updateChildValues(values)
+        }
+        
+        USER_FEED_REF.child(currentUid).updateChildValues(values)
+    }
+    
+    func uploadHashtagToServer(withPostId postId: String) {
+        guard let caption = captionTextView.text else { return }
+        let words: [String] = caption.components(separatedBy: .whitespacesAndNewlines)
+        
+        for var word in words {
+            if word.hasPrefix("#") {
+                word = word.trimmingCharacters(in: .punctuationCharacters)
+                word = word.trimmingCharacters(in: .symbols)
+                
+                let hashtagValues = [postId: 1]
+                HASHTAG_POST_REF.child(word.lowercased()).updateChildValues(hashtagValues)
+            }
+        }
+    }
+    
     @objc func handleCancel() {
         self.dismiss(animated: false, completion: nil)
     }
-    
     
     private var lastContentOffset: CGFloat = 0
     
@@ -242,54 +312,9 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-//    func handleShowCamera() {
-//        Config.tabsToShow = [.cameraTab]
-//        Config.Camera.imageLimit = 1
-//        Config.VideoEditor.maximumDuration = 30
-//        Config.VideoEditor.savesEditedVideoToLibrary = true
-//        let cameraController = GalleryController()
-//        cameraController.delegate = self
-//        self.present(cameraController, animated: true, completion: nil)
-//    }
-    
-//    func handleOpenGallery() {
-//        Config.tabsToShow = [.imageTab, .videoTab]
-//        Config.Camera.imageLimit = 1
-//        let cameraController = GalleryController()
-//        cameraController.delegate = self
-//        self.present(cameraController, animated: true, completion: nil)
-//    }
-    
-    //    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
-    //        let image = images[0]
-    //        image.resolve { (image) in
-    //            self.selectedImage = image
-    //        }
-    //        dismiss(animated: true, completion: nil)
-    //    }
-    //
-    //    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
-    //        dismiss(animated: true, completion: nil)
-    //
-    //        let editor = AdvancedVideoEditor()
-    //        editor.edit(video: video) { (editedVideo: Video?, tempPath: URL?) in
-    //            DispatchQueue.main.async {
-    //                if let tempPath = tempPath {
-    //                    let controller = AVPlayerViewController()
-    //                    controller.player = AVPlayer(url: tempPath)
-    //
-    //                    self.present(controller, animated: true, completion: nil)
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
-    //
-    //    }
-    //
-    //    func galleryControllerDidCancel(_ controller: GalleryController) {
-    //          dismiss(animated: true, completion: nil)
-    //    }
+    func handleShowCamera() {
+        let cameraController = CameraController()
+        present(cameraController, animated: true, completion: nil)
+    }
     
 }

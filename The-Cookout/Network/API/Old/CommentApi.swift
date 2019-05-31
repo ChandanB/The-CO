@@ -10,10 +10,9 @@ import Foundation
 import FirebaseDatabase
 
 class CommentApi {
-    var commentsRef = Database.database().reference().child("comments")
     
     func observeComments(user: User, withPostId id: String, completion: @escaping (Comment) -> Void) {
-        commentsRef.child(id).observeSingleEvent(of: .value, with: {
+        COMMENT_REF.child(id).observeSingleEvent(of: .value, with: {
             snapshot in
             if let dict = snapshot.value as? [String: Any] {
                 let newComment = Comment(user: user, dictionary: dict)

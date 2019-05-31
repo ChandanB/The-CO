@@ -11,9 +11,7 @@ import Firebase
 import BoltsSwift
 
 class UserSearchController : DatasourceController, UISearchBarDelegate {
-    
-    let database = API.database
-    
+        
     let searchBar: UISearchBar = {
         let sb = UISearchBar()
         sb.placeholder = "Enter Username"

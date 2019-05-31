@@ -7,7 +7,9 @@ target 'The-Cookout' do
 
   # Pods for The-Cookout
 
-  pod "LBTAComponents"
+  pod 'LBTAComponents'
+  pod 'LBTATools'
+  
   pod 'Firebase/Core'
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth' 
@@ -15,19 +17,25 @@ target 'The-Cookout' do
   pod 'Firebase/DynamicLinks'
   pod 'Firebase/Performance'
   pod 'Firebase/Storage'
+  pod 'Firebase/Messaging'
+  
   pod 'Kingfisher'
   pod 'Bolts-Swift'
   pod 'Spring'
-  pod 'BonMot'
   pod 'UIFontComplete'
-  pod 'SCLAlertView'
   pod 'PKHUD'
-  pod 'KILabel'
-  pod 'BMPlayer'
-  pod 'SnapKit'
-  pod 'PinterestLayout'
   pod 'YPImagePicker', '~> 3.5.2'
-  pod 'AlamofireImage', '~> 3.5'
-  pod 'Nora'
-	
+  pod 'UIImageColors'
+  pod 'SkeletonView'
+  
+  pod 'SDWebImage', '~> 5.0'
+  pod 'CropViewController'
+  pod 'FTPopOverMenu_Swift', '~> 0.2.0'
+  pod 'ARSLineProgress', '~> 3.1'
+  pod 'FLAnimatedImage', '~> 1.0'
+  pod 'ActiveLabel'
+  
+  pod 'EZSwipeController'
+  
+
 end

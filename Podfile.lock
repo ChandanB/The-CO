@@ -1,16 +1,9 @@
 PODS:
-  - Alamofire (4.8.2)
-  - AlamofireImage (3.5.2):
-    - Alamofire (~> 4.8)
-  - BMPlayer (1.2.1):
-    - BMPlayer/Full (= 1.2.1)
-  - BMPlayer/Core (1.2.1)
-  - BMPlayer/Full (1.2.1):
-    - BMPlayer/Core
-    - NVActivityIndicatorView (~> 4.6.1)
-    - SnapKit (~> 4.2.0)
+  - ActiveLabel (1.0.1)
+  - ARSLineProgress (3.1.0)
   - Bolts-Swift (1.4.0)
-  - BonMot (5.3)
+  - CropViewController (2.4.0)
+  - EZSwipeController (0.6.1)
   - Firebase/Analytics (5.20.1):
     - Firebase/Core
   - Firebase/Auth (5.20.1):
@@ -27,6 +20,9 @@ PODS:
   - Firebase/DynamicLinks (5.20.1):
     - Firebase/CoreOnly
     - FirebaseDynamicLinks (= 3.4.3)
+  - Firebase/Messaging (5.20.1):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (= 3.5.0)
   - Firebase/Performance (5.20.1):
     - Firebase/Core
     - FirebasePerformance (= 2.2.4)
@@ -67,6 +63,14 @@ PODS:
     - FirebaseCore (~> 5.2)
     - GoogleUtilities/Environment (~> 5.2)
     - GoogleUtilities/UserDefaults (~> 5.2)
+  - FirebaseMessaging (3.5.0):
+    - FirebaseAnalyticsInterop (~> 1.1)
+    - FirebaseCore (~> 5.2)
+    - FirebaseInstanceID (~> 3.6)
+    - GoogleUtilities/Environment (~> 5.3)
+    - GoogleUtilities/Reachability (~> 5.3)
+    - GoogleUtilities/UserDefaults (~> 5.3)
+    - Protobuf (~> 3.1)
   - FirebasePerformance (2.2.4):
     - FirebaseAnalytics (~> 5.8)
     - FirebaseInstanceID (~> 3.8)
@@ -89,6 +93,8 @@ PODS:
     - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.2)
     - GTMSessionFetcher/Core (~> 1.1)
+  - FLAnimatedImage (1.0.12)
+  - FTPopOverMenu_Swift (0.2.0)
   - GoogleAppMeasurement (5.8.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 5.2)
     - GoogleUtilities/MethodSwizzler (~> 5.2)
@@ -120,8 +126,7 @@ PODS:
   - GoogleUtilities/UserDefaults (5.5.0):
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.2.1)
-  - KILabel (1.0.1)
-  - Kingfisher (5.3.1)
+  - Kingfisher (5.4.0)
   - LBTAComponents (1.0.2)
   - leveldb-library (1.20)
   - nanopb (0.3.901):
@@ -129,59 +134,54 @@ PODS:
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
-  - Nora (1.1.1):
-    - Firebase/Core
-    - Firebase/Database
-    - Firebase/Storage
-    - Result (~> 3.0)
-  - NVActivityIndicatorView (4.6.1):
-    - NVActivityIndicatorView/Presenter (= 4.6.1)
-  - NVActivityIndicatorView/Presenter (4.6.1)
-  - PinterestLayout (1.0.3)
   - PKHUD (5.2.1)
   - Protobuf (3.7.0)
   - PryntTrimmerView (3.0.0)
-  - Result (3.2.4)
-  - SCLAlertView (0.8)
-  - SnapKit (4.2.0)
+  - SDWebImage (5.0.2):
+    - SDWebImage/Core (= 5.0.2)
+  - SDWebImage/Core (5.0.2)
+  - SkeletonView (1.5)
   - Spring (1.0.5)
   - SteviaLayout (4.4.4)
   - UIFontComplete (3.0.0)
+  - UIImageColors (2.1.0)
   - YPImagePicker (3.5.3):
     - PryntTrimmerView (~> 3.0.0)
     - SteviaLayout (~> 4.4.1)
 
 DEPENDENCIES:
-  - AlamofireImage (~> 3.5)
-  - BMPlayer
+  - ActiveLabel
+  - ARSLineProgress (~> 3.1)
   - Bolts-Swift
-  - BonMot
+  - CropViewController
+  - EZSwipeController
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
   - Firebase/DynamicLinks
+  - Firebase/Messaging
   - Firebase/Performance
   - Firebase/Storage
-  - KILabel
+  - FLAnimatedImage (~> 1.0)
+  - FTPopOverMenu_Swift (~> 0.2.0)
   - Kingfisher
   - LBTAComponents
-  - Nora
-  - PinterestLayout
   - PKHUD
-  - SCLAlertView
-  - SnapKit
+  - SDWebImage (~> 5.0)
+  - SkeletonView
   - Spring
   - UIFontComplete
+  - UIImageColors
   - YPImagePicker (~> 3.5.2)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - Alamofire
-    - AlamofireImage
-    - BMPlayer
+    - ActiveLabel
+    - ARSLineProgress
     - Bolts-Swift
-    - BonMot
+    - CropViewController
+    - EZSwipeController
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -192,38 +192,37 @@ SPEC REPOS:
     - FirebaseDatabase
     - FirebaseDynamicLinks
     - FirebaseInstanceID
+    - FirebaseMessaging
     - FirebasePerformance
     - FirebaseRemoteConfig
     - FirebaseStorage
+    - FLAnimatedImage
+    - FTPopOverMenu_Swift
     - GoogleAppMeasurement
     - GoogleToolboxForMac
     - GoogleUtilities
     - GTMSessionFetcher
-    - KILabel
     - Kingfisher
     - LBTAComponents
     - leveldb-library
     - nanopb
-    - Nora
-    - NVActivityIndicatorView
-    - PinterestLayout
     - PKHUD
     - Protobuf
     - PryntTrimmerView
-    - Result
-    - SCLAlertView
-    - SnapKit
+    - SDWebImage
+    - SkeletonView
     - Spring
     - SteviaLayout
     - UIFontComplete
+    - UIImageColors
     - YPImagePicker
 
 SPEC CHECKSUMS:
-  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
-  AlamofireImage: 63cfe3baf1370be6c498149687cf6db3e3b00999
-  BMPlayer: ea12f9d82e37f968dea2078b5e58e356ee4439d8
+  ActiveLabel: b8b2396fe25308d563601437d6605bf691c3b5db
+  ARSLineProgress: 60778657c69491796c3faf5b834c72924c405833
   Bolts-Swift: 650d72e8017721b1a6bbe43d542c4578f8e5ba6f
-  BonMot: 0104d1b4eda54f4a4b7393d6559539ef25498fbd
+  CropViewController: a090820b15fc3da68e694d7c192a4708c576828b
+  EZSwipeController: 255b0f8aed31963b0236802c926e27dd006a2532
   Firebase: 2f5235e62f141cb86181c3af0dfe4509706351ac
   FirebaseABTesting: 1f50b8d50f5e3469eea54e7463a7b7fe221d1f5e
   FirebaseAnalytics: fd72a26bf8dac84cefba2f0864366f718555a5b0
@@ -234,32 +233,31 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 2c15b0ea6f2c6eb5e57413f9d6340f1e50b81ae3
   FirebaseDynamicLinks: f7a8717e2c7ea652923882a2d60b0045d6fd99d5
   FirebaseInstanceID: a122b0c258720cf250551bb2bedf48c699f80d90
+  FirebaseMessaging: 4235f949ce1c4e827aeb19705ba5c53f9b85aa10
   FirebasePerformance: 25ecee2a260bcf398d7f32d6f4804438df953100
   FirebaseRemoteConfig: 7e11c65f0769c09bff6947997c209515058c5318
   FirebaseStorage: 6162ef4322502b818d9de0ec552f5226d283de43
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
+  FTPopOverMenu_Swift: 44d95f702ef643f902c60d7e49553dfc0e874dac
   GoogleAppMeasurement: 1624046ab1bcc5e170061a56ef5679000b079c8e
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   GoogleUtilities: 6481e6318c5fcabaaa8513ef8120f329055d7c10
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  KILabel: 4797807cdc0b4992dad8bf91175ddc973c3b569b
-  Kingfisher: d9e7e0b209b59b8f9873aa2f37654e81a7beea51
+  Kingfisher: 9c8f2cc6710334e06f32ba2b45e77707d5e2f0c9
   LBTAComponents: c4c8863e0ef6715e378300db148b96a09df656f7
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
-  Nora: c7dd939e14abb43405df0e377be7339c7fe67fef
-  NVActivityIndicatorView: 4ca19fccc84595a78957336a086d00a49be6ce61
-  PinterestLayout: f1c7ec0254ffa842d69f1b43e4436c8ded4359b9
   PKHUD: 4e6162c4c39ac367c6934e9855c6b4762ee16256
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
   PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
-  Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
-  SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
-  SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
+  SDWebImage: 6764b5fa0f73c203728052955dbefa2bf1f33282
+  SkeletonView: 6cbb80f82f8bdee3f9093e2fa03b84819b4bd826
   Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
   SteviaLayout: 523469269059f2c6da02820bb2ff28a5fe0780aa
   UIFontComplete: 5b0f59a83308816c610164b79a2540b3520f9b72
+  UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
   YPImagePicker: 5dd3814b47b1208e9c8cc8f6ef77fe90db3723b6
 
-PODFILE CHECKSUM: b632269aa7ed6cc06b8d60a534156ebe66d0c526
+PODFILE CHECKSUM: 466d80e1c2e790f344fc21efd1fab14d9d24985c
 
 COCOAPODS: 1.6.1

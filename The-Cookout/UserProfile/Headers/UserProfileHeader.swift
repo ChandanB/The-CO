@@ -6,11 +6,10 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import Kingfisher
 import LBTAComponents
 import Firebase
-import BonMot
 import UIFontComplete
+import SDWebImage
 
 //    let fontStyle = UIFont.boldSystemFont(ofSize: 12)
 //    let attributedText = NSMutableAttributedString(string: "\(postCount ?? 0)\n", attributes: [NSAttributedString.Key.font: fontStyle])
@@ -37,7 +36,7 @@ class UserProfileHeader: DatasourceCell {
     let profileImageView: CachedImageView = {
         let iv = CachedImageView()
         iv.clipsToBounds = true
-        iv.backgroundColor = .clear
+        iv.backgroundColor = .lightGray
         iv.layer.borderColor = UIColor.white.cgColor
         iv.layer.borderWidth = 0.5
         iv.contentMode = .scaleAspectFill
@@ -63,7 +62,7 @@ class UserProfileHeader: DatasourceCell {
     
     lazy var gridButton: UIButton = {
         let button = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "Grid_icon").resizeImage(targetSize: CGSize(width: 25, height: 25))
+        let image = #imageLiteral(resourceName: "Grid_icon").scaleImageToSize(newSize: CGSize(width: 25, height: 25))
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(handleChangeToGridView), for: .touchUpInside)
         return button
@@ -71,7 +70,7 @@ class UserProfileHeader: DatasourceCell {
     
     lazy var listButton: UIButton = {
         let button = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "List_icon").resizeImage(targetSize: CGSize(width: 25, height: 25))
+        let image = #imageLiteral(resourceName: "List_icon").scaleImageToSize(newSize: CGSize(width: 25, height: 25))
         button.setImage(image, for: .normal)
         button.tintColor = UIColor(white: 0, alpha: 0.2)
         button.addTarget(self, action: #selector(handleChangeToListView), for: .touchUpInside)
@@ -80,7 +79,7 @@ class UserProfileHeader: DatasourceCell {
     
     lazy var repostsButton: UIButton = {
         let btn = UIButton(type: .system)
-        let image = #imageLiteral(resourceName: "circular-arrow").resizeImage(targetSize: CGSize(width: 25, height: 20))
+        let image = #imageLiteral(resourceName: "circular-arrow").scaleImageToSize(newSize: CGSize(width: 25, height: 25))
         btn.setImage(image, for: .normal)
         btn.tintColor = UIColor(white: 0, alpha: 0.3)
         return btn
@@ -205,17 +204,11 @@ class UserProfileHeader: DatasourceCell {
         
         let bio = user.bio
         guard let font = CustomFont.proximaNovaAlt.of(size: 12.0) else {return}
+    
+        let attributedText = NSMutableAttributedString(string: bio, attributes: [NSAttributedString.Key.font: font])
+        attributedText.setLineSpacing(3)
         
-        var style = StringStyle(
-            .font(font),
-            .lineHeightMultiple(1.8)
-        )
-        
-        style.lineSpacing = 3
-        
-        let attributedString = bio.styled(with: style)
-        
-        bioTextView.attributedText = attributedString
+        bioTextView.attributedText = attributedText
         bioTextView.textAlignment = .center
         bioTextView.sizeToFit()
         bioTextView.isScrollEnabled = false
@@ -223,7 +216,7 @@ class UserProfileHeader: DatasourceCell {
     
     
     func reloadFollowButton() {
-        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        guard let currentLoggedInUserId = CURRENT_USER?.uid else { return }
         guard let userId = user?.uid else {return}
         
         if currentLoggedInUserId == userId {
@@ -292,12 +285,12 @@ class UserProfileHeader: DatasourceCell {
         NotificationCenter.default.post(name: NSNotification.Name.updateHomeFeed, object: nil)
     }
     
+    //Shift + Command + M
     fileprivate func setupProfileAndBannerImage() {
         guard let profileImageUrl = user?.profileImageUrl else { return }
-
-        DispatchQueue.main.async {
-            self.profileImageView.loadImage(urlString: profileImageUrl)
-        }
+        let url = URL(string: profileImageUrl)
+        profileImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+        profileImageView.sd_setImage(with: url, completed: nil)
     }
     
     @objc func handleChangeToListView() {

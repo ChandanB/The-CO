@@ -23,6 +23,7 @@ class PreviewPhotoContainerView: UIView {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "circular-arrow").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(handleCancel), for: .touchUpInside)
+        button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         return button
     }()
     
@@ -30,7 +31,22 @@ class PreviewPhotoContainerView: UIView {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "save_shadow").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
+        button.imageEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         return button
+    }()
+    
+    private let savedLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Saved Successfully"
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 4
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.textColor = .white
+        label.alpha = 0.7
+        label.numberOfLines = 0
+        label.backgroundColor = .black
+        label.textAlignment = .center
+        return label
     }()
     
     
@@ -43,63 +59,22 @@ class PreviewPhotoContainerView: UIView {
     
     
     @objc func handleSave() {
-        print("Handling save...")
-        
         guard let previewImage = previewImageView.image else { return }
         
         let library = PHPhotoLibrary.shared()
+        
         library.performChanges({
-            
             PHAssetChangeRequest.creationRequestForAsset(from: previewImage)
-            
         }) { (success, err) in
             if let err = err {
                 print("Failed to save image to photo library:", err)
                 return
             }
-            
-            print("Successfully saved image to library")
-            
             DispatchQueue.main.async {
-                let savedLabel = UILabel()
-                savedLabel.text = "Saved Successfully"
-                savedLabel.font = UIFont.boldSystemFont(ofSize: 18)
-                savedLabel.textColor = .white
-                savedLabel.numberOfLines = 0
-                savedLabel.backgroundColor = UIColor(white: 0, alpha: 0.3)
-                savedLabel.textAlignment = .center
-                savedLabel.layer.cornerRadius = 5
-                savedLabel.layer.masksToBounds = true
-                
-                savedLabel.frame = CGRect(x: 0, y: 0, width: 150, height: 80)
-                savedLabel.center = self.center
-                
-                self.addSubview(savedLabel)
-                
-                savedLabel.layer.transform = CATransform3DMakeScale(0, 0, 0)
-                
-                UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
-                    
-                    savedLabel.layer.transform = CATransform3DMakeScale(1, 1, 1)
-                    
-                }, completion: { (completed) in
-                    //completed
-                    
-                    UIView.animate(withDuration: 0.5, delay: 0.75, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
-                        
-                        savedLabel.layer.transform = CATransform3DMakeScale(0.1, 0.1, 0.1)
-                        savedLabel.alpha = 0
-                        
-                    }, completion: { (_) in
-                        
-                        savedLabel.removeFromSuperview()
-                        
-                    })
-                    
-                })
+                self.presentSavedLabel()
             }
-            
         }
+
     }
     
     @objc func handleNext() {
@@ -128,6 +103,28 @@ class PreviewPhotoContainerView: UIView {
         
         addSubview(nextButton)
         nextButton.anchor(nil, left: nil, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 34, rightConstant: 24, widthConstant: 80, heightConstant: 80)
+    }
+    
+    private func presentSavedLabel()  {
+        addSubview(savedLabel)
+        savedLabel.alpha = 1
+        savedLabel.frame = CGRect(x: 0, y: 0, width: 150, height: 80)
+        savedLabel.center = self.center
+        
+        savedLabel.layer.transform = CATransform3DMakeScale(0, 0, 0)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+            self.savedLabel.layer.transform = CATransform3DMakeScale(1, 1, 1)
+        }, completion: { (completed) in
+            
+            UIView.animate(withDuration: 0.5, delay: 0.75, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+                self.savedLabel.layer.transform = CATransform3DMakeScale(0.1, 0.1, 0.1)
+                self.savedLabel.alpha = 0
+            }, completion: { (_) in
+                self.savedLabel.removeFromSuperview()
+            })
+            
+        })
     }
     
     required init?(coder aDecoder: NSCoder) {

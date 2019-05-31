@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6944DBF27A0F2E17C7AF9A1D13FC11FF"
+               BlueprintIdentifier = "41ED4B24CF11801EEDB407432140BC28"
                BuildableName = "UIFontComplete.framework"
                BlueprintName = "UIFontComplete"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6944DBF27A0F2E17C7AF9A1D13FC11FF"
+            BlueprintIdentifier = "41ED4B24CF11801EEDB407432140BC28"
             BuildableName = "UIFontComplete.framework"
             BlueprintName = "UIFontComplete"
             ReferencedContainer = "container:Pods.xcodeproj">

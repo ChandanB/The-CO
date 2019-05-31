@@ -107,7 +107,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         view.addSubview(alreadyHaveAccountButton)
         alreadyHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
         
-        self.hideKeyboardWhenTapped()
+        self.hideKeyboardWhenTappedAround()
         
         view.backgroundColor = .white
         
@@ -155,15 +155,27 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func setupInputFields() {
-        
         let stackView = UIStackView(arrangedSubviews: [nameTextField, usernameTextField, emailTextField, passwordTextField, signUpButton])
         stackView.distribution = .fillEqually
         stackView.axis = .vertical
         stackView.spacing = 10
         
         view.addSubview(stackView)
-        
         stackView.anchor(addPhotoButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 18, bottomConstant: 0, rightConstant: 18, widthConstant: 0, heightConstant: 280)
+    }
+    
+    private func resetInputFields() {
+        nameTextField.text = ""
+        emailTextField.text = ""
+        usernameTextField.text = ""
+        passwordTextField.text = ""
+        
+        emailTextField.isUserInteractionEnabled = true
+        usernameTextField.isUserInteractionEnabled = true
+        passwordTextField.isUserInteractionEnabled = true
+        
+        signUpButton.isEnabled = false
+        signUpButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
     }
     
     @objc func handleTextInputChange() {
@@ -265,7 +277,13 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         }
         
     }
-    let database = API.database
+    
+    @objc private func handleTapOnView(_ sender: UITextField) {
+        nameTextField.resignFirstResponder()
+        usernameTextField.resignFirstResponder()
+        emailTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
+    }
 }
 
 
@@ -273,10 +291,23 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
 // MARK: - Handle Sign Up
 extension RegisterController {
     @objc func handleSignUp() {
+        let bio = "New Account 🤐"
+        guard let name = nameTextField.text else { return }
+        guard let email = emailTextField.text else { return }
+        guard let username = usernameTextField.text else { return }
+        guard let password = passwordTextField.text else { return }
+        guard let image = self.addPhotoButton.imageView?.image else { return }
+        
+        nameTextField.isUserInteractionEnabled = false
+        emailTextField.isUserInteractionEnabled = false
+        usernameTextField.isUserInteractionEnabled = false
+        passwordTextField.isUserInteractionEnabled = false
+        
+        signUpButton.isEnabled = false
+        signUpButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
+        
         dismissKeyboard()
-        if self.view.frame.origin.y != 0 {
-            self.view.frame.origin.y += 70
-        }
+        
         HUD.show(.progress)
         HUD.dimsBackground = true
         
@@ -284,17 +315,12 @@ extension RegisterController {
             self.view.frame.origin.y += 70
         }
         
-        let bio = "New Account 🤐"
-        guard let name = nameTextField.text else { return }
-        guard let email = emailTextField.text else { return }
-        guard let username = usernameTextField.text else { return }
-        guard let password = passwordTextField.text else { return }
-        guard let image = self.addPhotoButton.imageView?.image else { return }
-        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y += 70
+        }
         
         Auth.auth().signUp(bio: bio, name: name, username: username, email: email, password: password, image: image) { (err) in
             if err != nil {
-                print("Failed to create user:", err)
                 self.signUpButton.animation = "pop"
                 self.signUpButton.curve = "spring"
                 self.signUpButton.duration = 1.2
@@ -303,9 +329,7 @@ extension RegisterController {
                 return
             }
             
-//            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
-//            mainTabBarController.setupViewControllers()
-//            mainTabBarController.selectedIndex = 0
+                        
             HUD.hide()
             self.handleAnimations()
         }

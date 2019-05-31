@@ -15,22 +15,19 @@ import LBTAComponents
 import UIFontComplete
 import Spring
 import AVFoundation
-import Kingfisher
 
 class CommentPostCell: DatasourceCell {
     
     var delegate: HomePostCellDelegate?
-    var player: AVPlayer?
-    var playerLayer: AVPlayerLayer?
     
     override var datasourceItem: Any? {
         didSet {
             guard let post = datasourceItem as? Post else { return }
             let url = post.user.profileImageUrl
-
             self.post = post
             
             updateView(post)
+            
             setupAttibutedCaption(post)
             
             let fetchImage = FetchImage()
@@ -38,6 +35,13 @@ class CommentPostCell: DatasourceCell {
                 fetchImage.fetch(with: url) { (image) in
                     self.profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
                 }
+            }
+            
+            if post.hasImage {
+                let url = URL(string: post.imageUrl)
+                photoImageView.sd_setImage(with: url, completed: nil)
+                setupPhotoImageView()
+                
             }
             
         }
@@ -201,10 +205,6 @@ class CommentPostCell: DatasourceCell {
     }()
     
     func updateView(_ post: Post) {
-        
-        let imageUrl = URL(string: post.imageUrl)
-        self.photoImageView.kf.setImage(with: imageUrl)
-        
         messageTextView.anchor(profileImageButton.bottomAnchor, left: self.leftAnchor, bottom: nil, right: rightAnchor, topConstant: 4, leftConstant: 12, bottomConstant: 4, rightConstant: 12, widthConstant: 0, heightConstant: 0)
         
         setupBottomButtons(post)
@@ -253,22 +253,6 @@ class CommentPostCell: DatasourceCell {
         addSubview(seperatorView)
         addSubview(buttonStackView)
         
-        if post.hasImage {
-            addSubview(photoImageView)
-            photoImageView.addSubview(heartPopup)
-            
-            photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: seperatorView.topAnchor, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-            
-            heartPopup.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
-            heartPopup.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true
-            heartPopup.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor).isActive = true
-            
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
-            tapGestureRecognizer.numberOfTapsRequired = 2
-            photoImageView.isUserInteractionEnabled = true
-            photoImageView.addGestureRecognizer(tapGestureRecognizer)
-        }
-        
         seperatorView.anchor(nil, left: self.leftAnchor, bottom: buttonStackView.topAnchor, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 8, rightConstant: 12, widthConstant: 0, heightConstant: 1)
         
         buttonStackView.anchor(nil, left: self.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, topConstant: 0, leftConstant: 34, bottomConstant: 4, rightConstant: 0, widthConstant: 0, heightConstant: 26)
@@ -294,6 +278,22 @@ class CommentPostCell: DatasourceCell {
         
         repostButton.anchor(repostButtonContainerView.topAnchor, left: repostButtonContainerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 0, widthConstant: 24, heightConstant: 24)
         repostsCount.anchor(repostButtonContainerView.topAnchor, left: repostButton.rightAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 6, bottomConstant: 10, rightConstant: 0, widthConstant: 40, heightConstant: 20)
+    }
+    
+    private func setupPhotoImageView() {
+        addSubview(photoImageView)
+        photoImageView.addSubview(heartPopup)
+        
+        photoImageView.anchor(messageTextView.bottomAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 0)
+        
+        heartPopup.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
+        heartPopup.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true
+        heartPopup.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor).isActive = true
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+        tapGestureRecognizer.numberOfTapsRequired = 2
+        photoImageView.isUserInteractionEnabled = true
+        photoImageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     @objc func imageTapped()

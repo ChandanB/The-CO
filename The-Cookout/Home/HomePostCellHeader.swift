@@ -100,7 +100,8 @@ class HomePostCellHeader: UIView {
     
     private func configureUser() {
         guard let post = post else { return }
-        userProfileImageView.loadImage(urlString: post.user.profileImageUrl)
+        let url = URL(string: post.user.profileImageUrl)
+        userProfileImageView.sd_setImage(with: url, completed: nil)
         setupAttibutedUsername()
     }
     

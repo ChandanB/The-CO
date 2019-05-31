@@ -11,6 +11,7 @@ import Firebase
 
 struct Post {
     var id: String?
+    var userId: String?
     let user: User
     
     var caption: String
@@ -44,6 +45,7 @@ struct Post {
     init(user: User, dictionary: [String: AnyObject]) {
         self.user = user
         self.id = dictionary["id"] as? String ?? ""
+        self.userId = dictionary["userId"] as? String ?? ""
         
         self.caption = dictionary["caption"] as? String ?? ""
         self.imageUrl = dictionary["imageUrl"] as? String ?? ""
@@ -87,7 +89,7 @@ extension Post {
         post.repostCount = dict["repostCount"] as? Int ?? 0
         post.reposts = dict["reposts"] as? Dictionary<String, Any> ?? ["": 0]
         post.ratio = dict["ratio"] as? CGFloat ?? 0
-        if let currentUserId = Auth.auth().currentUser?.uid {
+        if let currentUserId = CURRENT_USER?.uid {
             post.repostedByCurrentUser = post.reposts[currentUserId] != nil
         }
         return post

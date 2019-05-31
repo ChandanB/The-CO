@@ -15,18 +15,19 @@ import LBTAComponents
 import UIFontComplete
 import Spring
 import AVFoundation
-import Kingfisher
+import SDWebImage
+import SkeletonView
 
 protocol HomePostCellDelegate {
     func didTapComment(post: Post)
     func didTapUser(user: User)
     func didTapOptions(post: Post)
-    func didRepost(for cell: HomePostCell)
-    func didUpvote(for cell: HomePostCell)
-    func didDownvote(for cell: HomePostCell)
+    func didRepost(for cell: HomePostTextCell)
+    func didUpvote(for cell: HomePostTextCell)
+    func didDownvote(for cell: HomePostTextCell)
 }
 
-class HomePostCell: DatasourceCell {
+class HomePostTextCell: DatasourceCell {
     
     var delegate: HomePostCellDelegate?
     var playerLayer: AVPlayerLayer?
@@ -36,9 +37,9 @@ class HomePostCell: DatasourceCell {
         didSet {
             self.post = datasourceItem as? Post
             guard let post = self.post else {return}
-            configurePost(post)
-            setupActionButtons(post)
+            anchorPostImage(post)
             setupAttributedCaption(post)
+            configurePost(post)
         }
     }
     
@@ -46,16 +47,38 @@ class HomePostCell: DatasourceCell {
     
     let header = HomePostCellHeader()
     
+    let padding: CGFloat = 12
+    
     let captionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         let tg = UITapGestureRecognizer(target: self, action: #selector(handleComment))
         label.addGestureRecognizer(tg)
         label.isUserInteractionEnabled = true
+        label.isSkeletonable = true
         return label
     }()
     
-    let padding: CGFloat = 12
+    lazy var usernameLabel: UILabel = {
+        let label = UILabel()
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 2
+        let tg = UITapGestureRecognizer(target: self, action: #selector(handleUserTap))
+        label.addGestureRecognizer(tg)
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+    
+    private let userProfileImageView: CustomImageView = {
+        let iv = CustomImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
+        iv.layer.borderWidth = 0.5
+        iv.isUserInteractionEnabled  = true
+        iv.isSkeletonable = true
+        return iv
+    }()
     
     let photoImageView: CachedImageView = {
         let iv = CachedImageView()
@@ -63,6 +86,7 @@ class HomePostCell: DatasourceCell {
         iv.clipsToBounds = true
         iv.layer.cornerRadius = 10
         iv.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        iv.isSkeletonable = true
         return iv
     }()
     
@@ -106,6 +130,26 @@ class HomePostCell: DatasourceCell {
         return button
     }()
     
+    private let usernameButton: UIButton = {
+        let label = UIButton(type: .system)
+        label.setTitleColor(.black, for: .normal)
+        label.titleLabel?.lineBreakMode = .byWordWrapping
+        label.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        label.contentHorizontalAlignment = .left
+        label.addTarget(self, action: #selector(handleUserTap), for: .touchUpInside)
+        label.isSkeletonable = true
+        return label
+    }()
+    
+    private let optionsButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("•••", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.addTarget(self, action: #selector(handleOptionsTap), for: .touchUpInside)
+        return button
+    }()
+    
     private let repostCounter: UILabel = {
         let label = UILabel()
         let regular = CustomFont.proximaNovaAlt.of(size: 12.0)
@@ -145,52 +189,12 @@ class HomePostCell: DatasourceCell {
         label.textColor = .red
         return label
     }()
-    
-    private let userProfileImageView: CustomImageView = {
-        let iv = CustomImageView()
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
-        iv.layer.borderWidth = 0.5
-        iv.isUserInteractionEnabled  = true
-        return iv
-    }()
-    
-    private let usernameButton: UIButton = {
-        let label = UIButton(type: .system)
-        label.setTitleColor(.black, for: .normal)
-        label.titleLabel?.lineBreakMode = .byWordWrapping
-        label.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        label.contentHorizontalAlignment = .left
-        label.addTarget(self, action: #selector(handleUserTap), for: .touchUpInside)
-        return label
-    }()
-    
-    lazy var usernameLabel: UILabel = {
-        let label = UILabel()
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 2
-        let tg = UITapGestureRecognizer(target: self, action: #selector(handleUserTap))
-        label.addGestureRecognizer(tg)
-        label.isUserInteractionEnabled = true
-        //    label.isSkeletonable = true
-        return label
-    }()
-    
-    private let optionsButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("•••", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        button.addTarget(self, action: #selector(handleOptionsTap), for: .touchUpInside)
-        return button
-    }()
 
     static var cellId = "homePostCellId"
     
     override func setupViews() {
         super.setupViews()
-        
+                
         backgroundColor = .white
         self.layer.cornerRadius = 10
   
@@ -208,12 +212,14 @@ class HomePostCell: DatasourceCell {
         addSubview(captionLabel)
         captionLabel.anchor(userProfileImageView.bottomAnchor, left: userProfileImageView.leftAnchor, right: rightAnchor, topConstant: 12, leftConstant: 0, rightConstant: padding)
         
+        setupActionButtons()
+        
     }
 
     let iconSize: CGFloat = 24
     let seperatorView = UIView()
     
-    private func setupActionButtons(_ post: Post) {
+    private func setupActionButtons() {
         
         let commentButtonContainer = UIView()
         let upvoteButtonContainer = UIView()
@@ -235,8 +241,6 @@ class HomePostCell: DatasourceCell {
         
         addSubview(seperatorView)
         seperatorView.anchor(nil, left: self.leftAnchor, bottom: stackView.topAnchor, right: self.rightAnchor, topConstant: 0, leftConstant: 12, bottomConstant: 6, rightConstant: padding, widthConstant: 0, heightConstant: 1)
-        
-        anchorPostImage(post)
         
         // Buttons
         addSubview(commentButton)
@@ -278,9 +282,8 @@ class HomePostCell: DatasourceCell {
     }
     
     func anchorPostImage(_ post: Post) {
+        addSubview(photoImageView)
         if post.hasImage {
-            
-            addSubview(photoImageView)
             photoImageView.anchor(captionLabel.bottomAnchor, left: userProfileImageView.leftAnchor, bottom: seperatorView.topAnchor, right: optionsButton.rightAnchor, topConstant: padding, bottomConstant: padding)
             photoImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
             
@@ -301,9 +304,10 @@ class HomePostCell: DatasourceCell {
             photoImageView.addGestureRecognizer(singleTap)
             
             photoImageView.addGestureRecognizer(doubleTap)
-            return
+        } else {
+            photoImageView.anchor(captionLabel.bottomAnchor, left: userProfileImageView.leftAnchor, bottom: seperatorView.topAnchor, right: optionsButton.rightAnchor, topConstant: padding, bottomConstant: padding, widthConstant: 0, heightConstant: 0)
+            photoImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         }
-        
     }
     
     fileprivate func setupAttributedCaption(_ post: Post) {
@@ -339,13 +343,13 @@ class HomePostCell: DatasourceCell {
     
     func configurePost(_ post: Post) {
         header.post = post
-
-        photoImageView.loadImage(urlString: post.imageUrl)
-        userProfileImageView.loadImage(urlString: post.user.profileImageUrl)
-        
         repostButton.setImage(post.repostedByCurrentUser == true ? #imageLiteral(resourceName: "repost").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
-        
         setupCounters(post)
+        
+        guard let photoImageViewUrl = URL(string: post.imageUrl) else {return}
+        guard let userProfileImageViewUrl = URL(string: post.user.profileImageUrl) else {return}
+        photoImageView.sd_setImage(with: photoImageViewUrl, completed: nil)
+        userProfileImageView.sd_setImage(with: userProfileImageViewUrl, completed: nil)
     }
     
     func setupCounters(_ post: Post) {
@@ -464,7 +468,7 @@ class HomePostCell: DatasourceCell {
 
 
 //MARK: - HomePostCellHeaderDelegate
-extension HomePostCell: HomePostCellHeaderDelegate {
+extension HomePostTextCell: HomePostCellHeaderDelegate {
     
     func didTapUser() {
         guard let post = self.post else { return }

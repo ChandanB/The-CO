@@ -25,7 +25,7 @@ class SearchDataSource: Datasource {
     }
     
     override func cellClasses() -> [DatasourceCell.Type] {
-        return [UserCell.self, UserSearchCell.self]
+        return [UserSearchCell.self, UserSearchCell.self]
     }
     
     override func item(_ indexPath: IndexPath) -> Any? {

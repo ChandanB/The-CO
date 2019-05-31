@@ -1,6 +1,0 @@
-framework module Nora {
-  umbrella header "Nora-umbrella.h"
-
-  export *
-  module * { export * }
-}

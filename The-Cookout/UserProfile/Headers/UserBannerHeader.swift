@@ -6,11 +6,12 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-import Kingfisher
 import LBTAComponents
 import Firebase
-import BonMot
 import UIFontComplete
+import UIImageColors
+import SDWebImage
+
 
 class UserBannerHeader: DatasourceCell {
     
@@ -73,8 +74,10 @@ class UserBannerHeader: DatasourceCell {
 //        bannerImageView.frame = self.bounds
 //        bannerImageView.frame.origin.y -= bounds.height
         
-        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
-        gradientLayer.locations = [0, 0.5]
+        guard let colors = self.bannerImageView.image?.getColors() else {return}
+        
+        gradientLayer.colors = [UIColor.clear.cgColor, colors.primary.cgColor]
+        gradientLayer.locations = [0, 1]
         
         gradientContainerView.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
         gradientContainerView.layer.addSublayer(gradientLayer)
@@ -98,7 +101,7 @@ class UserBannerHeader: DatasourceCell {
         stackView.spacing = 8
         
         addSubview(stackView)
-        stackView.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 16, bottom: 12, right: 12))
+        stackView.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 16, bottom: 6, right: 12))
         
        
     }
@@ -116,14 +119,11 @@ class UserBannerHeader: DatasourceCell {
             guard enable != enabled else { return }
             switch enable {
             case true:
-                visualEffectView.pauseAnimation(delay: 0.3)
+                print("true")
             case false:
-                visualEffectView.resumeAnimation()
-                visualEffectView.effect = nil
+                print("false")
             }
         })
-        
-      //  animator.fractionComplete = 0
     }
     
     func reloadData() {
@@ -133,13 +133,16 @@ class UserBannerHeader: DatasourceCell {
     
     
     fileprivate func setupProfileAndBannerImage(_ user: User) {
-        setupGradientLayer(user)
-      //  let profileImageUrl = user.profileImageUrl
-        let bannerImageUrl = user.bannerImageUrl 
         
-        DispatchQueue.main.async {
-     //       self.profileImageView.loadImage(urlString: profileImageUrl)
-            self.bannerImageView.loadImage(urlString: bannerImageUrl)
+        let url = URL(string: user.bannerImageUrl)
+        bannerImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+        
+        bannerImageView.sd_setImage(with: url) { (image, error, cacheType, url) in
+            if let err = error {
+                print(err.localizedDescription)
+                return
+            }
+            self.setupGradientLayer(user)
         }
     }
     

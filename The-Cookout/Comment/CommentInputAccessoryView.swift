@@ -9,32 +9,19 @@
 import LBTAComponents
 
 protocol CommentInputAccessoryViewDelegate {
-    func didSubmit(for comment: String)
+    func didSubmit(comment: String)
 }
 
-class CommentInputAccessoryView: UIView {
+class CommentInputAccessoryView: UIView, UITextViewDelegate {
     
     var delegate: CommentInputAccessoryViewDelegate?
     
     fileprivate let placeholderLabel: UILabel = {
         let label = UILabel()
-        label.text = "Enter Comment"
+        label.text = "Comment on post..."
         label.textColor = UIColor.lightGray
         label.backgroundColor = .white
         return label
-    }()
-    
-    func clearCommentTextField() {
-        commentTextView.text = nil
-        commentTextView.showPlaceholderLabel()
-    }
-
-    fileprivate let commentTextView: CommentInputTextView = {
-        let tv = CommentInputTextView()
-        tv.isScrollEnabled = false
-        tv.font = UIFont.systemFont(ofSize: 18)
-        tv.backgroundColor = .white
-        return tv
     }()
     
     fileprivate let submitButton: UIButton = {
@@ -46,39 +33,64 @@ class CommentInputAccessoryView: UIView {
         return sb
     }()
     
+    func clearCommentTextField() {
+        commentTextView.text = nil
+        commentTextView.showPlaceholderLabel()
+        submitButton.isEnabled = false
+        submitButton.setTitleColor(.lightGray, for: .normal)
+    }
+
+    fileprivate let commentTextView: CommentInputTextView = {
+        let tv = CommentInputTextView()
+        tv.isScrollEnabled = false
+        tv.font = UIFont.systemFont(ofSize: 18)
+        tv.backgroundColor = .white
+        return tv
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         self.backgroundColor = .white
         autoresizingMask = .flexibleHeight
         
+        
         addSubview(submitButton)
-        submitButton.anchor(topAnchor, left: nil, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 12, widthConstant: 50, heightConstant: 0)
+        submitButton.anchor(top: safeAreaLayoutGuide.topAnchor, right: rightAnchor, paddingRight: 12, width: 50, height: 50)
         
         addSubview(commentTextView)
-        if #available(iOS 11.0, *) {
-            commentTextView.anchor(topAnchor, left: leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: submitButton.leftAnchor, topConstant: 8, leftConstant: 8, bottomConstant: 8, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        } else {
-          commentTextView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: submitButton.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        }
+        commentTextView.anchor(top: safeAreaLayoutGuide.topAnchor, left: safeAreaLayoutGuide.leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: submitButton.leftAnchor, paddingTop: 8, paddingLeft: 12, paddingBottom: 8)
         
         setupLineSeparatorView()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleTextChange), name: UITextView.textDidChangeNotification, object: nil)
     }
     
-    override var intrinsicContentSize: CGSize {
-        return .zero
-    }
+    override var intrinsicContentSize: CGSize { return .zero }
     
     fileprivate func setupLineSeparatorView() {
         let lineSeparatorView = UIView()
         lineSeparatorView.backgroundColor = UIColor(r: 230, g: 230, b: 230)
         addSubview(lineSeparatorView)
-        lineSeparatorView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0.5)
+        lineSeparatorView.anchor(top: topAnchor, left: leftAnchor, right: rightAnchor, height: 0.5)
     }
+    
+    @objc private func handleTextChange() {
+        guard let text = commentTextView.text else { return }
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            submitButton.isEnabled = false
+            submitButton.setTitleColor(.lightGray, for: .normal)
+        } else {
+            submitButton.isEnabled = true
+            submitButton.setTitleColor(.black, for: .normal)
+        }
+    }
+    
     
     @objc func handleSubmit() {
         guard let commentText = commentTextView.text else { return }
-        delegate?.didSubmit(for: commentText)
+        commentTextView.resignFirstResponder()
+        delegate?.didSubmit(comment: commentText)
     }
     
     required init?(coder aDecoder: NSCoder) {

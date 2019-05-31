@@ -12,7 +12,7 @@ import Firebase
 import LBTAComponents
 
 class HomePostCellViewController: UICollectionViewController, HomePostCellDelegate {
-    
+   
     var posts = [Post]()
     
     func showEmptyStateViewIfNeeded() {}
@@ -87,7 +87,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
         return action
     }
     
-    func didRepost(for cell: HomePostCell) {
+    func didRepost(for cell: DatasourceCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
@@ -123,7 +123,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
         }
     }
     
-    func didUpvote(for cell: HomePostCell) {
+    func didUpvote(for cell: DatasourceCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
@@ -168,7 +168,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
         }
     }
     
-    func didDownvote(for cell: HomePostCell) {
+    func didDownvote(for cell: DatasourceCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
         guard let uid = Auth.auth().currentUser?.uid else { return }
         

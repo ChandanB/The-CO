@@ -29,10 +29,10 @@ import UIKit
     var thumbnailImage: UIImage? { get }
     var messageUID: String? { get }
     @objc optional var isDeletable: Bool { get }
-    
-    func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
-    func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
-    
+
+    func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> Void)
+    func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> Void)
+
     var attributedTitle: NSAttributedString? { get }
 }
 
@@ -41,55 +41,52 @@ import UIKit
     @objc open var thumbnailImage: UIImage?
     @objc open var messageUID: String?
     @objc open var isDeletable: Bool
-  
-    
+
     var imageURL: URL?
     var thumbnailImageURL: URL?
    // var messageUID: String?
-    
+
     @objc open var attributedTitle: NSAttributedString?
 
-    
     public init(image: UIImage?, thumbnailImage: UIImage?, messageUID: String?) {
         self.image = image
         self.thumbnailImage = thumbnailImage
         self.messageUID = messageUID
         self.isDeletable = false
     }
-    
+
     public init(imageURL: URL?, thumbnailImageURL: URL?, messageUID: String?) {
         self.imageURL = imageURL
         self.thumbnailImageURL = thumbnailImageURL
         self.messageUID = messageUID
         self.isDeletable = false
     }
-    
-    public init (imageURL: URL?, thumbnailImage: UIImage?, messageUID: String?)  {
+
+    public init (imageURL: URL?, thumbnailImage: UIImage?, messageUID: String?) {
         self.imageURL = imageURL
         self.thumbnailImage = thumbnailImage
         self.messageUID = messageUID
         self.isDeletable = false
     }
-    
-    @objc open func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
+
+    @objc open func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> Void) {
         if let image = image {
             completion(image, nil)
             return
         }
         loadImageWithURL(imageURL, completion: completion)
     }
-    @objc open func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
+    @objc open func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> Void) {
         if let thumbnailImage = thumbnailImage {
             completion(thumbnailImage, nil)
             return
         }
         loadImageWithURL(thumbnailImageURL, completion: completion)
     }
-    
-    open func loadImageWithURL(_ url: URL?, completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
+
+    open func loadImageWithURL(_ url: URL?, completion: @escaping (_ image: UIImage?, _ error: Error?) -> Void) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
-      
         if let imageURL = url {
             session.dataTask(with: imageURL, completionHandler: { (response, data, error) in
                 DispatchQueue.main.async(execute: { () -> Void in

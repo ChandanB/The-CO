@@ -10,17 +10,17 @@ import Nora
 import Firebase
 
 public enum Users: NRDatabaseTarget {
-    
+
     case getUser(id: String)
     case createUser(email: String, name: String, username: String)
     case deleteUser(id: String)
-    
+
     public var baseReference: DatabaseReference {
         return Database.database().reference().child("users")
     }
-    
+
     public var path: String {
-        
+
         switch self {
         case .getUser(let id), .deleteUser(let id):
             return id
@@ -28,9 +28,9 @@ public enum Users: NRDatabaseTarget {
             return uniqueID()
         }
     }
-    
+
     public var task: NRDatabaseTask {
-        
+
         switch self {
         case .getUser:
             return .observeOnce(.value)
@@ -40,5 +40,5 @@ public enum Users: NRDatabaseTarget {
             return .setValue(["email": email, "name": name, "username": username])
         }
     }
-    
+
 }

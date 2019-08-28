@@ -15,7 +15,7 @@ private let nibName = "PhotoEditorViewController"
 private var selectedPhotoIndexPath: IndexPath!
 
 extension ChatLogController: CropViewControllerDelegate {
-  
+
   func presentPhotoEditor(forImageAt indexPath: IndexPath) {
     guard let image = inputContainerView.selectedMedia[indexPath.row].object?.asUIImage else { return }
     inputContainerView.inputTextView.resignFirstResponder()
@@ -31,18 +31,18 @@ extension ChatLogController: CropViewControllerDelegate {
     self.inputContainerView.attachedImages.reloadItems(at: [selectedPhotoIndexPath])
     dismissCropController(cropViewController: cropViewController)
   }
-  
+
   func cropViewController(_ cropViewController: CropViewController, didFinishCancelled cancelled: Bool) {
     dismissCropController(cropViewController: cropViewController)
   }
-  
+
   func dismissCropController(cropViewController: CropViewController) {
     selectedPhotoIndexPath = nil
     cropViewController.dismiss(animated: true, completion: nil)
     cropViewController.delegate = nil //to avoid memory leaks
     updateContainerViewLayout()
   }
-  
+
   func updateContainerViewLayout() {
     //needed to update input container layout if device was rotated during the image editing
     inputContainerView.inputTextView.invalidateIntrinsicContentSize()
@@ -51,7 +51,7 @@ extension ChatLogController: CropViewControllerDelegate {
       self.inputContainerView.attachedImages.frame.size.width = self.inputContainerView.inputTextView.frame.width
     }
   }
-  
+
   func presentVideoPlayer(forUrlAt indexPath: IndexPath) {
     guard let pathURL = inputContainerView.selectedMedia[indexPath.item].fileURL else { return }
     let videoURL = URL(string: pathURL)

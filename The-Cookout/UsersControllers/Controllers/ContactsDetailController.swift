@@ -10,9 +10,9 @@ import UIKit
 import MessageUI
 
 class UsersDetailController: UITableViewController {
-  
+
   var username = String()
-  
+
   var usernames = [String]()
   let invitationText = "Hey! Download SocialPoint Messenger on the App Store. https://itunes.apple.com/ua/app/falcon-messenger/id1313765714?mt=8 "
 
@@ -44,7 +44,7 @@ class UsersDetailController: UITableViewController {
      cell.backgroundColor =  view.backgroundColor
      cell.selectionStyle = .none
      cell.textLabel?.textColor = ThemeManager.currentTheme().generalTitleColor
-    
+
     if indexPath.section == 0 {
       cell.imageView?.image = UIImage(named: "UserpicIcon")
       cell.textLabel?.text = username

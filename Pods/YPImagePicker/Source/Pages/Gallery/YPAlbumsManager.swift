@@ -10,17 +10,17 @@ import Foundation
 import Photos
 
 class YPAlbumsManager {
-    
+
     private var cachedAlbums: [YPAlbum]?
-    
+
     func fetchAlbums() -> [YPAlbum] {
         if let cachedAlbums = cachedAlbums {
             return cachedAlbums
         }
-        
+
         var albums = [YPAlbum]()
         let options = PHFetchOptions()
-        
+
         let smartAlbumsResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum,
                                                                         subtype: .any,
                                                                         options: options)
@@ -48,7 +48,7 @@ class YPAlbumsManager {
                         })
                     }
                     album.collection = assetCollection
-                    
+
                     if YPConfig.library.mediaType == .photo {
                         if !(assetCollection.assetCollectionSubtype == .smartAlbumSlomoVideos
                             || assetCollection.assetCollectionSubtype == .smartAlbumVideos) {
@@ -63,14 +63,14 @@ class YPAlbumsManager {
         cachedAlbums = albums
         return albums
     }
-    
+
     func mediaCountFor(collection: PHAssetCollection) -> Int {
         let options = PHFetchOptions()
         options.predicate = YPConfig.library.mediaType.predicate()
         let result = PHAsset.fetchAssets(in: collection, options: options)
         return result.count
     }
-    
+
 }
 
 extension YPlibraryMediaType {

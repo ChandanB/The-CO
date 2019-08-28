@@ -85,8 +85,7 @@ struct ActiveBuilder {
             var word = nsstring.substring(with: range)
             if word.hasPrefix("@") {
                 word.remove(at: word.startIndex)
-            }
-            else if word.hasPrefix("#") {
+            } else if word.hasPrefix("#") {
                 word.remove(at: word.startIndex)
             }
 

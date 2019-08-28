@@ -10,7 +10,7 @@ import UIKit
 import Stevia
 
 class YPCameraView: UIView, UIGestureRecognizerDelegate {
-    
+
     let focusView = UIView(frame: CGRect(x: 0, y: 0, width: 90, height: 90))
     let previewViewContainer = UIView()
     let buttonsContainer = UIView()
@@ -22,7 +22,7 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
 
     convenience init(overlayView: UIView? = nil) {
         self.init(frame: .zero)
-        
+
         if let overlayView = overlayView {
             // View Hierarchy
             sv(
@@ -49,7 +49,7 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
                 )
             )
         }
-        
+
         // Layout
         let isIphone4 = UIScreen.main.bounds.height == 480
         let sideMargin: CGFloat = isIphone4 ? 20 : 0
@@ -71,10 +71,10 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
 
         flipButton.size(42)-(15+sideMargin)-|
         flipButton.Bottom == previewViewContainer.Bottom - 15
-        
+
         timeElapsedLabel-(15+sideMargin)-|
         timeElapsedLabel.Top == previewViewContainer.Top + 15
-        
+
         shotButton.centerVertically()
         shotButton.size(84).centerHorizontally()
 

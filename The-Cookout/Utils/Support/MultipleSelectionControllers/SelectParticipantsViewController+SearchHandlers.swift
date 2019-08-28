@@ -9,9 +9,9 @@
 import UIKit
 
 extension SelectParticipantsViewController: UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
-  
+
   func updateSearchResults(for searchController: UISearchController) {}
-  
+
   func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
     searchBar.text = nil
     filteredUsers = users
@@ -20,14 +20,14 @@ extension SelectParticipantsViewController: UISearchBarDelegate, UISearchControl
     searchBar.resignFirstResponder()
     tableView.reloadData()
   }
-  
+
   func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
     searchBar.keyboardAppearance = ThemeManager.currentTheme().keyboardAppearance
     searchBar.setShowsCancelButton(true, animated: true)
 
     return true
   }
-  
+
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
     filteredUsers = searchText.isEmpty ? users : users.filter({ (User) -> Bool in
         return User.name.lowercased().contains(searchText.lowercased())
@@ -38,14 +38,12 @@ extension SelectParticipantsViewController: UISearchBarDelegate, UISearchControl
 }
 
 extension SelectParticipantsViewController { /* hiding keyboard */
-  
+
    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
     searchBar?.resignFirstResponder()
   }
-  
+
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
     self.searchBar?.endEditing(true)
   }
 }
-
-

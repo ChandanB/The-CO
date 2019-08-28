@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func < <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l < r
@@ -20,7 +20,7 @@ fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func > <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l > r
@@ -34,13 +34,13 @@ private let pinErrorMessage = "Changes won't be saved across app restarts. Check
 private let muteErrorTitle = "Error muting/unmuting"
 private let muteErrorMessage = "Check your internet connection and try again."
 extension ChatsTableViewController {
-    
-    fileprivate func delayWithSeconds(_ seconds: Double, completion: @escaping () -> ()) {
+
+    fileprivate func delayWithSeconds(_ seconds: Double, completion: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
             completion()
         }
     }
-    
+
     func setupMuteAction(at indexPath: IndexPath) -> UITableViewRowAction {
         let mute = UITableViewRowAction(style: .default, title: "Mute") { _, _ in
             if indexPath.section == 0 {
@@ -59,7 +59,7 @@ extension ChatsTableViewController {
                 })
             }
         }
-        
+
         if indexPath.section == 0 {
             let isPinnedConversationMuted = filteredPinnedConversations[indexPath.row].muted == true
             let muteTitle = isPinnedConversationMuted ? "Unmute" : "Mute"
@@ -69,10 +69,10 @@ extension ChatsTableViewController {
             let muteTitle = isConversationMuted ? "Unmute" : "Mute"
             mute.title = muteTitle
         }
-        mute.backgroundColor = UIColor(red:0.56, green:0.64, blue:0.68, alpha:1.0)
+        mute.backgroundColor = UIColor(red: 0.56, green: 0.64, blue: 0.68, alpha: 1.0)
         return mute
     }
-    
+
     func setupPinAction(at indexPath: IndexPath) -> UITableViewRowAction {
         let pin = UITableViewRowAction(style: .default, title: "Pin") { _, _ in
             if indexPath.section == 0 {
@@ -81,16 +81,16 @@ extension ChatsTableViewController {
                 self.pinConversation(at: indexPath)
             }
         }
-        
+
         let pinTitle = indexPath.section == 0 ? "Unpin" : "Pin"
         pin.title = pinTitle
-        pin.backgroundColor = UIColor(red:0.96, green:0.49, blue:0.00, alpha:1.0)
+        pin.backgroundColor = UIColor(red: 0.96, green: 0.49, blue: 0.00, alpha: 1.0)
         return pin
     }
-    
+
     func setupDeleteAction(at indexPath: IndexPath) -> UITableViewRowAction {
-        
-        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { action, index in
+
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { _, _ in
             if self.currentReachabilityStatus == .notReachable {
                 basicErrorAlertWith(title: "Error deleting message", message: noInternetError, controller: self)
                 return
@@ -101,101 +101,101 @@ extension ChatsTableViewController {
                 self.deleteUnPinnedConversation(at: indexPath)
             }
         }
-        
-        delete.backgroundColor = UIColor(red:0.90, green:0.22, blue:0.21, alpha:1.0)
+
+        delete.backgroundColor = UIColor(red: 0.90, green: 0.22, blue: 0.21, alpha: 1.0)
         return delete
     }
     func unpinConversation(at indexPath: IndexPath) {
         let conversation = self.filteredPinnedConversations[indexPath.row]
         guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation.chatID else { return }
-        
+
         guard let index = self.pinnedConversations.firstIndex(where: { (conversation) -> Bool in
             return conversation.chatID == self.filteredPinnedConversations[indexPath.row].chatID
         }) else { return }
-        
+
         self.tableView.beginUpdates()
         let pinnedElement = self.filteredPinnedConversations[indexPath.row]
-        
+
         let filteredIndexToInsert = self.filtededConversations.insertionIndex(of: pinnedElement, using: { (conversation1, conversation2) -> Bool in
             return conversation1.lastMessage?.timestamp?.int32Value > conversation2.lastMessage?.timestamp?.int32Value
         })
-        
+
         let unfilteredIndexToInsert = self.conversations.insertionIndex(of: pinnedElement, using: { (conversation1, conversation2) -> Bool in
             return conversation1.lastMessage?.timestamp?.int32Value > conversation2.lastMessage?.timestamp?.int32Value
         })
-        
+
         self.filtededConversations.insert(pinnedElement, at: filteredIndexToInsert)
         self.conversations.insert(pinnedElement, at: unfilteredIndexToInsert)
         self.filteredPinnedConversations.remove(at: indexPath.row)
         self.pinnedConversations.remove(at: index)
         let destinationIndexPath = IndexPath(row: filteredIndexToInsert, section: 1)
-        
+
         self.tableView.deleteRows(at: [indexPath], with: .bottom)
         self.tableView.insertRows(at: [destinationIndexPath], with: .bottom)
         self.tableView.endUpdates()
-        
+
         let metadataRef = USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(messageMetaDataFirebaseFolder)
-        metadataRef.updateChildValues(["pinned": false], withCompletionBlock: { (error, reference) in
-            if error != nil {
-                basicErrorAlertWith(title: pinErrorTitle , message: pinErrorMessage, controller: self)
-                return
-            }
-        })
-    }
-    
-    func pinConversation(at indexPath: IndexPath) {
-        
-        let conversation = self.filtededConversations[indexPath.row]
-        guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation.chatID else { return }
-        
-        guard let index = self.conversations.firstIndex(where: { (conversation) -> Bool in
-            return conversation.chatID == self.filtededConversations[indexPath.row].chatID
-        }) else { return }
-        
-        self.tableView.beginUpdates()
-        let elementToPin = self.filtededConversations[indexPath.row]
-        
-        let filteredIndexToInsert = self.filteredPinnedConversations.insertionIndex(of: elementToPin, using: { (conversation1, conversation2) -> Bool in
-            return conversation1.lastMessage?.timestamp?.int32Value > conversation2.lastMessage?.timestamp?.int32Value
-        })
-        
-        let unfilteredIndexToInsert = self.pinnedConversations.insertionIndex(of: elementToPin, using: { (conversation1, conversation2) -> Bool in
-            return conversation1.lastMessage?.timestamp?.int32Value > conversation2.lastMessage?.timestamp?.int32Value
-        })
-        
-        self.filteredPinnedConversations.insert(elementToPin, at: filteredIndexToInsert)
-        self.pinnedConversations.insert(elementToPin, at: unfilteredIndexToInsert)
-        self.filtededConversations.remove(at: indexPath.row)
-        self.conversations.remove(at: index)
-        let destinationIndexPath = IndexPath(row: filteredIndexToInsert, section: 0)
-        
-        self.tableView.deleteRows(at: [indexPath], with: .top)
-        self.tableView.insertRows(at: [destinationIndexPath], with: .top)
-        self.tableView.endUpdates()
-        
-        let metadataReference = USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(messageMetaDataFirebaseFolder)
-        metadataReference.updateChildValues(["pinned": true], withCompletionBlock: { (error, reference) in
+        metadataRef.updateChildValues(["pinned": false], withCompletionBlock: { (error, _) in
             if error != nil {
                 basicErrorAlertWith(title: pinErrorTitle, message: pinErrorMessage, controller: self)
                 return
             }
         })
     }
-    
+
+    func pinConversation(at indexPath: IndexPath) {
+
+        let conversation = self.filtededConversations[indexPath.row]
+        guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation.chatID else { return }
+
+        guard let index = self.conversations.firstIndex(where: { (conversation) -> Bool in
+            return conversation.chatID == self.filtededConversations[indexPath.row].chatID
+        }) else { return }
+
+        self.tableView.beginUpdates()
+        let elementToPin = self.filtededConversations[indexPath.row]
+
+        let filteredIndexToInsert = self.filteredPinnedConversations.insertionIndex(of: elementToPin, using: { (conversation1, conversation2) -> Bool in
+            return conversation1.lastMessage?.timestamp?.int32Value > conversation2.lastMessage?.timestamp?.int32Value
+        })
+
+        let unfilteredIndexToInsert = self.pinnedConversations.insertionIndex(of: elementToPin, using: { (conversation1, conversation2) -> Bool in
+            return conversation1.lastMessage?.timestamp?.int32Value > conversation2.lastMessage?.timestamp?.int32Value
+        })
+
+        self.filteredPinnedConversations.insert(elementToPin, at: filteredIndexToInsert)
+        self.pinnedConversations.insert(elementToPin, at: unfilteredIndexToInsert)
+        self.filtededConversations.remove(at: indexPath.row)
+        self.conversations.remove(at: index)
+        let destinationIndexPath = IndexPath(row: filteredIndexToInsert, section: 0)
+
+        self.tableView.deleteRows(at: [indexPath], with: .top)
+        self.tableView.insertRows(at: [destinationIndexPath], with: .top)
+        self.tableView.endUpdates()
+
+        let metadataReference = USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(messageMetaDataFirebaseFolder)
+        metadataReference.updateChildValues(["pinned": true], withCompletionBlock: { (error, _) in
+            if error != nil {
+                basicErrorAlertWith(title: pinErrorTitle, message: pinErrorMessage, controller: self)
+                return
+            }
+        })
+    }
+
     func deletePinnedConversation(at indexPath: IndexPath) {
         let conversation = self.filteredPinnedConversations[indexPath.row]
         guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation.chatID  else { return }
-        
+
         guard let index = self.pinnedConversations.firstIndex(where: { (conversation) -> Bool in
             return conversation.chatID == self.filteredPinnedConversations[indexPath.row].chatID
         }) else { return }
-        
+
         self.tableView.beginUpdates()
         self.filteredPinnedConversations.remove(at: indexPath.row)
         self.pinnedConversations.remove(at: index)
         self.tableView.deleteRows(at: [indexPath], with: .left)
         self.tableView.endUpdates()
-        
+
         USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(messageMetaDataFirebaseFolder).removeAllObservers()
         USER_MESSAGES_REF.child(currentUserID).child(conversationID).removeValue()
         configureTabBarBadge()
@@ -205,24 +205,24 @@ extension ChatsTableViewController {
             }
         }
     }
-    
+
     func deleteUnPinnedConversation(at indexPath: IndexPath) {
         let conversation = self.filtededConversations[indexPath.row]
         guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation.chatID  else { return }
-        
+
         guard let index = self.conversations.firstIndex(where: { (conversation) -> Bool in
             return conversation.chatID == self.filtededConversations[indexPath.row].chatID
         }) else { return }
-        
+
         self.tableView.beginUpdates()
         self.filtededConversations.remove(at: indexPath.row)
         self.conversations.remove(at: index)
         self.tableView.deleteRows(at: [indexPath], with: .left)
         self.tableView.endUpdates()
-        
+
         USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(messageMetaDataFirebaseFolder).removeAllObservers()
         USER_MESSAGES_REF.child(currentUserID).child(conversationID).removeValue()
-        
+
         configureTabBarBadge()
         if self.conversations.count <= 0 && self.pinnedConversations.count <= 0 {
             DispatchQueue.main.async {
@@ -230,21 +230,21 @@ extension ChatsTableViewController {
             }
         }
     }
-    
+
     fileprivate func updateMutedDatabaseValue(to state: Bool, currentUserID: String, conversationID: String) {
-        
+
         let metadataReference = USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(messageMetaDataFirebaseFolder)
-        metadataReference.updateChildValues(["muted": state], withCompletionBlock: { (error, reference) in
+        metadataReference.updateChildValues(["muted": state], withCompletionBlock: { (error, _) in
             if error != nil {
                 basicErrorAlertWith(title: muteErrorTitle, message: muteErrorMessage, controller: self)
             }
         })
     }
-    
+
     func handleMuteConversation(section: Int, for conversation: Conversation) {
-        
+
         guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation.chatID else { return }
-        
+
         if section == 0 {
             guard conversation.muted != nil else {
                 updateMutedDatabaseValue(to: true, currentUserID: currentUserID, conversationID: conversationID)
@@ -255,7 +255,7 @@ extension ChatsTableViewController {
                 return
             }
             updateMutedDatabaseValue(to: false, currentUserID: currentUserID, conversationID: conversationID)
-            
+
         } else if section == 1 {
             guard conversation.muted != nil else {
                 updateMutedDatabaseValue(to: true, currentUserID: currentUserID, conversationID: conversationID)

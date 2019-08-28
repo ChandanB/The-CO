@@ -6,11 +6,10 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 
 class BaseVoiceMessageCell: BaseMessageCell {
-  
+
   var playerView: PlayerCellView = {
     var playerView = PlayerCellView()
     playerView.alpha = 1
@@ -21,10 +20,10 @@ class BaseVoiceMessageCell: BaseMessageCell {
     playerView.timerLabel.text = "00:00:00"
     playerView.startingTime = 0
     playerView.seconds = 0
-    
+
     return playerView
   }()
-  
+
   override func prepareViewsForReuse() {
     playerView.timerLabel.text = "00:00:00"
     playerView.seconds = 0

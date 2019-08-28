@@ -11,30 +11,30 @@ import Firebase
 import ARSLineProgress
 
 class UserMessageProfileController: UIViewController {
-    
+
     let userProfileContainerView = UserProfileContainerView()
     let avatarOpener = AvatarOpener()
     let userProfileDataDatabaseUpdater = UserProfileDataDatabaseUpdater()
     typealias CompletionHandler = (_ success: Bool) -> Void
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = ThemeManager.currentTheme().generalBackgroundColor
         view.addSubview(userProfileContainerView)
-        
+
         configureNavigationBar()
         configureContainerView()
         configureColorsAccordingToTheme()
     }
-    
+
     fileprivate func configureNavigationBar () {
         let rightBarButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(rightBarButtonDidTap))
         self.navigationItem.rightBarButtonItem = rightBarButton
         self.title = "Profile"
         self.navigationItem.setHidesBackButton(true, animated: true)
     }
-    
+
     fileprivate func configureContainerView() {
         userProfileContainerView.frame = view.bounds
         userProfileContainerView.bioPlaceholderLabel.isHidden = !userProfileContainerView.bio.text.isEmpty
@@ -42,7 +42,7 @@ class UserMessageProfileController: UIViewController {
         userProfileContainerView.bio.delegate = self
         userProfileContainerView.name.delegate = self
     }
-    
+
     fileprivate func configureColorsAccordingToTheme() {
         userProfileContainerView.profileImageView.layer.borderColor = ThemeManager.currentTheme().inputTextViewColor.cgColor
         userProfileContainerView.userData.layer.borderColor = ThemeManager.currentTheme().inputTextViewColor.cgColor
@@ -52,13 +52,13 @@ class UserMessageProfileController: UIViewController {
         userProfileContainerView.bio.keyboardAppearance = ThemeManager.currentTheme().keyboardAppearance
         userProfileContainerView.name.keyboardAppearance = ThemeManager.currentTheme().keyboardAppearance
     }
-    
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         userProfileContainerView.frame = view.bounds
         userProfileContainerView.layoutIfNeeded()
     }
-    
+
     @objc fileprivate func openUserProfilePicture() {
         guard currentReachabilityStatus != .notReachable else {
             basicErrorAlertWith(title: basicErrorTitleForAlert, message: noInternetError, controller: self)
@@ -71,47 +71,46 @@ class UserMessageProfileController: UIViewController {
 }
 
 extension UserMessageProfileController {
-    
+
     @objc func rightBarButtonDidTap () {
         userProfileContainerView.name.resignFirstResponder()
         if userProfileContainerView.name.text?.count == 0 ||
             userProfileContainerView.name.text!.trimmingCharacters(in: .whitespaces).isEmpty {
             userProfileContainerView.name.shake()
         } else {
-            
+
             if currentReachabilityStatus == .notReachable {
                 basicErrorAlertWith(title: "No internet connection", message: noInternetError, controller: self)
                 return
             }
-            
+
             updateUserData()
             setOnlineStatus()
         }
     }
-    
+
     func checkIfUserDataExists(completionHandler: @escaping CompletionHandler) {
-        
+
         let nameReference = USER_REF.child(CURRENT_USER!.uid).child("name")
         nameReference.observe(.value, with: { (snapshot) in
             if snapshot.exists() {
                 self.userProfileContainerView.name.text = snapshot.value as? String
             }
         })
-        
+
         let bioReference = USER_REF.child(CURRENT_USER!.uid).child("bio")
         bioReference.observe(.value, with: { (snapshot) in
             if snapshot.exists() {
                 self.userProfileContainerView.bio.text = snapshot.value as? String
             }
         })
-        
-        
+
         let photoReference = USER_REF.child(CURRENT_USER!.uid).child("profileImageUrl")
         photoReference.observe(.value, with: { (snapshot) in
-            
+
             if snapshot.exists() {
                 guard let urlString = snapshot.value as? String else { return }
-                self.userProfileContainerView.profileImageView.sd_setImage(with: URL(string: urlString), placeholderImage: nil, options: [.scaleDownLargeImages , .continueInBackground], completed: { (_, _, _, _) in
+                self.userProfileContainerView.profileImageView.sd_setImage(with: URL(string: urlString), placeholderImage: nil, options: [.scaleDownLargeImages, .continueInBackground], completed: { (_, _, _, _) in
                     completionHandler(true)
                 })
             } else {
@@ -119,10 +118,10 @@ extension UserMessageProfileController {
             }
         })
     }
-    
+
     func updateUserData() {
         ARSLineProgress.ars_showOnView(self.view)
-        
+
         let userReference = USER_REF.child(CURRENT_USER!.uid)
         userReference.updateChildValues(["name": userProfileContainerView.name.text!,
                                          "username": userProfileContainerView.username.text!,
@@ -136,18 +135,18 @@ extension UserMessageProfileController {
 }
 
 extension UserMessageProfileController: UITextViewDelegate {
-    
+
     func textViewDidBeginEditing(_ textView: UITextView) {
         userProfileContainerView.bioPlaceholderLabel.isHidden = true
         userProfileContainerView.countLabel.text = "\(userProfileContainerView.bioMaxCharactersCount - userProfileContainerView.bio.text.count)"
         userProfileContainerView.countLabel.isHidden = false
     }
-    
+
     func textViewDidEndEditing(_ textView: UITextView) {
         userProfileContainerView.bioPlaceholderLabel.isHidden = !textView.text.isEmpty
         userProfileContainerView.countLabel.isHidden = true
     }
-    
+
     func textViewDidChange(_ textView: UITextView) {
         if textView.isFirstResponder && textView.text == "" {
             userProfileContainerView.bioPlaceholderLabel.isHidden = true
@@ -156,14 +155,14 @@ extension UserMessageProfileController: UITextViewDelegate {
         }
         userProfileContainerView.countLabel.text = "\(userProfileContainerView.bioMaxCharactersCount - textView.text.count)"
     }
-    
+
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        
+
         if text == "\n" {
             textView.resignFirstResponder()
             return false
         }
-        
+
         return textView.text.count + (text.count - range.length) <= userProfileContainerView.bioMaxCharactersCount
     }
 }
@@ -174,4 +173,3 @@ extension UserMessageProfileController: UITextFieldDelegate {
         return true
     }
 }
-

@@ -17,7 +17,7 @@ class TimestampView: RevealableView {
 
     titleLabel.textColor = ThemeManager.currentTheme().generalSubtitleColor
   }
-  
+
   required init(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)!
   }

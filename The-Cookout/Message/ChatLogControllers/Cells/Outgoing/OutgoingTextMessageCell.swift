@@ -9,7 +9,7 @@
 import UIKit
 
 class OutgoingTextMessageCell: BaseMessageCell {
-  
+
   let textView: SocialPointTextView = {
     let textView = SocialPointTextView()
     textView.font = UIFont.systemFont(ofSize: 13)
@@ -34,7 +34,7 @@ class OutgoingTextMessageCell: BaseMessageCell {
     textView.frame.size = CGSize(width: bubbleView.frame.width.rounded(), height: bubbleView.frame.height.rounded())
     setupTimestampView(message: message, isOutgoing: true)
   }
-  
+
   override func setupViews() {
     bubbleView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(handleLongTap(_:))) )
     contentView.addSubview(bubbleView)

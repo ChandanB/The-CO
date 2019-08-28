@@ -13,7 +13,7 @@ extension FileManager {
         guard fileExists(atPath: url.path) else {
             return
         }
-        
+
         do {
             try removeItem(at: url)
         } catch let error {

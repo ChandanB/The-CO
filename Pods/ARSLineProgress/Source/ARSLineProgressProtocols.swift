@@ -16,5 +16,5 @@ import UIKit
 	@objc optional var outerCircle: CAShapeLayer { get set }
 	@objc optional var middleCircle: CAShapeLayer { get set }
 	@objc optional var innerCircle: CAShapeLayer { get set }
-	@objc optional weak var targetView: UIView? { get set }
+	@objc optional var targetView: UIView? { get set }
 }

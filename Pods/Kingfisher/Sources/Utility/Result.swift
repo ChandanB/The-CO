@@ -172,11 +172,11 @@ extension Result where Failure == Swift.Error {
     }
 }
 
-extension Result : Equatable where Success : Equatable, Failure: Equatable { }
+extension Result: Equatable where Success: Equatable, Failure: Equatable { }
 
-extension Result : Hashable where Success : Hashable, Failure : Hashable { }
+extension Result: Hashable where Success: Hashable, Failure: Hashable { }
 
-extension Result : CustomDebugStringConvertible {
+extension Result: CustomDebugStringConvertible {
     public var debugDescription: String {
         var output = "Result."
         switch self {
@@ -243,8 +243,7 @@ extension Result where Failure: Error {
     /// - Returns: A single `Output` value.
     func match<Output>(
         onSuccess: (Success) -> Output,
-        onFailure: (Failure) -> Output) -> Output
-    {
+        onFailure: (Failure) -> Output) -> Output {
         switch self {
         case let .success(value):
             return onSuccess(value)

@@ -10,26 +10,26 @@ import UIKit
 import Stevia
 
 public class YPSelectionsGalleryCell: UICollectionViewCell {
-    
+
     let imageView = UIImageView()
     let editIcon = UIView()
     let editSquare = UIView()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-    
+
         sv(
             imageView,
             editIcon,
             editSquare
         )
-        
+
         imageView.fillContainer()
         editIcon.size(32).left(12).bottom(12)
         editSquare.size(16)
         editSquare.CenterY == editIcon.CenterY
         editSquare.CenterX == editIcon.CenterX
-        
+
         layer.shadowColor = UIColor(r: 46, g: 43, b: 37).cgColor
         layer.shadowOpacity = 0.2
         layer.shadowOffset = CGSize(width: 4, height: 7)
@@ -48,12 +48,11 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
             v.layer.borderColor = UIColor.black.cgColor
         }
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
+
     public override var isHighlighted: Bool {
         didSet {
             UIView.animate(withDuration: 0.5,

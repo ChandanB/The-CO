@@ -9,7 +9,7 @@
 import UIKit
 
 public extension UIView {
-    
+
     /**
      Defines the view hierachy for the view.
      
@@ -89,7 +89,7 @@ public extension UIView {
 }
 
 public extension UITableViewCell {
-    
+
     /**
      Defines the view hierachy for the view.
      

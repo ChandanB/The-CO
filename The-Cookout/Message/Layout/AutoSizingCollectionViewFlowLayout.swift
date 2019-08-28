@@ -12,7 +12,7 @@ var isInsertingCellsToTop: Bool = false
 var contentSizeWhenInsertingToTop: CGSize?
 
 class AutoSizingCollectionViewFlowLayout: UICollectionViewFlowLayout {
-    
+
     override func prepare() {
         super.prepare()
         minimumLineSpacing = 2

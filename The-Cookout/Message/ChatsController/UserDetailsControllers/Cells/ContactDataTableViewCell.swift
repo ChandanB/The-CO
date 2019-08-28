@@ -16,15 +16,15 @@ class ContactDataTableViewCell: UITableViewCell {
     textField.translatesAutoresizingMaskIntoConstraints = false
     textField.font = UIFont.systemFont(ofSize: 20)
     textField.keyboardAppearance = ThemeManager.currentTheme().keyboardAppearance
-    
+
     return textField
   }()
-  
+
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: .default, reuseIdentifier: reuseIdentifier)
-    
+
     addSubview(textField)
-    
+
     if #available(iOS 11.0, *) {
       textField.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20).isActive = true
     } else {
@@ -38,7 +38,7 @@ class ContactDataTableViewCell: UITableViewCell {
     super.prepareForReuse()
     textField.keyboardType = .default
   }
-  
+
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }

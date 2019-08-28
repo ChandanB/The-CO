@@ -23,7 +23,7 @@ public class YPPhotoSaver {
             }
         }
     }
-    
+
     fileprivate class func saveImage(_ image: UIImage, toAlbum album: PHAssetCollection) {
         PHPhotoLibrary.shared().performChanges({
             let changeRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
@@ -32,7 +32,7 @@ public class YPPhotoSaver {
             albumChangeRequest?.addAssets(enumeration)
         })
     }
-    
+
     fileprivate class func createAlbum(withName name: String, completion:@escaping () -> Void) {
         PHPhotoLibrary.shared().performChanges({
             PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
@@ -42,7 +42,7 @@ public class YPPhotoSaver {
             }
         })
     }
-    
+
     fileprivate class func album(named: String) -> PHAssetCollection? {
         let fetchOptions = PHFetchOptions()
         fetchOptions.predicate = NSPredicate(format: "title = %@", named)

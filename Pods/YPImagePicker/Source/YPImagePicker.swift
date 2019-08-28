@@ -15,32 +15,32 @@ public protocol YPImagePickerDelegate: AnyObject {
 }
 
 public class YPImagePicker: UINavigationController {
-    
+
     private var _didFinishPicking: (([YPMediaItem], Bool) -> Void)?
     public func didFinishPicking(completion: @escaping (_ items: [YPMediaItem], _ cancelled: Bool) -> Void) {
         _didFinishPicking = completion
     }
     public weak var imagePickerDelegate: YPImagePickerDelegate?
-    
+
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return YPImagePickerConfiguration.shared.preferredStatusBarStyle
     }
-    
+
     // This nifty little trick enables us to call the single version of the callbacks.
     // This keeps the backwards compatibility keeps the api as simple as possible.
     // Multiple selection becomes available as an opt-in.
     private func didSelect(items: [YPMediaItem]) {
         _didFinishPicking?(items, false)
     }
-    
+
     let loadingView = YPLoadingView()
     private let picker: YPPickerVC!
-    
+
     /// Get a YPImagePicker instance with the default configuration.
     public convenience init() {
         self.init(configuration: YPImagePickerConfiguration.shared)
     }
-    
+
     /// Get a YPImagePicker with the specified configuration.
     public required init(configuration: YPImagePickerConfiguration) {
         YPImagePickerConfiguration.shared = configuration
@@ -48,11 +48,11 @@ public class YPImagePicker: UINavigationController {
         super.init(nibName: nil, bundle: nil)
         picker.imagePickerDelegate = self
     }
-    
+
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override public func viewDidLoad() {
         super.viewDidLoad()
         picker.didClose = { [weak self] in
@@ -64,14 +64,14 @@ public class YPImagePicker: UINavigationController {
 
         picker.didSelectItems = { [weak self] items in
             let showsFilters = YPConfig.showsFilters
-            
+
             // Use Fade transition instead of default push animation
             let transition = CATransition()
             transition.duration = 0.3
             transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
             transition.type = CATransitionType.fade
             self?.view.layer.add(transition, forKey: nil)
-            
+
             // Multiple items flow
             if items.count > 1 {
                 if YPConfig.library.skipSelectionsGallery {
@@ -85,7 +85,7 @@ public class YPImagePicker: UINavigationController {
                     return
                 }
             }
-            
+
             // One item flow
             let item = items.first!
             switch item {
@@ -101,7 +101,7 @@ public class YPImagePicker: UINavigationController {
                     }
                     self?.didSelect(items: [mediaItem])
                 }
-                
+
                 func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
                     if case let YPCropType.rectangle(ratio) = YPConfig.showsCrop {
                         let cropVC = YPCropVC(image: photo.image, ratio: ratio)
@@ -114,7 +114,7 @@ public class YPImagePicker: UINavigationController {
                         completion(photo)
                     }
                 }
-                
+
                 if showsFilters {
                     let filterVC = YPPhotoFiltersVC(inputPhoto: photo,
                                                     isFromSelectionVC: false)
@@ -141,17 +141,17 @@ public class YPImagePicker: UINavigationController {
                 }
             }
         }
-        
+
         // If user has not customized the Nav Bar tintColor, then use black.
         if UINavigationBar.appearance().tintColor == nil {
             UINavigationBar.appearance().tintColor  = .black
         }
     }
-    
+
     deinit {
         print("Picker deinited 👍")
     }
-    
+
     private func setupLoadingView() {
         view.sv(
             loadingView

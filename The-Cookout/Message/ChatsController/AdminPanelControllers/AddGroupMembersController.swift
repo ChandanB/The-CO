@@ -10,14 +10,14 @@ import UIKit
 class AddGroupMembersController: SelectParticipantsViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     setupRightBarButton(with: "Add")
     setupNavigationItemTitle(title: "Add users")
   }
-  
+
   override func rightBarButtonTapped() {
     super.rightBarButtonTapped()
-    
+
     addNewMembers()
   }
 }

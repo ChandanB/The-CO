@@ -78,7 +78,7 @@ open class ShoutView: UIView {
   open fileprivate(set) var displayTimer = Timer()
   open fileprivate(set) var panGestureActive = false
   open fileprivate(set) var shouldSilent = false
-  open fileprivate(set) var completion: (() -> ())?
+  open fileprivate(set) var completion: (() -> Void)?
 
   private var subtitleLabelOriginalHeight: CGFloat = 0
   private var internalHeight: CGFloat = 0
@@ -117,7 +117,7 @@ open class ShoutView: UIView {
 
   // MARK: - Configuration
 
-  open func craft(_ announcement: Announcement, to: UIViewController, completion: (() -> ())?) {
+  open func craft(_ announcement: Announcement, to: UIViewController, completion: (() -> Void)?) {
     panGestureActive = false
     shouldSilent = false
     configureView(announcement)
@@ -135,7 +135,6 @@ open class ShoutView: UIView {
     titleLabel.textColor = announcement.textColor
     subtitleLabel.textColor = announcement.textColor
     indicatorView.backgroundColor = announcement.dragIndicatordColor
-    
 
     displayTimer.invalidate()
     displayTimer = Timer.scheduledTimer(timeInterval: announcement.duration,
@@ -165,30 +164,30 @@ open class ShoutView: UIView {
           $0.frame.size.width = totalWidth - (Dimensions.imageOffset * 2)
           $0.sizeToFit()
         }
-      
+
         let oldInternalHeight = self.internalHeight
         self.internalHeight += self.safeYCoordinate
         self.internalHeight += self.subtitleLabel.frame.height
-      
+
         if self.internalHeight >= 141.0 {
           self.internalHeight = oldInternalHeight
         }
-      
+
         let textOffsetX: CGFloat = 20
-        var textOffsetY:CGFloat = 0
-      
+        var textOffsetY: CGFloat = 0
+
           textOffsetY = UIApplication.shared.isStatusBarHidden ? 10 : 30
         if DeviceType.iPhoneX {
           textOffsetY = 10 + UIApplication.shared.statusBarFrame.height
         }
-        
+
         self.titleLabel.frame.origin = CGPoint(x: textOffsetX, y: textOffsetY)
         self.subtitleLabel.frame.origin = CGPoint(x: textOffsetX, y: self.titleLabel.frame.maxY + 2.5)
-      
+
         if self.subtitleLabel.text?.isEmpty ?? true {
           self.titleLabel.center.y = self.imageView.center.y - 2.5
         }
-      
+
         self.frame = CGRect(x: 0, y: 0, width: totalWidth, height: self.internalHeight + Dimensions.touchOffset)
     }
   }
@@ -219,7 +218,7 @@ open class ShoutView: UIView {
   open func silent() {
     UIView.animate(withDuration: 0.35, animations: {
       self.frame.size.height = 0
-      }, completion: { finished in
+      }, completion: { _ in
         self.completion?()
         self.displayTimer.invalidate()
         self.removeFromSuperview()
@@ -242,7 +241,7 @@ open class ShoutView: UIView {
     announcement.action?()
     silent()
   }
-  
+
   @objc private func handlePanGestureRecognizer() {
     let translation = panGestureRecognizer.translation(in: self)
 
@@ -252,9 +251,9 @@ open class ShoutView: UIView {
       subtitleLabel.sizeToFit()
     } else if panGestureRecognizer.state == .changed {
       panGestureActive = true
-      
+
       let maxTranslation = (subtitleLabel.bounds.size.height - subtitleLabelOriginalHeight)
-      
+
       if translation.y >= maxTranslation {
         frame.size.height = internalHeight + maxTranslation + (translation.y - maxTranslation) / 25 + Dimensions.touchOffset
       } else {
@@ -264,9 +263,9 @@ open class ShoutView: UIView {
       panGestureActive = false
       subtitleLabel.numberOfLines = 2
       subtitleLabel.sizeToFit()
-      
+
       UIView.animate(withDuration: 0.2, animations: {
-  
+
         self.frame.size.height = 0
       }, completion: { _ in
         self.completion?()
@@ -274,7 +273,6 @@ open class ShoutView: UIView {
       })
     }
   }
-
 
   // MARK: - Handling screen orientation
 

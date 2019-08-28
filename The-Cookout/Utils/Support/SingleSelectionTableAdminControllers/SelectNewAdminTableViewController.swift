@@ -6,18 +6,17 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 import Firebase
 import SDWebImage
 import ARSLineProgress
 
 class SelectNewAdminTableViewController: UITableViewController {
-  
+
   let socialPointUsersCellID = "socialPointUsersCellID"
-  
+
   weak var adminControlsController: GroupAdminControlsTableViewController?
-  
+
   var filteredUsers = [User]() {
     didSet {
       configureSections()
@@ -32,36 +31,36 @@ class SelectNewAdminTableViewController: UITableViewController {
   var currentUserName = String()
   var searchBar: UISearchBar?
   let informationMessageSender = InformationMessageSender()
-  
+
   fileprivate var isInitialLoad = true
   fileprivate func configureSections() {
     if isInitialLoad {
       isInitialLoad = false
     }
-    
+
     let firstLetters = filteredUsers.map { $0.titleFirstLetter }
     let uniqueFirstLetters = Array(Set(firstLetters))
     sortedFirstLetters = uniqueFirstLetters.sorted()
     sections = sortedFirstLetters.map { firstLetter in
-      
+
       return self.filteredUsers
         .filter { $0.titleFirstLetter == firstLetter }
         .sorted { $0.name < $1.name }
     }
   }
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     setupMainView()
     setupTableView()
     setupSearchController()
   }
-  
+
   deinit {
     print("new admion deinit")
   }
-  
+
   func setupMainView() {
     navigationItem.title = "New admin"
     if #available(iOS 11.0, *) {
@@ -82,7 +81,7 @@ class SelectNewAdminTableViewController: UITableViewController {
     tableView.separatorStyle = .none
     setupRightBarButton(with: "Leave the group")
   }
-  
+
   func setupRightBarButton(with title: String) {
     if #available(iOS 11.0, *) {
       let rightBarButton = UIButton(type: .system)
@@ -95,13 +94,13 @@ class SelectNewAdminTableViewController: UITableViewController {
     }
     navigationItem.rightBarButtonItem?.isEnabled = false
   }
-  
+
   @objc func rightBarButtonTapped() {
     ARSLineProgress.ars_showOnView(self.view)
     adminControlsController?.removeObservers()
     print("rbb")
   }
-  
+
   func leaveTheGroupAndSetAdmin() {
     guard let uid = CURRENT_USER?.uid else { return }
     let membersIDs = getMembersIDs()
@@ -112,10 +111,10 @@ class SelectNewAdminTableViewController: UITableViewController {
       self.setNewAdmin(membersIDs: membersIDs)
     }
   }
-  
+
   func setNewAdmin(membersIDs: [String]) {
     let newAdminID = selectedSocialPointUsers[0].uid
-    let newAdminName = selectedSocialPointUsers[0].name 
+    let newAdminName = selectedSocialPointUsers[0].name
     let adminReference = Database.database().reference().child("groupChats").child(self.chatID).child(messageMetaDataFirebaseFolder)
     adminReference.updateChildValues(["admin": newAdminID]) { (_, _) in
       let newAdminText = "\(newAdminName) is new group administrator"
@@ -124,7 +123,7 @@ class SelectNewAdminTableViewController: UITableViewController {
       self.navigationController?.backToViewController(viewController: ChatLogController.self)
     }
   }
-  
+
   func getMembersIDs() -> [String] {
     guard let uid = CURRENT_USER?.uid else { return [] }
     var membersIDs = self.users.map({$0.uid})
@@ -141,27 +140,27 @@ class SelectNewAdminTableViewController: UITableViewController {
     searchBar?.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
     tableView.tableHeaderView = searchBar
   }
-  
+
   override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
     return sortedFirstLetters[section]
   }
-  
+
   override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
     return sortedFirstLetters
   }
-  
+
   override func numberOfSections(in tableView: UITableView) -> Int {
     return sections.count
   }
-  
+
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return sections[section].count
   }
-  
+
   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 65
   }
-  
+
   override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     view.tintColor = ThemeManager.currentTheme().inputTextViewColor
     if let headerTitle = view as? UITableViewHeaderFooterView {
@@ -169,30 +168,30 @@ class SelectNewAdminTableViewController: UITableViewController {
       headerTitle.textLabel?.font = UIFont.systemFont(ofSize: 10)
     }
   }
-  
+
   override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
     return 20
   }
-  
+
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     return selectCell(for: indexPath)!
   }
-  
+
   func selectCell(for indexPath: IndexPath) -> UITableViewCell? {
-    
+
     let cell = tableView.dequeueReusableCell(withIdentifier: socialPointUsersCellID, for: indexPath) as? NewAdminTableViewCell ?? NewAdminTableViewCell()
     cell.selectNewAdminTableViewController = self
     let user = sections[indexPath.section][indexPath.row]
     cell.isSelected = user.isSelected
-    
+
     if cell.isSelected {
       cell.accessoryType = .checkmark
     } else {
       cell.accessoryType = .none
     }
-  
+
     let name = sections[indexPath.section][indexPath.row].name
-    
+
     if let statusString = sections[indexPath.section][indexPath.row].onlineStatus as? String {
       if statusString == statusOnline {
         cell.subtitle.textColor = SocialPointPalette.defaultBlue
@@ -203,16 +202,16 @@ class SelectNewAdminTableViewController: UITableViewController {
         let subtitle = "Last seen " + timeAgoSinceDate(date)
         cell.subtitle.text = subtitle
       }
-      
+
     } else if let statusTimeinterval = sections[indexPath.section][indexPath.row].onlineStatus as? TimeInterval {
       cell.subtitle.textColor = ThemeManager.currentTheme().generalSubtitleColor
       let date = Date(timeIntervalSince1970: statusTimeinterval/1000)
       let subtitle = "Last seen " + timeAgoSinceDate(date)
       cell.subtitle.text = subtitle
     }
-    
+
     let url = sections[indexPath.section][indexPath.row].thumbnailPhotoURL
-    cell.icon.sd_setImage(with: URL(string: url), placeholderImage:  UIImage(named: "UserpicIcon"), options: [.progressiveLoad, .continueInBackground], completed: { (image, error, cacheType, url) in
+    cell.icon.sd_setImage(with: URL(string: url), placeholderImage: UIImage(named: "UserpicIcon"), options: [.progressiveLoad, .continueInBackground], completed: { (image, _, cacheType, _) in
       guard image != nil else { return }
       guard cacheType != SDImageCacheType.memory, cacheType != SDImageCacheType.disk else {
         cell.icon.alpha = 1
@@ -223,8 +222,8 @@ class SelectNewAdminTableViewController: UITableViewController {
     })
     return cell
   }
-  
-  func deselectAll(indexPath:IndexPath) {
+
+  func deselectAll(indexPath: IndexPath) {
     for user in selectedSocialPointUsers {
 			if let filteredUsersIndex = filteredUsers.firstIndex(of: user) {
         filteredUsers[filteredUsersIndex].isSelected = false
@@ -236,26 +235,26 @@ class SelectNewAdminTableViewController: UITableViewController {
     sections[indexPath.section][indexPath.row].isSelected = false
     selectedSocialPointUsers.removeAll()
   }
-  
+
   func didSelectUser(at indexPath: IndexPath) {
-    
+
     let user = sections[indexPath.section][indexPath.row]
-    
+
 		if let filteredUsersIndex = filteredUsers.firstIndex(of: user) {
       filteredUsers[filteredUsersIndex].isSelected = true
     }
-    
+
 		if let usersIndex = users.firstIndex(of: user) {
       users[usersIndex].isSelected = true
     }
-    
+
     sections[indexPath.section][indexPath.row].isSelected = true
     selectedSocialPointUsers.append(sections[indexPath.section][indexPath.row])
-    
+
     DispatchQueue.main.async {
       self.tableView.reloadData()
     }
-    
+
     if selectedSocialPointUsers.count != 0 {
       navigationItem.rightBarButtonItem?.isEnabled = true
       return

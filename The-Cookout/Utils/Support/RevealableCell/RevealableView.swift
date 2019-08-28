@@ -19,19 +19,19 @@ public enum RevealSwipeDirection {
 }
 
 open class RevealableView: UIControl {
-    
+
     @IBInspectable open var width: CGFloat = 0 {
       didSet {
         prepareWidthConstraint()
       }
     }
-    
+
     internal weak var tableView: UICollectionView?
     open internal(set) var reuseIdentifier: String!
     open internal(set) var style: RevealStyle = .slide
     open internal(set) var direction: RevealSwipeDirection = .left
     fileprivate var viewWidthConstraint: NSLayoutConstraint?
-    
+
     /**
      Ensure to call super.didMoveToSuperview in your subclasses!
      */
@@ -41,11 +41,11 @@ open class RevealableView: UIControl {
       }
       self.translatesAutoresizingMaskIntoConstraints = false
     }
-    
+
     internal func prepareForReuse() {
       tableView?.prepareRevealableViewForReuse(self)
     }
-    
+
     fileprivate func prepareWidthConstraint() {
       if width > 0 {
         let constraint = NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal,

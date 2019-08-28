@@ -6,17 +6,16 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 import FLAnimatedImage
 
 class TypingIndicatorCell: UICollectionViewCell {
-  
+
   var typingIndicator: FLAnimatedImageView = {
     var typingIndicator = FLAnimatedImageView()
-  
+
     typingIndicator.backgroundColor = .clear
-  
+
     return typingIndicator
   }()
 

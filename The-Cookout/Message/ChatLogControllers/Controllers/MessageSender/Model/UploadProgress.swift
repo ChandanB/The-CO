@@ -11,7 +11,7 @@ import UIKit
 class UploadProgress: NSObject {
   var objectID: String
   var progress: Double
-  
+
   init(objectID: String, progress: Double) {
     self.objectID = objectID
     self.progress = progress
@@ -19,10 +19,10 @@ class UploadProgress: NSObject {
 }
 
 extension Array where Element: UploadProgress {
-  
+
   mutating func setProgress(_ progress: Double, id: String) {
     var array = self as [UploadProgress]
-    
+
 		guard let index = array.firstIndex(where: { (element) -> Bool in
       return element.objectID == id
     }) else {

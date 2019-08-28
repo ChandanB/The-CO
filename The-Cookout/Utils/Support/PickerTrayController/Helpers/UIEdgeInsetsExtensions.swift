@@ -6,13 +6,12 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 
 extension UIEdgeInsets {
-    
+
     var vertical: CGFloat {
         return top + bottom
     }
-    
+
 }

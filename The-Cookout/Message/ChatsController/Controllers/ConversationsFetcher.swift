@@ -18,20 +18,20 @@ protocol ConversationUpdatesDelegate: class {
 }
 
 class ConversationsFetcher: NSObject {
-    
+
     weak var delegate: ConversationUpdatesDelegate?
-    
+
     fileprivate var group: DispatchGroup!
     fileprivate var isGroupAlreadyFinished = false
     fileprivate var conversations = [Conversation]()
-    
+
     fileprivate var userReference: DatabaseReference!
     fileprivate var groupChatReference: DatabaseReference!
     fileprivate var currentUserConversationsReference: DatabaseReference!
     fileprivate var lastMessageForConverstaionRef: DatabaseReference!
     fileprivate var conversationReference: DatabaseReference!
     fileprivate var connectedReference: DatabaseReference!
-    
+
     fileprivate var inAppNotificationsObserverHandler: DatabaseHandle!
     fileprivate var currentUserConversationsRemovingHandle = DatabaseHandle()
     fileprivate var currentUserConversationsAddingHandle = DatabaseHandle()
@@ -69,21 +69,21 @@ class ConversationsFetcher: NSObject {
      currentUserConversationsReference.removeObserver(withHandle: currentUserConversationsRemovingHandle)
      }
      }*/
-    
+
     func fetchConversations() {
         guard let currentUserID = CURRENT_USER?.uid else { return }
         delegate?.conversations(didStartFetching: true)
-        
+
         currentUserConversationsReference = USER_MESSAGES_REF.child(currentUserID)
         currentUserConversationsReference.observeSingleEvent(of: .value) { (snapshot) in
             self.group = DispatchGroup()
             for _ in 0 ..< snapshot.childrenCount { self.group.enter() }
-            
+
             self.group.notify(queue: .main, execute: {
                 self.isGroupAlreadyFinished = true
                 self.delegate?.conversations(didFinishFetching: true, conversations: self.conversations)
             })
-            
+
             if !snapshot.exists() {
                 self.delegate?.conversations(didFinishFetching: true, conversations: self.conversations)
                 return
@@ -92,7 +92,7 @@ class ConversationsFetcher: NSObject {
         observeConversationRemoved()
         observeConversationAdded()
     }
-    
+
     func observeConversationRemoved() {
         currentUserConversationsRemovingHandle = currentUserConversationsReference.observe(.childRemoved) { (snapshot) in
             let chatID = snapshot.key
@@ -104,7 +104,7 @@ class ConversationsFetcher: NSObject {
                 self.userReference.removeObserver(withHandle: self.conversationsChangesHandle[index].handle)
                 self.conversationsChangesHandle.remove(at: index)
             }
-            
+
             if self.groupChatReference != nil {
                 guard let index = self.groupConversationsChangesHandle.firstIndex(where: { (element) -> Bool in
                     return element.chatID == chatID
@@ -115,7 +115,7 @@ class ConversationsFetcher: NSObject {
             }
         }
     }
-    
+
     func observeConversationAdded() {
         currentUserConversationsAddingHandle = currentUserConversationsReference.observe(.childAdded, with: { (snapshot) in
             let chatID = snapshot.key
@@ -124,24 +124,24 @@ class ConversationsFetcher: NSObject {
             self.loadConversation(for: chatID)
         })
     }
-    
+
     fileprivate var conversationReferenceHandle = [(handle: DatabaseHandle, currentUserID: String, chatID: String)]()
-    
+
     fileprivate func loadConversation(for chatID: String) {
         guard let currentUserID = CURRENT_USER?.uid else { return }
-        
+
         conversationReference = USER_MESSAGES_REF.child(currentUserID).child(chatID).child(messageMetaDataFirebaseFolder)
         let element = (handle: DatabaseHandle(), currentUserID: currentUserID, chatID: chatID)
         conversationReferenceHandle.insert(element, at: 0)
         conversationReference.keepSynced(true)
         conversationReferenceHandle[0].handle = conversationReference.observe( .value, with: { (snapshot) in
-            
+
             guard var dictionary = snapshot.value as? [String: AnyObject], snapshot.exists() else { return }
             dictionary.updateValue(chatID as AnyObject, forKey: "chatID")
-            
+
             self.delegate?.conversations(didStartUpdatingData: true)
             let conversation = Conversation(dictionary: dictionary)
-            
+
             guard let lastMessageID = conversation.lastMessageID else { //if no messages in chat yet
                 self.loadAddictionalMetadata(for: conversation)
                 return
@@ -149,28 +149,28 @@ class ConversationsFetcher: NSObject {
             self.loadLastMessage(for: lastMessageID, conversation: conversation)
         })
     }
-    
+
     fileprivate func loadLastMessage(for messageID: String, conversation: Conversation) {
         let lastMessageReference = MESSAGES_REF.child(messageID)
         lastMessageReference.observeSingleEvent(of: .value, with: { (snapshot) in
             guard var dictionary = snapshot.value as? [String: AnyObject] else { return }
             dictionary.updateValue(messageID as AnyObject, forKey: "messageUID")
-            
+
             let message = Message(dictionary: dictionary)
             conversation.lastMessage = message
             self.loadAddictionalMetadata(for: conversation)
         })
     }
-    
+
     fileprivate func loadAddictionalMetadata(for conversation: Conversation) {
-        
+
         guard let chatID = conversation.chatID, let currentUserID = CURRENT_USER?.uid else { return }
-        
+
         let userDataReference = USER_REF.child(chatID)
         userDataReference.observeSingleEvent(of: .value, with: { (snapshot) in
             guard var dictionary = snapshot.value as? [String: AnyObject] else { return }
             dictionary.updateValue(chatID as AnyObject, forKey: "id")
-            
+
             let user = User(uid: chatID, dictionary: dictionary)
             conversation.chatName = user.name
             conversation.chatPhotoURL = user.profileImageUrl
@@ -179,16 +179,16 @@ class ConversationsFetcher: NSObject {
             self.prefetchThumbnail(from: conversation.chatThumbnailPhotoURL)
             self.updateConversationArrays(with: conversation)
         })
-        
+
         let groupChatDataReference = Database.database().reference().child("groupChats").child(chatID).child(messageMetaDataFirebaseFolder)
         groupChatDataReference.observeSingleEvent(of: .value, with: { (snapshot) in
             guard var dictionary = snapshot.value as? [String: AnyObject] else { return }
             dictionary.updateValue(chatID as AnyObject, forKey: "id")
-            
-            if let membersIDs = dictionary["chatParticipantsIDs"] as? [String:AnyObject] {
+
+            if let membersIDs = dictionary["chatParticipantsIDs"] as? [String: AnyObject] {
                 dictionary.updateValue(Array(membersIDs.values) as AnyObject, forKey: "chatParticipantsIDs")
             }
-            
+
             let metaInfo = Conversation(dictionary: dictionary)
             conversation.chatName = metaInfo.chatName
             conversation.chatPhotoURL = metaInfo.chatPhotoURL
@@ -201,16 +201,16 @@ class ConversationsFetcher: NSObject {
             self.updateConversationArrays(with: conversation)
         })
     }
-    
+
     fileprivate func prefetchThumbnail(from urlString: String?) {
         if let thumbnail = urlString, let url = URL(string: thumbnail) {
             SDWebImagePrefetcher.shared.prefetchURLs([url])
         }
     }
-    
+
     fileprivate func updateConversationArrays(with conversation: Conversation) {
         guard let userID = conversation.chatID else { return }
-        
+
         if let index = conversations.firstIndex(where: { (conversation) -> Bool in
             return conversation.chatID == userID
         }) {
@@ -220,7 +220,7 @@ class ConversationsFetcher: NSObject {
             handleGroupOrReloadTable()
         }
     }
-    
+
     func update(conversation: Conversation, at index: Int) {
         guard isGroupAlreadyFinished, (conversations[index].muted != conversation.muted) else {
             if isGroupAlreadyFinished && conversations[index].pinned != conversation.pinned {
@@ -228,7 +228,7 @@ class ConversationsFetcher: NSObject {
                 delegate?.conversations(update: conversations[index], reloadNeeded: false)
                 return
             }
-            
+
             conversations[index] = conversation
             handleGroupOrReloadTable()
             return
@@ -236,7 +236,7 @@ class ConversationsFetcher: NSObject {
         conversations[index] = conversation
         delegate?.conversations(update: conversations[index], reloadNeeded: true)
     }
-    
+
     fileprivate func handleGroupOrReloadTable() {
         guard isGroupAlreadyFinished else {
             guard group != nil else {
@@ -248,13 +248,13 @@ class ConversationsFetcher: NSObject {
         }
         delegate?.conversations(didFinishFetching: true, conversations: conversations)
     }
-    
+
     var conversationsChangesHandle = [(handle: DatabaseHandle, chatID: String)]()
     var groupConversationsChangesHandle = [(handle: DatabaseHandle, chatID: String)]()
-    
+
     fileprivate func observeChangesForGroupConversation(with chatID: String) {
         groupChatReference = Database.database().reference().child("groupChats").child(chatID).child(messageMetaDataFirebaseFolder)
-        
+
         let handle = DatabaseHandle()
         let element = (handle: handle, chatID: chatID)
         groupConversationsChangesHandle.insert(element, at: 0)
@@ -264,10 +264,10 @@ class ConversationsFetcher: NSObject {
                                            chatID: chatID, membersIDsKey: "chatParticipantsIDs", adminKey: "admin")
         })
     }
-    
+
     fileprivate func observeChangesForDefaultConversation(with chatID: String) {
         userReference = USER_REF.child(chatID)
-        
+
         let handle = DatabaseHandle()
         let element = (handle: handle, chatID: chatID)
         conversationsChangesHandle.insert(element, at: 0)
@@ -277,31 +277,31 @@ class ConversationsFetcher: NSObject {
                                            chatID: chatID, membersIDsKey: nil, adminKey: nil)
         })
     }
-    
+
     fileprivate func handleConversationChanges(from snapshot: DataSnapshot,
                                                conversationNameKey: String, conversationPhotoKey: String,
                                                chatID: String, membersIDsKey: String?, adminKey: String?) {
-        
+
         guard let index = conversations.firstIndex(where: { (conversation) -> Bool in
             return conversation.chatID == chatID
         }) else { return }
-        
+
         if let adminKey = adminKey, snapshot.key == adminKey {
             conversations[index].admin = snapshot.value as? String
             delegate?.conversations(update: conversations[index], reloadNeeded: true)
         }
-        
+
         if let membersIDsKey = membersIDsKey, snapshot.key == membersIDsKey {
             guard let dictionary = snapshot.value as? [String: AnyObject] else { return }
             conversations[index].chatParticipantsIDs = Array(dictionary.keys)
             delegate?.conversations(update: conversations[index], reloadNeeded: true)
         }
-        
+
         if snapshot.key == conversationNameKey {
             conversations[index].chatName = snapshot.value as? String
             delegate?.conversations(update: conversations[index], reloadNeeded: true)
         }
-        
+
         if snapshot.key == conversationPhotoKey {
             conversations[index].chatThumbnailPhotoURL = snapshot.value as? String
             delegate?.conversations(update: conversations[index], reloadNeeded: true)

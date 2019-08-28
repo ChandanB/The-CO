@@ -10,27 +10,27 @@ import UIKit
 import AVFoundation
 
 class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, ReturnPostImageDelegate {
-    
-    var delegate : ReturnPostImageDelegate?
-    
+
+    var delegate: ReturnPostImageDelegate?
+
     func returnPostImage(image: UIImage) {
         handleCapturePhoto()
         self.delegate?.returnPostImage(image: image)
         self.dismiss(animated: true, completion: nil)
     }
-    
+
     let topBar: UIView = {
         let iv = UIView()
         iv.backgroundColor = .black
         return iv
     }()
-    
+
     let bottomBar: UIView = {
         let iv = UIView()
         iv.backgroundColor = .black
         return iv
     }()
-    
+
     let dismissButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "cancel_shadow").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -39,47 +39,46 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, ReturnP
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
-    
+
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil)
     }
-    
+
     let capturePhotoButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "capture_photo"), for: .normal)
         button.addTarget(self, action: #selector(handleCapturePhoto), for: .touchUpInside)
         return button
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         transitioningDelegate = self
         setupCaptureSession()
         setupHUD()
     }
-    
-    
+
     override var prefersStatusBarHidden: Bool {
         return true
     }
-    
+
     private let customAnimationPresentor = CustomAnimationPresenter()
     private let customAnimationDismissor = CustomAnimationDismisser()
-    
+
     private let output = AVCapturePhotoOutput()
-    
+
     private func setupHUD() {
         view.addSubview(capturePhotoButton)
         capturePhotoButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 24, paddingRight: 0, width: 80, height: 80)
         capturePhotoButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        
+
         view.addSubview(dismissButton)
         dismissButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.safeAreaLayoutGuide.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 44, height: 44)
     }
-    
+
     @objc private func handleCapturePhoto() {
         let settings = AVCapturePhotoSettings()
-        
+
         // do not execute camera capture for simulator
         #if (!arch(x86_64))
         guard let previewFormatType = settings.availablePreviewPhotoPixelFormatTypes.first else { return }
@@ -87,16 +86,15 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, ReturnP
         output.capturePhoto(with: settings, delegate: self)
         #endif
     }
-    
+
     let screenWidth = UIScreen.main.bounds.size.width
     let screenHeight = UIScreen.main.bounds.size.height - 120
-    
-    
+
     private func setupCaptureSession() {
         guard let captureDevice = AVCaptureDevice.default(for: AVMediaType.video) else { return }
-        
+
         let captureSession = AVCaptureSession()
-        
+
         //setup inputs
         do {
             let input = try AVCaptureDeviceInput(device: captureDevice)
@@ -106,30 +104,30 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, ReturnP
         } catch let err {
             print("Could not set up camera input:", err)
         }
-        
+
         //setup outputs
         if captureSession.canAddOutput(output) {
             captureSession.addOutput(output)
         }
-        
+
         //setup output preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.frame = view.safeAreaLayoutGuide.layoutFrame
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
-        
+
         captureSession.startRunning()
     }
-    
+
 }
 
-//MARK: - AVCapturePhotoCaptureDelegate
+// MARK: - AVCapturePhotoCaptureDelegate
 extension CameraController {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let imageData = photo.fileDataRepresentation() else { return }
-        
+
         let previewImage = UIImage(data: imageData)
-        
+
         let containerView = PreviewPhotoContainerView()
         containerView.previewImageView.image = previewImage
         view.addSubview(containerView)
@@ -137,13 +135,13 @@ extension CameraController {
     }
 }
 
-//MARK: - UIViewControllerTransitioningDelegate
+// MARK: - UIViewControllerTransitioningDelegate
 extension CameraController: UIViewControllerTransitioningDelegate {
-    
+
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return customAnimationPresentor
     }
-    
+
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return customAnimationDismissor
     }

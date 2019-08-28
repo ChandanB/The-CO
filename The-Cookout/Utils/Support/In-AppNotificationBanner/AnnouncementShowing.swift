@@ -4,7 +4,6 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 
 public func show(shout announcement: Announcement, to: UIViewController, completion: (() -> Void)? = nil) {

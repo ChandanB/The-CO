@@ -9,7 +9,7 @@
 import UIKit
 
 class Conversation: NSObject {
-    
+
     var chatID: String?
     var chatName: String?
     var chatPhotoURL: String?
@@ -17,30 +17,30 @@ class Conversation: NSObject {
     var lastMessageID: String?
     var lastMessage: Message?
     var isGroupChat: Bool?
-    var chatParticipantsIDs:[String]?
+    var chatParticipantsIDs: [String]?
     var admin: String?
     var badge: Int?
     var pinned: Bool?
     var muted: Bool?
-    
+
     func messageText() -> String {
-        
+
         let isImageMessage = (lastMessage?.imageUrl != nil || lastMessage?.localImage != nil) && lastMessage?.videoUrl == nil
         let isVideoMessage = (lastMessage?.imageUrl != nil || lastMessage?.localImage != nil) && lastMessage?.videoUrl != nil
         let isVoiceMessage = lastMessage?.voiceEncodedString != nil
         let isTextMessage = lastMessage?.text != nil
-        
+
         guard !isImageMessage else { return  MessageSubtitle.image }
         guard !isVideoMessage else { return MessageSubtitle.video }
         guard !isVoiceMessage else { return MessageSubtitle.audio }
         guard !isTextMessage else { return lastMessage?.text ?? "" }
-        
+
         return MessageSubtitle.empty
     }
-    
+
     init(dictionary: [String: AnyObject]?) {
         super.init()
-        
+
         chatID = dictionary?["chatID"] as? String
         chatName = dictionary?["chatName"] as? String
         chatPhotoURL = dictionary?["chatOriginalPhotoURL"] as? String

@@ -14,9 +14,9 @@ extension AVAssetTrack {
         let renderScale = renderSize.width / cropRect.width
         let offset = CGPoint(x: -cropRect.origin.x, y: -cropRect.origin.y)
         let rotation = atan2(self.preferredTransform.b, self.preferredTransform.a)
-        
+
         var rotationOffset = CGPoint(x: 0, y: 0)
-        
+
         if self.preferredTransform.b == -1.0 {
             rotationOffset.y = self.naturalSize.width
         } else if self.preferredTransform.c == -1.0 {
@@ -25,7 +25,7 @@ extension AVAssetTrack {
             rotationOffset.x = self.naturalSize.width
             rotationOffset.y = self.naturalSize.height
         }
-        
+
         var transform = CGAffineTransform.identity
         transform = transform.scaledBy(x: renderScale, y: renderScale)
         transform = transform.translatedBy(x: offset.x + rotationOffset.x, y: offset.y + rotationOffset.y)

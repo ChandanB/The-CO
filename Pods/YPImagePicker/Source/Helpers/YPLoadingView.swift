@@ -10,13 +10,13 @@ import UIKit
 import Stevia
 
 class YPLoadingView: UIView {
-    
+
     let spinner = UIActivityIndicatorView(style: .whiteLarge)
     let processingLabel = UILabel()
-    
+
     convenience init() {
         self.init(frame: .zero)
-    
+
         // View Hiearachy
         let stack = UIStackView(arrangedSubviews: [spinner, processingLabel])
         stack.axis = .vertical
@@ -24,22 +24,22 @@ class YPLoadingView: UIView {
         sv(
             stack
         )
-        
+
         // Layout
         stack.centerInContainer()
         processingLabel.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 751), for: .horizontal)
-        
+
         // Style
         backgroundColor = UIColor.black.withAlphaComponent(0.8)
         processingLabel.textColor = .white
         spinner.hidesWhenStopped = true
-        
+
         // Content
         processingLabel.text = YPConfig.wordings.processing
-        
+
         spinner.startAnimating()
     }
-    
+
     func toggleLoading() {
         if !spinner.isAnimating {
             spinner.startAnimating()

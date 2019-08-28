@@ -22,13 +22,13 @@ private let currentUserCellID = "currentUserCellID"
 private let usersCellID = "usersCellID"
 
 class UsersController: UITableViewController {
-    
+
   var users = [User]()
   var filteredUsers = [User]()
 
   var searchBar: UISearchBar?
   var searchUsersController: UISearchController?
-  
+
   let viewPlaceholder = ViewPlaceholder()
   let socialPointUsersFetcher = SocialPointUsersFetcher()
   let usersFetcher = UsersFetcher()
@@ -51,7 +51,7 @@ class UsersController: UITableViewController {
         self.socialPointUsersFetcher.fetchSocialPointUsers(asynchronously: true)
       }
     }
-  
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
       return ThemeManager.currentTheme().statusBarStyle
     }
@@ -104,16 +104,16 @@ class UsersController: UITableViewController {
         tableView.tableHeaderView = searchBar
       }
     }
-  
+
     fileprivate func reloadTableView(updatedUsers: [User]) {
-      
+
       self.users = updatedUsers
       self.users = socialPointUsersFetcher.rearrangeUsers(users: self.users)
-    
+
       let searchBar = correctSearchBarForCurrentIOSVersion()
       let isSearchInProgress = searchBar.text != ""
       let isSearchControllerEmpty = self.filteredUsers.count == 0
-      
+
       if isSearchInProgress && !isSearchControllerEmpty {
         return
       } else {
@@ -124,7 +124,7 @@ class UsersController: UITableViewController {
         }
       }
     }
-  
+
     fileprivate func correctSearchBarForCurrentIOSVersion() -> UISearchBar {
       var searchBar: UISearchBar!
       if #available(iOS 11.0, *) {
@@ -142,7 +142,7 @@ class UsersController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-  
+
       if section == 0 {
         return 1
       } else if section == 1 {
@@ -159,13 +159,13 @@ class UsersController: UITableViewController {
          return 65
       }
     }
-  
+
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-      
+
       if section == 0 {
         return ""
       } else if section == 1 {
-      
+
         if filteredUsers.count == 0 {
           return ""
         } else {
@@ -178,7 +178,7 @@ class UsersController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
       view.tintColor = ThemeManager.currentTheme().generalBackgroundColor
-      
+
       if let headerTitle = view as? UITableViewHeaderFooterView {
         headerTitle.textLabel?.textColor = ThemeManager.currentTheme().generalTitleColor
       }
@@ -187,7 +187,7 @@ class UsersController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       return selectCell(for: indexPath)
     }
-  
+
     func selectCell(for indexPath: IndexPath) -> UITableViewCell {
       if indexPath.section == 0 {
         let cell = tableView.dequeueReusableCell(withIdentifier: currentUserCellID,
@@ -200,7 +200,7 @@ class UsersController: UITableViewController {
         let user = filteredUsers[indexPath.row]
         cell.configureCell(for: user)
         return cell
-        
+
       } else {
         let cell = tableView.dequeueReusableCell(withIdentifier: usersCellID,
                                                  for: indexPath) as? UsersTableViewCell ?? UsersTableViewCell()
@@ -209,18 +209,18 @@ class UsersController: UITableViewController {
         return cell
       }
     }
-  
-    var chatLogController: ChatLogController? = nil
-    var messagesFetcher: MessagesFetcher? = nil
-  
+
+    var chatLogController: ChatLogController?
+    var messagesFetcher: MessagesFetcher?
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-      
+
       if indexPath.section == 0 {
         guard let currentUID = CURRENT_USER?.uid else { return }
         let conversationDictionary: [String: AnyObject] = ["chatID": currentUID as AnyObject,
                                                           "isGroupChat": false  as AnyObject,
                                                           "chatParticipantsIDs": [currentUID] as AnyObject]
-        
+
         let conversation = Conversation(dictionary: conversationDictionary)
         chatLogController = ChatLogController(collectionViewLayout: AutoSizingCollectionViewFlowLayout())
         messagesFetcher = MessagesFetcher()
@@ -233,7 +233,7 @@ class UsersController: UITableViewController {
                                                            "chatOriginalPhotoURL": filteredUsers[indexPath.row].profileImageUrl as AnyObject,
                                                            "chatThumbnailPhotoURL": filteredUsers[indexPath.row].thumbnailPhotoURL as AnyObject,
                                                            "chatParticipantsIDs": [filteredUsers[indexPath.row].uid, currentUserID] as AnyObject]
-        
+
         let conversation = Conversation(dictionary: conversationDictionary)
         chatLogController = ChatLogController(collectionViewLayout: AutoSizingCollectionViewFlowLayout())
         messagesFetcher = MessagesFetcher()
@@ -256,13 +256,13 @@ extension UsersController: SocialPointUsersUpdatesDelegate {
 }
 
 extension UsersController: MessagesDelegate {
-  
+
   func messages(shouldChangeMessageStatusToReadAt reference: DatabaseReference) {
     chatLogController?.updateMessageStatus(messageRef: reference)
   }
-  
+
   func messages(shouldBeUpdatedTo messages: [Message], conversation: Conversation) {
-    
+
     chatLogController?.hidesBottomBarWhenPushed = true
     chatLogController?.messagesFetcher = messagesFetcher
     chatLogController?.messages = messages
@@ -271,12 +271,12 @@ extension UsersController: MessagesDelegate {
     chatLogController?.configureTitleViewWithOnlineStatus()
     chatLogController?.messagesFetcher.collectionDelegate = chatLogController
     guard let destination = chatLogController else { return }
-    
+
     if #available(iOS 11.0, *) {
     } else {
       self.chatLogController?.startCollectionViewAtBottom()
     }
-    
+
     navigationController?.pushViewController(destination, animated: true)
     chatLogController = nil
     messagesFetcher?.delegate = nil
@@ -285,7 +285,7 @@ extension UsersController: MessagesDelegate {
 }
 
 extension UsersController: UsersUpdatesDelegate {
- 
+
   func users(updateDatasource users: [User]) {
     self.users = users
     self.filteredUsers = users
@@ -296,7 +296,7 @@ extension UsersController: UsersUpdatesDelegate {
       self.socialPointUsersFetcher.fetchSocialPointUsers(asynchronously: true)
     }
   }
-  
+
   func users(handleAccessStatus: Bool) {
     guard handleAccessStatus else {
       viewPlaceholder.add(for: view, title: .denied, subtitle: .denied, priority: .high, position: .top)

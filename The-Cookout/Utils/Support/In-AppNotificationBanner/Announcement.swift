@@ -6,7 +6,6 @@
 
 import UIKit
 
-
 public struct Announcement {
 
   public var title: String
@@ -22,7 +21,7 @@ public struct Announcement {
               backgroundColor: UIColor,
               textColor: UIColor,
               dragIndicatordColor: UIColor, action: (() -> Void)? = nil) {
-    
+
     self.title = title
     self.subtitle = subtitle
     self.image = image
@@ -35,7 +34,7 @@ public struct Announcement {
 }
 
 public struct FontList {
-  
+
   public struct Announcement {
     public static var title = UIFont.boldSystemFont(ofSize: 15)
     public static var subtitle = UIFont.systemFont(ofSize: 13)

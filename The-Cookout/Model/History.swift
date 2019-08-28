@@ -8,8 +8,8 @@
 
 struct HistoriesContent: Content {
     let contentType: ContentType = .histories
-    let histories:[History]
-    
+    let histories: [History]
+
     init(histories: [History]) {
         self.histories = histories
     }
@@ -20,7 +20,7 @@ struct History {
     let profileUrl: String
     let histories: [String]
     let isSelfPost: Bool
-    
+
     init(name: String, profileUrl: String, histories: [String], isSelfPost: Bool) {
         self.name = name
         self.profileUrl = profileUrl

@@ -9,7 +9,7 @@
 import UIKit
 
 public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
-    
+
     var v: YPLibraryView!
     private let assetViewContainerOriginalConstraintTop: CGFloat = 0
     private var dragDirection = YPDragDirection.up
@@ -18,7 +18,7 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
     private var dragStartPos: CGPoint = .zero
     private let dragDiff: CGFloat = 0
     private var _isImageShown = true
-    
+
     // The height constraint of the view with main selected image
     var topHeight: CGFloat {
         get { return v.assetViewContainerConstraintTop.constant }
@@ -28,7 +28,7 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
             }
         }
     }
-    
+
     // Is the main image shown
     var isImageShown: Bool {
         get { return self._isImageShown }
@@ -41,7 +41,7 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
             }
         }
     }
-    
+
     func registerForPanGesture(on view: YPLibraryView) {
         v = view
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
@@ -49,13 +49,13 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
         view.addGestureRecognizer(panGesture)
         topHeight = 0
     }
-    
+
     public func resetToOriginalState() {
         topHeight = assetViewContainerOriginalConstraintTop
         animateView()
         dragDirection = .up
     }
-    
+
     fileprivate func animateView() {
         UIView.animate(withDuration: 0.2,
                        delay: 0.0,
@@ -67,12 +67,12 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
             ,
                        completion: nil)
     }
-    
+
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith
         otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    
+
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         let p = gestureRecognizer.location(ofTouch: 0, in: v)
         // Desactivate pan on image when it is shown.
@@ -83,35 +83,35 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
         }
         return true
     }
-    
+
     @objc
     func panned(_ sender: UIPanGestureRecognizer) {
-        
+
         let containerHeight = v.assetViewContainer.frame.height
         let currentPos = sender.location(in: v)
         let overYLimitToStartMovingUp = currentPos.y * 1.4 < cropBottomY - dragDiff
-        
+
         switch sender.state {
         case .began:
             let view    = sender.view
             let loc     = sender.location(in: view)
             let subview = view?.hitTest(loc, with: nil)
-            
+
             if subview == v.assetZoomableView
                 && topHeight == assetViewContainerOriginalConstraintTop {
                 return
             }
-            
+
             dragStartPos = sender.location(in: v)
             cropBottomY = v.assetViewContainer.frame.origin.y + containerHeight
-            
+
             // Move
             if dragDirection == .stop {
                 dragDirection = (topHeight == assetViewContainerOriginalConstraintTop)
                     ? .up
                     : .down
             }
-            
+
             // Scroll event of CollectionView is preferred.
             if (dragDirection == .up && dragStartPos.y < cropBottomY + dragDiff) ||
                 (dragDirection == .down && dragStartPos.y > cropBottomY) {
@@ -140,13 +140,13 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
                     imaginaryCollectionViewOffsetStartPosY = currentPos.y
                 }
             }
-            
+
         default:
             imaginaryCollectionViewOffsetStartPosY = 0.0
             if sender.state == UIGestureRecognizer.State.ended && dragDirection == .stop {
                 return
             }
-            
+
             if overYLimitToStartMovingUp && isImageShown == false {
                 // The largest movement
                 topHeight =
@@ -158,9 +158,8 @@ public class PanGestureHelper: NSObject, UIGestureRecognizerDelegate {
                 resetToOriginalState()
             }
         }
-        
+
         // Update isImageShown
         isImageShown = topHeight == assetViewContainerOriginalConstraintTop
     }
 }
-

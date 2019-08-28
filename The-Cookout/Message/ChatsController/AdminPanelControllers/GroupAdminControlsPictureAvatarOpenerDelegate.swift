@@ -25,7 +25,7 @@ extension GroupAdminControlsTableViewController: AvatarOpenerDelegate {
       })
     }
   }
-  
+
   func avatarOpener(didPerformDeletionAction: Bool) {
     navigationController?.view.isUserInteractionEnabled = false
     groupProfileTableHeaderContainer.profileImageView.showActivityIndicator()
@@ -42,14 +42,14 @@ extension GroupAdminControlsTableViewController: AvatarOpenerDelegate {
 }
 
 extension GroupAdminControlsTableViewController { // delete
-  
+
   typealias CurrentPictureDeletionCompletionHandler = (_ success: Bool) -> Void
   func deleteCurrentPhoto(completion: @escaping CurrentPictureDeletionCompletionHandler) {
     guard groupAvatarURL != "" else { completion(true); return }
     let storage = Storage.storage()
     let storageReference = storage.reference(forURL: groupAvatarURL)
     let groupChatsMetaReference = Database.database().reference().child("groupChats").child(chatID).child(messageMetaDataFirebaseFolder)
-    
+
     storageReference.delete { _ in
       let chatOriginalPhotoURLReference = groupChatsMetaReference.child("chatOriginalPhotoURL")
       let chatThumbnailPhotoURLReference = groupChatsMetaReference.child("chatThumbnailPhotoURL")
@@ -61,7 +61,7 @@ extension GroupAdminControlsTableViewController { // delete
 }
 
 extension GroupAdminControlsTableViewController { // update
-  
+
   typealias UpdateUserProfileCompletionHandler = (_ success: Bool) -> Void
   func updateUserProfile(with image: UIImage, completion: @escaping UpdateUserProfileCompletionHandler) {
     let userReference = Database.database().reference().child("groupChats").child(chatID).child(messageMetaDataFirebaseFolder)
@@ -72,11 +72,11 @@ extension GroupAdminControlsTableViewController { // update
 
     let photoUpdatingGroup = DispatchGroup()
     for _ in images { photoUpdatingGroup.enter() }
-    
+
     photoUpdatingGroup.notify(queue: DispatchQueue.main, execute: {
       completion(true)
     })
-    
+
     for imageElement in images {
       uploadAvatarForUserToFirebaseStorageUsingImage(imageElement.image, quality: imageElement.quality) { (url) in
         userReference.updateChildValues([imageElement.key: url], withCompletionBlock: { (_, _) in

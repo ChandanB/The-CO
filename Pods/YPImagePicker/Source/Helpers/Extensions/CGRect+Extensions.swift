@@ -9,7 +9,7 @@
 import UIKit
 
 internal extension CGRect {
-    
+
     func differenceWith(rect: CGRect,
                         removedHandler: (CGRect) -> Void,
                         addedHandler: (CGRect) -> Void) {

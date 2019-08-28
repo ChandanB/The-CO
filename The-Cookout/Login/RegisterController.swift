@@ -13,19 +13,19 @@ import Spring
 import PKHUD
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+private func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
     return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
 
 class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
+
     lazy var addPhotoButton: SpringButton = {
         let button = SpringButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
         return button
     }()
-    
+
     let usernameTextField: SpringTextField = {
         let tf = SpringTextField()
         tf.constrainHeight(60)
@@ -33,10 +33,10 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         let leftLabel = UILabel(frame: CGRect(x: 4, y: 0, width: 20, height: 20))
         leftLabel.text = " @"
         leftLabel.textColor = .black
-        
+
         tf.leftView = leftLabel
         tf.leftViewMode = .always
-        
+
         tf.placeholder = "Username"
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -44,11 +44,11 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
-    
+
     let nameTextField: SpringTextField = {
         let tf = SpringTextField()
         tf.constrainHeight(60)
-        
+
         tf.placeholder = "Name"
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -56,11 +56,11 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
-    
+
     let emailTextField: SpringTextField = {
         let tf = SpringTextField()
         tf.constrainHeight(60)
-        
+
         tf.placeholder = "Email"
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -68,11 +68,11 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
-    
+
     let passwordTextField: SpringTextField = {
         let tf = SpringTextField()
         tf.constrainHeight(60)
-        
+
         tf.placeholder = "Password"
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
@@ -81,11 +81,11 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
-    
+
     let signUpButton: SpringButton = {
         let button = SpringButton(type: .system)
         button.constrainHeight(60)
-        
+
         button.setTitle("Sign Up", for: .normal)
         button.backgroundColor = UIColor(r: 149, g: 204, b: 244)
         button.layer.cornerRadius = 5
@@ -95,40 +95,39 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         button.isEnabled = false
         return button
     }()
-    
+
     let alreadyHaveAccountButton: UIButton = {
         let button = UIButton(type: .system)
         let fontStyle = UIFont.systemFont(ofSize: 14)
         let attributedTitle = NSMutableAttributedString(string: "Already have an account?  ", attributes: [NSAttributedString.Key.font: fontStyle, NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-        
-        attributedTitle.append(NSAttributedString(string: "Log In.", attributes: [NSAttributedString.Key.foregroundColor: UIColor(r: 17, g: 155, b: 237),  NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)]))
-        
+
+        attributedTitle.append(NSAttributedString(string: "Log In.", attributes: [NSAttributedString.Key.foregroundColor: UIColor(r: 17, g: 155, b: 237), NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)]))
+
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.addTarget(self, action: #selector(handleAlreadyHaveAccount), for: .touchUpInside)
         return button
     }()
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(LoginController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(LoginController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
+
         view.addSubview(alreadyHaveAccountButton)
         alreadyHaveAccountButton.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 24, rightConstant: 0, widthConstant: 0, heightConstant: 60)
-        
+
         self.hideKeyboardWhenTappedAround()
-        
+
         view.backgroundColor = .white
-        
+
         setupInputFields()
     }
-    
+
     @objc func handleAlreadyHaveAccount() {
         _ = navigationController?.popViewController(animated: true)
     }
-    
+
     @objc func openImagePicker() {
         let picker = UIImagePickerController()
         picker.allowsEditing = true
@@ -137,67 +136,66 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
             self.present(picker, animated: true, completion: nil)
         }
     }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
-        
-        
+
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
             addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
         } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
             addPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
         }
-        
+
         addPhotoButton.layer.cornerRadius = addPhotoButton.frame.width/2
         addPhotoButton.layer.masksToBounds = true
         addPhotoButton.layer.borderColor = UIColor.black.cgColor
         addPhotoButton.layer.borderWidth = 3
         dismiss(animated: true, completion: nil)
     }
-    
+
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         print("canceled picker")
         dismiss(animated: true, completion: nil)
     }
-    
+
     func setupInputFields() {
-        
+
         formContainerStackView.layoutMargins = .init(top: 0, left: 24, bottom: 0, right: 24)
         formContainerStackView.axis = .vertical
         formContainerStackView.spacing = 12
-        
+
         formContainerStackView.addArrangedSubview(nameTextField)
         formContainerStackView.addArrangedSubview(usernameTextField)
         formContainerStackView.addArrangedSubview(emailTextField)
         formContainerStackView.addArrangedSubview(passwordTextField)
         formContainerStackView.addArrangedSubview(signUpButton)
-        
+
         view.addSubview(addPhotoButton)
         addPhotoButton.anchor(bottom: formContainerStackView.topAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 24, rightConstant: 0, widthConstant: 140, heightConstant: 140)
         addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
+
     }
-    
+
     private func resetInputFields() {
         nameTextField.text = ""
         emailTextField.text = ""
         usernameTextField.text = ""
         passwordTextField.text = ""
-        
+
         emailTextField.isUserInteractionEnabled = true
         usernameTextField.isUserInteractionEnabled = true
         passwordTextField.isUserInteractionEnabled = true
-        
+
         signUpButton.isEnabled = false
         signUpButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
     }
-    
+
     @objc func handleTextInputChange() {
         guard let name = nameTextField.text else { return }
         guard let email = emailTextField.text else { return }
         guard let username = usernameTextField.text else { return }
         guard let password = passwordTextField.text else { return }
-        
+
         if checkIfFormIsValid(name, email: email, username: username, password: password) == true {
             signUpButton.isEnabled = true
             signUpButton.backgroundColor = twitterBlue
@@ -205,15 +203,15 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
             signUpButton.isEnabled = false
             signUpButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
         }
-        
+
     }
-    
+
     func checkIfFormIsValid(_ name: String, email: String, username: String, password: String) -> Bool {
-        
+
         if !isValidName(name) || email.count < 0 {
             return false
         }
-        
+
         if !isValidUsername(username) && username.count > 0 {
             usernameTextField.layer.borderColor = UIColor.red.cgColor
             usernameTextField.layer.borderWidth = 1
@@ -222,7 +220,7 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         } else {
             usernameTextField.layer.borderWidth = 0
         }
-        
+
         if !isValidPassword(password) {
             if password.count > 0 {
                 passwordTextField.layer.borderColor = UIColor.red.cgColor
@@ -233,65 +231,65 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         } else {
             passwordTextField.layer.borderColor = UIColor.green.cgColor
         }
-        
+
         return true
-        
+
     }
-    
+
     fileprivate func isValidName(_ name: String) -> Bool {
-        if (name.count <= 0 || name.count > 30){
+        if (name.count <= 0 || name.count > 30) {
             return false
         } else {
             return true
         }
     }
-    
+
     fileprivate func isValidPassword(_ password: String) -> Bool {
-        if (password.count < 6 || password.count > 20){
-            
+        if (password.count < 6 || password.count > 20) {
+
             return false
         }
-        
+
         let uppercase = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZ").inverted
         let uppercaseLetters = password.components(separatedBy: uppercase)
         let uppercaseCharacters: String = uppercaseLetters.joined()
-        
+
         let lowercase = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz").inverted
         let lowercaseLetters = password.components(separatedBy: lowercase)
         let lowercaseCharacters: String = lowercaseLetters.joined()
-        
+
         let numbers = CharacterSet(charactersIn: "0123456789").inverted
         let digits = password.components(separatedBy: numbers)
         let num: String = digits.joined()
-        
-        let regex = try! NSRegularExpression(pattern: ".*[^A-Za-z0-9].*", options:  NSRegularExpression.Options())
-        
-        if regex.firstMatch(in: password, options: NSRegularExpression.MatchingOptions(), range: NSMakeRange(0, password.length)) != nil {
+
+        let regex = try! NSRegularExpression(pattern: ".*[^A-Za-z0-9].*", options: NSRegularExpression.Options())
+
+        if regex.firstMatch(in: password, options: NSRegularExpression.MatchingOptions(), range: NSRange(location: 0, length: password.length)) != nil {
             return (uppercaseCharacters.count >= 1 && lowercaseCharacters.count >= 1)
         } else {
             return (uppercaseCharacters.count >= 1 && lowercaseCharacters.count >= 1 && num.count >= 1)
         }
-        
+
     }
-    
+
     fileprivate func isValidUsername(_ username: String) -> Bool {
-        
-        if (username.count < 0 || username.count > 18){
+
+        if (username.count < 0 || username.count > 18) {
             return false
         }
-        
+
         let characters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_").inverted
         let letters = username.components(separatedBy: characters)
         let strCharacters: String = letters.joined()
-        
+
         if username.rangeOfCharacter(from: characters) != nil {
             return false
         } else {
             return (strCharacters.count >= 1)
         }
-        
+
     }
-    
+
     @objc private func handleTapOnView(_ sender: UITextField) {
         nameTextField.resignFirstResponder()
         usernameTextField.resignFirstResponder()
@@ -299,8 +297,6 @@ class RegisterController: LBTAFormController, UIImagePickerControllerDelegate, U
         passwordTextField.resignFirstResponder()
     }
 }
-
-
 
 // MARK: - Handle Sign Up
 extension RegisterController {
@@ -311,28 +307,28 @@ extension RegisterController {
         guard let username = usernameTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         guard let image = self.addPhotoButton.imageView?.image else { return }
-        
+
         nameTextField.isUserInteractionEnabled = false
         emailTextField.isUserInteractionEnabled = false
         usernameTextField.isUserInteractionEnabled = false
         passwordTextField.isUserInteractionEnabled = false
-        
+
         signUpButton.isEnabled = false
         signUpButton.backgroundColor = UIColor(r: 149, g: 204, b: 244)
-        
+
         dismissKeyboard()
-        
+
         HUD.show(.progress)
         HUD.dimsBackground = true
-        
+
         if self.view.frame.origin.y != 0 {
             self.view.frame.origin.y += 70
         }
-        
+
         if self.view.frame.origin.y != 0 {
             self.view.frame.origin.y += 70
         }
-        
+
         Auth.auth().signUp(bio: bio, name: name, username: username, email: email, password: password, image: image) { (err) in
             if err != nil {
                 self.signUpButton.animation = "pop"
@@ -342,13 +338,12 @@ extension RegisterController {
                 HUD.hide()
                 return
             }
-            
-                        
+
             HUD.hide()
             self.handleAnimations()
         }
     }
-    
+
     fileprivate func handleAnimations() {
         addPhotoButton.animation = "zoomOut"
         addPhotoButton.curve = "easeOut"
@@ -388,7 +383,6 @@ extension RegisterController {
     }
 }
 
-
 extension RegisterController {
     @objc func keyboardWillShow(notification: NSNotification) {
         if ((notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue) != nil {
@@ -397,7 +391,7 @@ extension RegisterController {
             }
         }
     }
-    
+
     @objc func keyboardWillHide(notification: NSNotification) {
         if ((notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue) != nil {
             if self.view.frame.origin.y != 0 {
@@ -405,7 +399,7 @@ extension RegisterController {
             }
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)

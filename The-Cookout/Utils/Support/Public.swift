@@ -26,23 +26,23 @@ struct DeviceType {
     static let iPhone678 = UIDevice.current.userInterfaceIdiom == .phone && ScreenSize.maxLength == 667.0
     static let iPhone678p = UIDevice.current.userInterfaceIdiom == .phone && ScreenSize.maxLength == 736.0
     static let iPhoneX = UIDevice.current.userInterfaceIdiom == .phone && (ScreenSize.maxLength == 812.0 || ScreenSize.maxLength == 896.0)
-    
+
     static let IS_IPAD = UIDevice.current.userInterfaceIdiom == .pad && ScreenSize.maxLength == 1024.0
     static let IS_IPAD_PRO = UIDevice.current.userInterfaceIdiom == .pad && ScreenSize.maxLength == 1366.0
 }
 
 extension UILocalizedIndexedCollation {
-    
-    func partitionObjects(array:[AnyObject], collationStringSelector:Selector) -> ([AnyObject], [String]) {
+
+    func partitionObjects(array: [AnyObject], collationStringSelector: Selector) -> ([AnyObject], [String]) {
         var unsortedSections = [[AnyObject]]()
-        
+
         //1. Create a array to hold the data for each section
         for _ in self.sectionTitles {
             unsortedSections.append([]) //appending an empty array
         }
         //2. Put each objects into a section
         for item in array {
-            let index:Int = self.section(for: item, collationStringSelector:collationStringSelector)
+            let index: Int = self.section(for: item, collationStringSelector: collationStringSelector)
             unsortedSections[index].append(item)
         }
         //3. sorting the array of each sections
@@ -53,7 +53,7 @@ extension UILocalizedIndexedCollation {
             sections.append(self.sortedArray(from: unsortedSections[index], collationStringSelector: collationStringSelector) as AnyObject)
             }
         }
-        
+
         return (sections, sectionTitles)
     }
 }
@@ -99,15 +99,15 @@ extension UIApplication {
 }
 
 struct AppUtility {
-    
+
     static func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
-        
+
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
             delegate.orientationLock = orientation
         }
     }
-    
-    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation:UIInterfaceOrientation) {
+
+    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
         self.lockOrientation(orientation)
         UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
     }
@@ -117,18 +117,18 @@ func topViewController(rootViewController: UIViewController?) -> UIViewControlle
     guard let rootViewController = rootViewController else {
         return nil
     }
-    
+
     guard let presented = rootViewController.presentedViewController else {
         return rootViewController
     }
-    
+
     switch presented {
     case let navigationController as UINavigationController:
         return topViewController(rootViewController: navigationController.viewControllers.last)
-        
+
     case let tabBarController as UITabBarController:
         return topViewController(rootViewController: tabBarController.selectedViewController)
-        
+
     default:
         return topViewController(rootViewController: presented)
     }
@@ -162,11 +162,10 @@ let cameraNotExistsMessage = "You don't have camera"
 let thumbnailUploadError = "Failed to upload your image to database. Please, check your internet connection and try again."
 let fullsizePictureUploadError = "Failed to upload fullsize image to database. Please, check your internet connection and try again. Despite this error, thumbnail version of this picture has been uploaded, but you still should re-upload your fullsize image."
 
-
 extension UINavigationController {
-    
+
     func backToViewController(viewController: Swift.AnyClass) {
-        
+
         for element in viewControllers {
             if element.isKind(of: viewController) {
                 self.popToViewController(element, animated: true)
@@ -222,15 +221,14 @@ extension Int {
     }
 }
 
-
 func timestampOfLastMessage(_ date: Date) -> String {
     let calendar = NSCalendar.current
     let unitFlags: Set<Calendar.Component> = [ .day, .weekOfYear, .weekday]
     let now = Date()
     let earliest = now < date ? now : date
     let latest = (earliest == now) ? date : now
-    let components =  calendar.dateComponents(unitFlags, from: earliest,  to: latest)
-    
+    let components =  calendar.dateComponents(unitFlags, from: earliest, to: latest)
+
     //  if components.weekOfYear! >= 1 {
     //    return date.getShortDateStringFromUTC()
     //  } else if components.weekOfYear! < 1 && date.dayNumberOfWeek() != now.dayNumberOfWeek() {
@@ -238,19 +236,18 @@ func timestampOfLastMessage(_ date: Date) -> String {
     //  } else {
     //    return date.getTimeStringFromUTC()
     //  }
-    
+
     if now.getShortDateStringFromUTC() != date.getShortDateStringFromUTC() {  // not today
         if components.weekOfYear! >= 1 { // last week
             return date.getShortDateStringFromUTC()
         } else { // this week
             return date.dayOfWeek()
         }
-        
+
     } else { // this day
         return date.getTimeStringFromUTC()
     }
-    
-    
+
 }
 
 func timestampOfChatLogMessage(_ date: Date) -> String {
@@ -262,58 +259,58 @@ func timestampOfChatLogMessage(_ date: Date) -> String {
     }
 }
 
-func timeAgoSinceDate(_ date:Date, numericDates:Bool = false) -> String {
+func timeAgoSinceDate(_ date: Date, numericDates: Bool = false) -> String {
     let calendar = NSCalendar.current
     let unitFlags: Set<Calendar.Component> = [.minute, .hour, .day, .weekOfYear, .month, .year, .second]
     let now = Date()
     let earliest = now < date ? now : date
     let latest = (earliest == now) ? date : now
-    let components = calendar.dateComponents(unitFlags, from: earliest,  to: latest)
-    
+    let components = calendar.dateComponents(unitFlags, from: earliest, to: latest)
+
     if (components.year! >= 2) {
         return "\(components.year!) years ago"
-    } else if (components.year! >= 1){
-        if (numericDates){
+    } else if (components.year! >= 1) {
+        if (numericDates) {
             return "1 year ago"
         } else {
             return "last year"
         }
     } else if (components.month! >= 2) {
         return "\(components.month!) months ago"
-    } else if (components.month! >= 1){
-        if (numericDates){
+    } else if (components.month! >= 1) {
+        if (numericDates) {
             return "1 month ago"
         } else {
             return "last month"
         }
     } else if (components.weekOfYear! >= 2) {
         return "\(components.weekOfYear!) weeks ago"
-    } else if (components.weekOfYear! >= 1){
-        if (numericDates){
+    } else if (components.weekOfYear! >= 1) {
+        if (numericDates) {
             return "1 week ago"
         } else {
             return "last week"
         }
     } else if (components.day! >= 2) {
         return "\(components.day!) days ago"
-    } else if (components.day! >= 1){
-        if (numericDates){
+    } else if (components.day! >= 1) {
+        if (numericDates) {
             return "1 day ago"
         } else {
             return "yesterday at \(date.getTimeStringFromUTC())"
         }
     } else if (components.hour! >= 2) {
         return "\(components.hour!) hours ago"
-    } else if (components.hour! >= 1){
-        if (numericDates){
+    } else if (components.hour! >= 1) {
+        if (numericDates) {
             return "1 hour ago"
         } else {
             return "an hour ago"
         }
     } else if (components.minute! >= 2) {
         return "\(components.minute!) minutes ago"
-    } else if (components.minute! >= 1){
-        if (numericDates){
+    } else if (components.minute! >= 1) {
+        if (numericDates) {
             return "1 minute ago"
         } else {
             return "a minute ago"
@@ -330,7 +327,7 @@ extension UITableViewCell {
         set {
             let view = UIView()
             view.backgroundColor = newValue
-            
+
             self.selectedBackgroundView = view
         }
         get {
@@ -350,23 +347,23 @@ extension SystemSoundID {
 }
 
 func basicErrorAlertWith (title: String, message: String, controller: UIViewController) {
-    
+
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
     alert.addAction(UIAlertAction(title: "Close", style: UIAlertAction.Style.cancel, handler: nil))
     controller.present(alert, animated: true, completion: nil)
 }
 
 func libraryAccessChecking() -> Bool {
-    
+
     let status = PHPhotoLibrary.authorizationStatus()
-    
+
     switch status {
     case .authorized:
         return true
-        
+
     case .denied, .restricted :
         return false
-        
+
     case .notDetermined:
         return false
     @unknown default:
@@ -378,70 +375,69 @@ public let statusOnline = "Online"
 public let userMessagesFirebaseFolder = "userMessages"
 public let messageMetaDataFirebaseFolder = "metaData"
 
-func setOnlineStatus()  {
-    
+func setOnlineStatus() {
+
     if CURRENT_USER != nil {
         let onlineStatusReference = USER_REF.child(CURRENT_USER!.uid).child("OnlineStatus")
         let connectedRef = Database.database().reference(withPath: ".info/connected")
-        
+
         connectedRef.observe(.value, with: { (snapshot) in
             guard let connected = snapshot.value as? Bool, connected else { return }
             onlineStatusReference.setValue(statusOnline)
-            
+
             onlineStatusReference.onDisconnectSetValue(ServerValue.timestamp())
         })
     }
 }
 
 extension UINavigationItem {
-    
-    func setTitle(title:String, subtitle:String) {
-        
+
+    func setTitle(title: String, subtitle: String) {
+
         let one = UILabel()
         one.text = title
         one.textColor = ThemeManager.currentTheme().generalTitleColor
         one.font = UIFont.systemFont(ofSize: 17)
         one.sizeToFit()
-        
+
         let two = UILabel()
         two.text = subtitle
         two.font = UIFont.systemFont(ofSize: 12)
         two.textAlignment = .center
         two.textColor = ThemeManager.currentTheme().generalSubtitleColor
         two.sizeToFit()
-        
+
         let stackView = UIStackView(arrangedSubviews: [one, two])
         stackView.distribution = .equalCentering
         stackView.axis = .vertical
-        
+
         let width = max(one.frame.size.width, two.frame.size.width)
         stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
-        
+
         one.sizeToFit()
         two.sizeToFit()
         self.titleView = stackView
     }
 }
 
-
 extension PHAsset {
-    
+
     var originalFilename: String? {
-        
-        var fname:String?
-        
+
+        var fname: String?
+
         if #available(iOS 9.0, *) {
             let resources = PHAssetResource.assetResources(for: self)
             if let resource = resources.first {
                 fname = resource.originalFilename
             }
         }
-        
+
         if fname == nil {
             // this is an undocumented workaround that works as of iOS 9.1
             fname = self.value(forKey: "filename") as? String
         }
-        
+
         return fname
     }
 }
@@ -466,11 +462,11 @@ extension FileManager {
     }
 }
 
-public func rearrange<T>(array: Array<T>, fromIndex: Int, toIndex: Int) -> Array<T>{
+public func rearrange<T>(array: Array<T>, fromIndex: Int, toIndex: Int) -> Array<T> {
     var arr = array
     let element = arr.remove(at: fromIndex)
     arr.insert(element, at: toIndex)
-    
+
     return arr
 }
 
@@ -488,7 +484,7 @@ extension UISearchBar {
 }
 
 extension UITableView {
-    
+
     func indexPathForView(_ view: UIView) -> IndexPath? {
         let center = view.center
         let viewCenter = self.convert(center, from: view.superview)
@@ -498,17 +494,17 @@ extension UITableView {
 }
 
 extension UIScrollView {
-    
+
     // Scroll to a specific view so that it's top is at the top our scrollview
-    func scrollToView(view:UIView, animated: Bool) {
+    func scrollToView(view: UIView, animated: Bool) {
         if let origin = view.superview {
             // Get the Y position of your child view
             let childStartPoint = origin.convert(view.frame.origin, to: self)
             // Scroll to a rectangle starting at the Y of your subview, with a height of the scrollview
-            self.scrollRectToVisible(CGRect(x:0, y:childStartPoint.y, width: 1, height: self.frame.height), animated: animated)
+            self.scrollRectToVisible(CGRect(x: 0, y: childStartPoint.y, width: 1, height: self.frame.height), animated: animated)
         }
     }
-    
+
     // Bonus: Scroll to top
     func scrollToTop(animated: Bool) {
         let topOffset = CGPoint(x: 0, y: -contentInset.top)
@@ -517,70 +513,70 @@ extension UIScrollView {
 }
 
 func createImageThumbnail (_ image: UIImage) -> UIImage {
-    
-    let actualHeight:CGFloat = image.size.height
-    let actualWidth:CGFloat = image.size.width
-    let imgRatio:CGFloat = actualWidth/actualHeight
-    let maxWidth:CGFloat = 150.0
-    let resizedHeight:CGFloat = maxWidth/imgRatio
-    let compressionQuality:CGFloat = 0.5
-    
-    let rect:CGRect = CGRect(x: 0, y: 0, width: maxWidth, height: resizedHeight)
+
+    let actualHeight: CGFloat = image.size.height
+    let actualWidth: CGFloat = image.size.width
+    let imgRatio: CGFloat = actualWidth/actualHeight
+    let maxWidth: CGFloat = 150.0
+    let resizedHeight: CGFloat = maxWidth/imgRatio
+    let compressionQuality: CGFloat = 0.5
+
+    let rect: CGRect = CGRect(x: 0, y: 0, width: maxWidth, height: resizedHeight)
     UIGraphicsBeginImageContext(rect.size)
     image.draw(in: rect)
     let img: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
     let imageData: Data = img.jpegData(compressionQuality: compressionQuality)!
     UIGraphicsEndImageContext()
-    
+
     return UIImage(data: imageData)!
 }
 
 func compressImage(image: UIImage) -> Data {
     // Reducing file size to a 10th
-    
-    var actualHeight : CGFloat = image.size.height
-    var actualWidth : CGFloat = image.size.width
-    let maxHeight : CGFloat = 1920.0
-    let maxWidth : CGFloat = 1080.0
-    var imgRatio : CGFloat = actualWidth/actualHeight
-    let maxRatio : CGFloat = maxWidth/maxHeight
-    var compressionQuality : CGFloat = 0.8
-    
+
+    var actualHeight: CGFloat = image.size.height
+    var actualWidth: CGFloat = image.size.width
+    let maxHeight: CGFloat = 1920.0
+    let maxWidth: CGFloat = 1080.0
+    var imgRatio: CGFloat = actualWidth/actualHeight
+    let maxRatio: CGFloat = maxWidth/maxHeight
+    var compressionQuality: CGFloat = 0.8
+
     if (actualHeight > maxHeight || actualWidth > maxWidth) {
-        
+
         if (imgRatio < maxRatio) {
-            
+
             //adjust width according to maxHeight
-            imgRatio = maxHeight / actualHeight;
-            actualWidth = imgRatio * actualWidth;
-            actualHeight = maxHeight;
+            imgRatio = maxHeight / actualHeight
+            actualWidth = imgRatio * actualWidth
+            actualHeight = maxHeight
         } else if (imgRatio > maxRatio) {
-            
+
             //adjust height according to maxWidth
-            imgRatio = maxWidth / actualWidth;
-            actualHeight = imgRatio * actualHeight;
-            actualWidth = maxWidth;
-            
+            imgRatio = maxWidth / actualWidth
+            actualHeight = imgRatio * actualHeight
+            actualWidth = maxWidth
+
         } else {
-            
+
             actualHeight = maxHeight
             actualWidth = maxWidth
             compressionQuality = 1
         }
     }
-    
-    let rect = CGRect(x: 0.0, y: 0.0, width:actualWidth, height:actualHeight)
+
+    let rect = CGRect(x: 0.0, y: 0.0, width: actualWidth, height: actualHeight)
     UIGraphicsBeginImageContext(rect.size)
     image.draw(in: rect)
     let img = UIGraphicsGetImageFromCurrentImageContext()
     let imageData = img!.jpegData(compressionQuality: compressionQuality)
-    UIGraphicsEndImageContext();
-    
+    UIGraphicsEndImageContext()
+
     return imageData!
 }
 
 func uiImageFromAsset(phAsset: PHAsset) -> UIImage? {
-    
+
     var img: UIImage?
     let manager = PHImageManager.default()
     let options = PHImageRequestOptions()
@@ -589,7 +585,7 @@ func uiImageFromAsset(phAsset: PHAsset) -> UIImage? {
     options.resizeMode = .exact
     options.isSynchronous = true
     manager.requestImageData(for: phAsset, options: options) { data, _, _, _ in
-        
+
         if let data = data {
             img = UIImage(data: data)
         }
@@ -598,7 +594,7 @@ func uiImageFromAsset(phAsset: PHAsset) -> UIImage? {
 }
 
 func dataFromAsset(asset: PHAsset) -> Data? {
-    
+
     var finalData: Data?
     let manager = PHImageManager.default()
     let options = PHImageRequestOptions()
@@ -610,22 +606,22 @@ func dataFromAsset(asset: PHAsset) -> Data? {
     manager.requestImageData(for: asset, options: options) { data, _, _, _ in
         finalData = data
     }
-    
+
     return finalData
 }
 
 public extension UIView {
-    
-    func shake(count : Float? = nil,for duration : TimeInterval? = nil,withTranslation translation : Float? = nil) {
-        
+
+    func shake(count: Float? = nil, for duration: TimeInterval? = nil, withTranslation translation: Float? = nil) {
+
         // You can change these values, so that you won't have to write a long function
         let defaultRepeatCount = 3
         let defaultTotalDuration = 0.1
         let defaultTranslation = -8
-        
-        let animation : CABasicAnimation = CABasicAnimation(keyPath: "transform.translation.x")
+
+        let animation: CABasicAnimation = CABasicAnimation(keyPath: "transform.translation.x")
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
-        
+
         animation.repeatCount = count ?? Float(defaultRepeatCount)
         animation.duration = (duration ?? defaultTotalDuration)/TimeInterval(animation.repeatCount)
         animation.autoreverses = true
@@ -634,14 +630,14 @@ public extension UIView {
     }
 }
 
-func uploadAvatarForUserToFirebaseStorageUsingImage(_ image: UIImage, quality: CGFloat, completion: @escaping (_  imageUrl: String) -> ()) {
+func uploadAvatarForUserToFirebaseStorageUsingImage(_ image: UIImage, quality: CGFloat, completion: @escaping (_  imageUrl: String) -> Void) {
     let imageName = UUID().uuidString
     let ref = Storage.storage().reference().child("userProfilePictures").child(imageName)
-    
+
     if let uploadData = image.jpegData(compressionQuality: quality) {
-        ref.putData(uploadData, metadata: nil) { (metadata, error) in
+        ref.putData(uploadData, metadata: nil) { (_, error) in
             guard error == nil else { completion(""); return }
-            
+
             ref.downloadURL(completion: { (url, error) in
                 guard error == nil, let imageURL = url else { completion(""); return }
                 completion(imageURL.absoluteString)
@@ -653,19 +649,19 @@ func uploadAvatarForUserToFirebaseStorageUsingImage(_ image: UIImage, quality: C
 protocol Utilities {}
 
 extension NSObject: Utilities {
-    
+
     enum ReachabilityStatus {
         case notReachable
         case reachableViaWWAN
         case reachableViaWiFi
     }
-    
+
     var currentReachabilityStatus: ReachabilityStatus {
-        
+
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
         zeroAddress.sin_family = sa_family_t(AF_INET)
-        
+
         guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
             $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
                 SCNetworkReachabilityCreateWithAddress(nil, $0)
@@ -673,31 +669,26 @@ extension NSObject: Utilities {
         }) else {
             return .notReachable
         }
-        
+
         var flags: SCNetworkReachabilityFlags = []
         if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
             return .notReachable
         }
-        
+
         if flags.contains(.reachable) == false {
             // The target host is not reachable.
             return .notReachable
-        }
-        else if flags.contains(.isWWAN) == true {
+        } else if flags.contains(.isWWAN) == true {
             // WWAN connections are OK if the calling application is using the CFNetwork APIs.
             return .reachableViaWWAN
-        }
-        else if flags.contains(.connectionRequired) == false {
+        } else if flags.contains(.connectionRequired) == false {
             // If the target host is reachable and no connection is required then we'll assume that you're on Wi-Fi...
             return .reachableViaWiFi
-        }
-        else if (flags.contains(.connectionOnDemand) == true || flags.contains(.connectionOnTraffic) == true) && flags.contains(.interventionRequired) == false {
+        } else if (flags.contains(.connectionOnDemand) == true || flags.contains(.connectionOnTraffic) == true) && flags.contains(.interventionRequired) == false {
             // The connection is on-demand (or on-traffic) if the calling application is using the CFSocketStream or higher APIs and no [user] intervention is needed
             return .reachableViaWiFi
-        }
-        else {
+        } else {
             return .notReachable
         }
     }
 }
-

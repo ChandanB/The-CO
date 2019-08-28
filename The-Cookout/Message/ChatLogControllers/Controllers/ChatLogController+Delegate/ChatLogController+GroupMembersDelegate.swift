@@ -10,21 +10,21 @@ import UIKit
 import Firebase
 
 extension ChatLogController: GroupMembersManagerDelegate {
-  
+
   func updateName(name: String) {
     self.conversation?.chatName = name
     if self.isCurrentUserMemberOfCurrentGroup() {
       self.configureTitleViewWithOnlineStatus()
     }
   }
-  
+
   func updateAdmin(admin: String) {
     self.conversation?.admin = admin
   }
-  
+
   func addMember(id: String) {
     guard let members = self.conversation?.chatParticipantsIDs else { return }
-    
+
 		if let _ = members.firstIndex(where: { (memberID) -> Bool in
       return memberID == id }) {
     } else {
@@ -32,26 +32,24 @@ extension ChatLogController: GroupMembersManagerDelegate {
       self.changeUIAfterChildAddedIfNeeded()
     }
   }
-  
+
   func removeMember(id: String) {
     guard let members = self.conversation?.chatParticipantsIDs else { return }
-    
+
 		guard let memberIndex = members.firstIndex(where: { (memberID) -> Bool in
       return memberID == id
     }) else { return }
-    
-    
+
     self.conversation?.chatParticipantsIDs?.remove(at: memberIndex)
     self.changeUIAfterChildRemovedIfNeeded()
   }
-  
-  
+
   func isCurrentUserMemberOfCurrentGroup() -> Bool {
     guard let membersIDs = conversation?.chatParticipantsIDs,
       let uid = CURRENT_USER?.uid, membersIDs.contains(uid) else { return false }
     return true
   }
-  
+
   func changeUIAfterChildAddedIfNeeded() {
     if isCurrentUserMemberOfCurrentGroup() {
       configureTitleViewWithOnlineStatus()
@@ -62,7 +60,7 @@ extension ChatLogController: GroupMembersManagerDelegate {
       }
     }
   }
-  
+
   func changeUIAfterChildRemovedIfNeeded() {
     if isCurrentUserMemberOfCurrentGroup() {
       configureTitleViewWithOnlineStatus()
@@ -77,7 +75,7 @@ extension ChatLogController: GroupMembersManagerDelegate {
       typingIndicatorReference = nil
     }
   }
-  
+
   fileprivate func removeSubtitleInGroupChat() {
     if let isGroupChat = conversation?.isGroupChat, isGroupChat, let title = conversation?.chatName {
       let subtitle = ""

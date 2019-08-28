@@ -10,4 +10,3 @@ import FirebaseDatabase
 
 class PostApi {
 }
-

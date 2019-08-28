@@ -19,7 +19,7 @@
 
 import UIKit
 
-private func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func < <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
   switch (lhs, rhs) {
   case let (l?, r?):
     return l < r
@@ -30,27 +30,26 @@ private func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
   }
 }
 
-
 class INSScalingImageView: UIScrollView {
     lazy var imageView: UIImageView = {
         let imageView = UIImageView(frame: self.bounds)
         self.addSubview(imageView)
         return imageView
     }()
-    
+
     var image: UIImage? {
         didSet {
             updateImage(image)
         }
     }
-    
+
     override var frame: CGRect {
         didSet {
             updateZoomScale()
             centerScrollViewContents()
         }
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupImageScrollView()
@@ -62,62 +61,62 @@ class INSScalingImageView: UIScrollView {
         setupImageScrollView()
         updateZoomScale()
     }
-    
+
     override func didAddSubview(_ subview: UIView) {
         super.didAddSubview(subview)
         centerScrollViewContents()
     }
-    
+
     private func setupImageScrollView() {
 			showsVerticalScrollIndicator = false
 			showsHorizontalScrollIndicator = false
 			bouncesZoom = true
 			decelerationRate = UIScrollView.DecelerationRate.fast
     }
-    
+
     func centerScrollViewContents() {
-        var horizontalInset: CGFloat = 0;
-        var verticalInset: CGFloat = 0;
-        
+        var horizontalInset: CGFloat = 0
+        var verticalInset: CGFloat = 0
+
         if (contentSize.width < bounds.width) {
-            horizontalInset = (bounds.width - contentSize.width) * 0.5;
+            horizontalInset = (bounds.width - contentSize.width) * 0.5
         }
-        
+
         if (self.contentSize.height < bounds.height) {
-            verticalInset = (bounds.height - contentSize.height) * 0.5;
+            verticalInset = (bounds.height - contentSize.height) * 0.5
         }
-        
+
         if (window?.screen.scale < 2.0) {
-            horizontalInset = floor(horizontalInset);
-            verticalInset = floor(verticalInset);
+            horizontalInset = floor(horizontalInset)
+            verticalInset = floor(verticalInset)
         }
-        
+
         // Use `contentInset` to center the contents in the scroll view. Reasoning explained here: http://petersteinberger.com/blog/2013/how-to-center-uiscrollview/
-			self.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset);
+			self.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
     }
-    
+
     private func updateImage(_ image: UIImage?) {
         let size = image?.size ?? CGSize.zero
-        
+
         imageView.transform = CGAffineTransform.identity
         imageView.image = image
         imageView.frame = CGRect(origin: CGPoint.zero, size: size)
         self.contentSize = size
-        
+
         updateZoomScale()
         centerScrollViewContents()
     }
-    
+
     private func updateZoomScale() {
         if let image = imageView.image {
             let scrollViewFrame = self.bounds
             let scaleWidth = scrollViewFrame.size.width / image.size.width
             let scaleHeight = scrollViewFrame.size.height / image.size.height
             let minimumScale = min(scaleWidth, scaleHeight)
-            
+
             self.minimumZoomScale = minimumScale
             self.maximumZoomScale = max(minimumScale, self.maximumZoomScale)
-            
+
             self.zoomScale = minimumZoomScale
 
             // scrollView.panGestureRecognizer.enabled is on by default and enabled by

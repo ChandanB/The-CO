@@ -14,10 +14,10 @@ protocol PhotoCellDelegate {
 }
 
 class UserProfilePhotoCell: DatasourceCell {
-    
+
     var delegate: PhotoCellDelegate?
     static var cellId = "userProfilePhotoGridCellId"
-    
+
     var post: Post?
     override var datasourceItem: Any? {
         didSet {
@@ -27,7 +27,7 @@ class UserProfilePhotoCell: DatasourceCell {
             photoImageView.sd_setImage(with: url, completed: nil)
         }
     }
-    
+
     lazy var photoImageView: CachedImageView = {
         let iv = CachedImageView()
         iv.contentMode = .scaleAspectFill
@@ -37,17 +37,17 @@ class UserProfilePhotoCell: DatasourceCell {
         iv.addGestureRecognizer(tg)
         return iv
     }()
-    
+
     @objc func imageTapped() {
       guard let image = self.post else {return}
       delegate?.didTapImage(image)
     }
-    
+
     override func setupViews() {
         super.setupViews()
-        
+
         addSubview(photoImageView)
         photoImageView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
-    
+
 }

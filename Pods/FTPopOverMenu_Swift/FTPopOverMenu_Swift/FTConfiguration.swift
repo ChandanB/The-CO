@@ -23,12 +23,11 @@ public class FTConfiguration {
     public var shadowAlpha: CGFloat = 0.6
     public var localShadow = false
 
-    public static var shared : FTConfiguration {
+    public static var shared: FTConfiguration {
         struct StaticConfig {
-            static let instance : FTConfiguration = FTConfiguration()
+            static let instance: FTConfiguration = FTConfiguration()
         }
         return StaticConfig.instance
     }
 
 }
-

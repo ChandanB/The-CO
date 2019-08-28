@@ -6,46 +6,45 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 import AVFoundation
 
 class VoiceRecordingViewController: UIViewController {
-  
+
   var recorder: AVAudioRecorder!
-  
+
   var player: AVAudioPlayer!
-  
+
   weak var inputContainerView: ChatInputContainerView?
 
   let voiceRecordingContainerView = VoiceRecordingContainerView()
-  
+
   var meterTimer: Timer!
-  
+
   var soundFileURL: URL!
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
      print("VOICE INIT")
     view.addSubview(voiceRecordingContainerView)
-    
+
     view.addSubview(voiceRecordingContainerView)
     voiceRecordingContainerView.translatesAutoresizingMaskIntoConstraints = false
     voiceRecordingContainerView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-    
+
     if #available(iOS 11.0, *) {
       voiceRecordingContainerView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
       voiceRecordingContainerView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
-      voiceRecordingContainerView.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+      voiceRecordingContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     } else {
       voiceRecordingContainerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
       voiceRecordingContainerView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
       voiceRecordingContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
-    
+
     voiceRecordingContainerView.stopButton.addTarget(self, action: #selector(stop), for: .touchUpInside)
     voiceRecordingContainerView.recordButton.addTarget(self, action: #selector(record(_:)), for: .touchUpInside)
-    
+
     voiceRecordingContainerView.stopButton.isEnabled = false
     voiceRecordingContainerView.stopButton.setTitleColor(ThemeManager.currentTheme().generalSubtitleColor, for: .normal)
 
@@ -53,51 +52,51 @@ class VoiceRecordingViewController: UIViewController {
     askForNotifications()
     checkHeadphones()
   }
-  
+
   deinit {
     print("VOICE DID DEINIT")
   }
-  
+
   @objc func updateAudioMeter(_ timer: Timer) {
-    
+
     if let recorder = self.recorder {
       if recorder.isRecording {
         let hours = Int(recorder.currentTime) / 3600
         let minutes = Int(recorder.currentTime) / 60 % 60
         let seconds = Int(recorder.currentTime) % 60
         let stamp = String(format: "%02i:%02i:%02i", hours, minutes, seconds)
-        
+
         voiceRecordingContainerView.statusLabel.text = stamp
         recorder.updateMeters()
-       
+
         let percentage = pow(10, (0.05 * recorder.averagePower(forChannel: 0)))
        // print(percentage)
         voiceRecordingContainerView.waveForm.amplitude = CGFloat(percentage*5)
       }
     }
   }
-  
+
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     recorder = nil
     player = nil
   }
-  
+
 //  @IBAction func removeAll(_ sender: AnyObject) {
 //    deleteAllRecordings()
 //  }
-  
+
   @objc func record(_ sender: UIButton) {
-    
+
     print("\(#function)")
-    
+
     if player != nil && player.isPlaying {
       print("stopping")
       player.stop()
     }
-    
+
     if recorder == nil {
-   
+
       recordWithPermission(true, completionHandler: { (isCompleted) in
         if isCompleted {
           print("recording. recorder nil")
@@ -108,40 +107,40 @@ class VoiceRecordingViewController: UIViewController {
           }
           return
         } else {
-          
+
           basicErrorAlertWith(title: "Error", message: microphoneAccessDeniedMessage, controller: self)
           return
         }
       })
       return
     } else
-    
+
     if recorder != nil && recorder.isRecording {
       print("pausing")
       recorder.pause()
       voiceRecordingContainerView.waveForm.amplitude = 0
       voiceRecordingContainerView.recordButton.setTitle("Continue", for: .normal)
-      
+
     } else {
       print("recording")
       voiceRecordingContainerView.recordButton.setTitle("Pause", for: .normal)
    //   voiceRecordingContainerView.playButton.isEnabled = false
       voiceRecordingContainerView.stopButton.isEnabled = true
       voiceRecordingContainerView.stopButton.setTitleColor(.red, for: .normal)
-      
+
       //            recorder.record()
-      recordWithPermission(false, completionHandler: { (completed) in })
+      recordWithPermission(false, completionHandler: { (_) in })
     }
   }
-  
+
   @objc func stop() {
-    
+
     print("\(#function)")
-    
+
     recorder?.stop()
     player?.stop()
     meterTimer.invalidate()
-    
+
     voiceRecordingContainerView.recordButton.setTitle("Record", for: .normal)
     let session = AVAudioSession.sharedInstance()
     do {
@@ -154,51 +153,51 @@ class VoiceRecordingViewController: UIViewController {
       print("could not make session inactive")
       print(error.localizedDescription)
     }
-    
+
     //recorder = nil
   }
-  
+
   func setupRecorder() {
     print("\(#function)")
-    
+
     let format = DateFormatter()
     format.dateFormat="yyyy-MM-dd-HH-mm-ss"
     let currentFileName = "recording-\(format.string(from: Date())).m4a"
     print(currentFileName)
-    
+
     let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     self.soundFileURL = documentsDirectory.appendingPathComponent(currentFileName)
     print("writing to soundfile url: '\(soundFileURL!)'")
-    
+
     if FileManager.default.fileExists(atPath: soundFileURL.absoluteString) {
       // probably won't happen. want to do something about it?
       print("soundfile \(soundFileURL.absoluteString) exists")
     }
-    
+
     let recordSettings: [String: Any] = [
       AVFormatIDKey: kAudioFormatMPEG4AAC,
       AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue ,
-      AVEncoderBitRateKey: 24000,//32000,
+      AVEncoderBitRateKey: 24000, //32000,
       AVNumberOfChannelsKey: 1,
       AVSampleRateKey: 24000 //44100.0
     ]
-    
+
     do {
       recorder = try AVAudioRecorder(url: soundFileURL, settings: recordSettings)
       recorder.delegate = self
       recorder.isMeteringEnabled = true
-      
+
       recorder.prepareToRecord() // creates/overwrites the file at soundFileURL
     } catch {
       recorder = nil
       print(error.localizedDescription)
     }
-    
+
   }
     typealias CompletionHandler = (_ success: Bool) -> Void
   func recordWithPermission(_ setup: Bool, completionHandler: @escaping CompletionHandler) {
     print("\(#function)")
-    
+
     AVAudioSession.sharedInstance().requestRecordPermission {
       [unowned self] granted in
       if granted {
@@ -210,7 +209,7 @@ class VoiceRecordingViewController: UIViewController {
             self.setupRecorder()
           }
           self.recorder.record(forDuration: 1800)
-          
+
           self.meterTimer = Timer.scheduledTimer(timeInterval: 0.01,
                                                  target: self,
                                                  selector: #selector(self.updateAudioMeter(_:)),
@@ -222,7 +221,7 @@ class VoiceRecordingViewController: UIViewController {
         print("Permission to record not granted")
       }
     }
-    
+
 		if AVAudioSession.sharedInstance().recordPermission == .denied {
       print("permission denied")
     }
@@ -249,7 +248,6 @@ class VoiceRecordingViewController: UIViewController {
 //    }
 //  }
 
-
 	func setSessionPlayback() {
 		// print("\(#function)")
 
@@ -270,7 +268,7 @@ class VoiceRecordingViewController: UIViewController {
 			//      print(error.localizedDescription)
 		}
 	}
-  
+
 	func setSessionPlayAndRecord() {
 		// print("\(#function)")
 
@@ -291,13 +289,12 @@ class VoiceRecordingViewController: UIViewController {
 			//      print(error.localizedDescription)
 		}
 	}
-  
+
   func deleteAllRecordings() {
     print("\(#function)")
-    
-    
+
     let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    
+
     let fileManager = FileManager.default
     do {
       let files = try fileManager.contentsOfDirectory(at: documentsDirectory,
@@ -311,7 +308,7 @@ class VoiceRecordingViewController: UIViewController {
       for i in 0 ..< recordings.count {
         //                    let path = documentsDirectory.appendPathComponent(recordings[i], inDirectory: true)
         //                    let path = docsDir + "/" + recordings[i]
-        
+
         //                    print("removing \(path)")
         print("removing \(recordings[i])")
         do {
@@ -321,14 +318,14 @@ class VoiceRecordingViewController: UIViewController {
           print(error.localizedDescription)
         }
       }
-      
+
     } catch {
       print("could not get contents of directory at \(documentsDirectory)")
       print(error.localizedDescription)
     }
-    
+
   }
-  
+
 	func askForNotifications() {
 		//   print("\(#function)")
 
@@ -349,15 +346,14 @@ class VoiceRecordingViewController: UIViewController {
 	}
   @objc func background(_ notification: Notification) {
     print("\(#function)")
-    
+
   }
-  
+
   @objc func foreground(_ notification: Notification) {
     print("\(#function)")
-    
+
   }
-  
-  
+
 	@objc func routeChange(_ notification: Notification) {
 		//  print("\(#function)")
 
@@ -394,10 +390,10 @@ class VoiceRecordingViewController: UIViewController {
 			}
 		}
 	}
-	
+
   func checkHeadphones() {
     print("\(#function)")
-    
+
     // check NewDeviceAvailable and OldDeviceUnavailable for them being plugged in/unplugged
     let currentRoute = AVAudioSession.sharedInstance().currentRoute
     if !currentRoute.outputs.isEmpty {
@@ -415,62 +411,61 @@ class VoiceRecordingViewController: UIViewController {
   }
 }
 
-
 extension String {
-  
+
   public func isAudio() -> Bool {
     // Add here your image formats.
     let imageFormats = ["m4a"]
-    
+
     if let ext = self.getExtension() {
       return imageFormats.contains(ext)
     }
-    
+
     return false
   }
-  
+
   public func getExtension() -> String? {
     let ext = (self as NSString).pathExtension
-    
+
     if ext.isEmpty {
       return nil
     }
-    
+
     return ext
   }
-  
+
   public func isURL() -> Bool {
     return URL(string: self) != nil
   }
-  
+
 }
 
 // MARK: AVAudioRecorderDelegate
 extension VoiceRecordingViewController: AVAudioRecorderDelegate {
-  
+
   func expandCollection() {
     inputContainerView?.separator.isHidden = false
     inputContainerView?.sendButton.isEnabled = true
     inputContainerView?.placeholderLabel.text = "Add comment or Send"
     inputContainerView?.attachedImages.frame = CGRect(x: 0, y: 0, width: inputContainerView!.inputTextView.frame.width, height: 165)
     inputContainerView?.inputTextView.textContainerInset = InputContainerViewConstants.containerInsetsWithAttachedImages
-    
+
     let maxTextViewHeightRelativeToOrientation: CGFloat! = getInputTextViewMaxHeight()
     if inputContainerView!.inputTextView.contentSize.height <= maxTextViewHeightRelativeToOrientation {
       inputContainerView?.invalidateIntrinsicContentSize()
     }
   }
-  
+
   func insertItemsToCollectionViewAnimated(at indexPath: [IndexPath], mediaObject: [String: AnyObject]) {
-    
+
     self.expandCollection()
     self.inputContainerView?.attachedImages.performBatchUpdates ({
       self.inputContainerView?.attachedImages.insertItems(at: indexPath)
     }, completion: nil)
-    
-    self.inputContainerView?.attachedImages.scrollToItem(at: IndexPath(item: self.inputContainerView!.selectedMedia.count - 1 , section: 0), at: .right, animated: true)
+
+    self.inputContainerView?.attachedImages.scrollToItem(at: IndexPath(item: self.inputContainerView!.selectedMedia.count - 1, section: 0), at: .right, animated: true)
   }
-  
+
   func stackOverflowAnswer(data: Data) {
   //  if let data = UIImagePNGRepresentation(#imageLiteral(resourceName: "VanGogh.jpg")) as Data? {
       print("There were \(data.count) bytes")
@@ -481,32 +476,30 @@ extension VoiceRecordingViewController: AVAudioRecorderDelegate {
       print("formatted result: \(string)")
   //  }
   }
-  
-  
+
   func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder,
                                        successfully flag: Bool) {
-    
+
     print("\(#function)")
-    
+
     print("finished recording \(flag)")
     voiceRecordingContainerView.stopButton.isEnabled = false
     voiceRecordingContainerView.stopButton.setTitleColor(ThemeManager.currentTheme().generalSubtitleColor, for: .normal)
 		voiceRecordingContainerView.recordButton.setTitle("Record", for: UIControl.State())
-   
-    
+
     var soundData: Data!
-    
+
     do {
       soundData = try Data(contentsOf: soundFileURL)
         stackOverflowAnswer(data: soundData)
 			let mediaObject = ["audioObject": soundData as Any,
-												 "fileURL" : soundFileURL as Any] as [String: AnyObject]
+												 "fileURL": soundFileURL as Any] as [String: AnyObject]
       self.inputContainerView?.selectedMedia.append(MediaObject(dictionary: mediaObject))
       soundData = nil
       if self.inputContainerView!.selectedMedia.count - 1 >= 0 {
-        self.insertItemsToCollectionViewAnimated(at: [ IndexPath(item: self.inputContainerView!.selectedMedia.count - 1 , section: 0) ], mediaObject: mediaObject)
+        self.insertItemsToCollectionViewAnimated(at: [ IndexPath(item: self.inputContainerView!.selectedMedia.count - 1, section: 0) ], mediaObject: mediaObject)
       } else {
-        self.insertItemsToCollectionViewAnimated(at: [ IndexPath(item: 0 , section: 0) ], mediaObject: mediaObject)
+        self.insertItemsToCollectionViewAnimated(at: [ IndexPath(item: 0, section: 0) ], mediaObject: mediaObject)
       }
       self.recorder.deleteRecording()
       self.voiceRecordingContainerView.statusLabel.text = "00:00:00"
@@ -515,11 +508,11 @@ extension VoiceRecordingViewController: AVAudioRecorderDelegate {
       print("error converting sound to data")
     }
   }
-  
+
   func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder,
                                         error: Error?) {
     print("\(#function)")
-    
+
     if let e = error {
       print("\(e.localizedDescription)")
     }
@@ -530,19 +523,18 @@ extension VoiceRecordingViewController: AVAudioRecorderDelegate {
 extension VoiceRecordingViewController: AVAudioPlayerDelegate {
   func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
     print("\(#function)")
-    
+
     print("finished playing \(flag)")
     voiceRecordingContainerView.recordButton.isEnabled = true
     voiceRecordingContainerView.stopButton.isEnabled = false
     voiceRecordingContainerView.stopButton.setTitleColor(ThemeManager.currentTheme().generalSubtitleColor, for: .normal)
   }
-  
+
   func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
     print("\(#function)")
-    
+
     if let e = error {
       print("\(e.localizedDescription)")
     }
   }
 }
-

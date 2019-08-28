@@ -11,7 +11,7 @@ import UIKit
 extension UserMessageProfileController: AvatarOpenerDelegate {
   func avatarOpener(avatarPickerDidPick image: UIImage) {
     userProfileContainerView.profileImageView.showActivityIndicator()
-    userProfileDataDatabaseUpdater.deleteCurrentPhoto { (isDeleted) in
+    userProfileDataDatabaseUpdater.deleteCurrentPhoto { (_) in
       self.userProfileDataDatabaseUpdater.updateUserProfile(with: image, completion: { (isUpdated) in
         self.userProfileContainerView.profileImageView.hideActivityIndicator()
         guard isUpdated else {
@@ -19,11 +19,11 @@ extension UserMessageProfileController: AvatarOpenerDelegate {
           return
         }
         self.userProfileContainerView.profileImageView.image = image
-       
+
       })
     }
   }
-  
+
   func avatarOpener(didPerformDeletionAction: Bool) {
     userProfileContainerView.profileImageView.showActivityIndicator()
     userProfileDataDatabaseUpdater.deleteCurrentPhoto { (isDeleted) in

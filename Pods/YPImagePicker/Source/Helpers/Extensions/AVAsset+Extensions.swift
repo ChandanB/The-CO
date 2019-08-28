@@ -23,7 +23,7 @@ extension AVAsset {
         } catch let error {
             throw YPTrimError("Error during composition", underlyingError: error)
         }
-        
+
         // Reaply correct transform to keep original orientation.
         if let videoTrack = self.tracks(withMediaType: .video).last,
             let compositionTrack = composition.tracks(withMediaType: .video).last {
@@ -32,7 +32,7 @@ extension AVAsset {
 
         return composition
     }
-    
+
     /// Export the video
     ///
     /// - Parameters:
@@ -48,16 +48,16 @@ extension AVAsset {
         guard let exportSession = AVAssetExportSession(asset: self, presetName: YPConfig.video.compression) else {
             throw YPTrimError("Could not create an export session")
         }
-        
+
         exportSession.outputURL = destination
         exportSession.outputFileType = YPConfig.video.fileType
         exportSession.shouldOptimizeForNetworkUse = true
         exportSession.videoComposition = videoComposition
-        
+
         if removeOldFile { try FileManager.default.removeFileIfNecessary(at: destination) }
-        
+
         exportSession.exportAsynchronously(completionHandler: completion)
-        
+
         if let error = exportSession.error {
             throw YPTrimError("error during export", underlyingError: error)
         }

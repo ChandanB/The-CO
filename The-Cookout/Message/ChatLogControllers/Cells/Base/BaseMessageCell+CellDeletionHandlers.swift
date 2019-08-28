@@ -6,7 +6,6 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 import FTPopOverMenu_Swift
 import Firebase
@@ -124,7 +123,7 @@ extension BaseMessageCell {
           deletionReference = USER_MESSAGES_REF.child(uid).child(partnerID).child(userMessagesFirebaseFolder).child(messageID)
         }
 
-        deletionReference.removeValue(completionBlock: { (error, reference) in
+        deletionReference.removeValue(completionBlock: { (error, _) in
           if error != nil { return }
           let shouldReloadMessageStatus = self.shouldReloadMessageSatus()
 

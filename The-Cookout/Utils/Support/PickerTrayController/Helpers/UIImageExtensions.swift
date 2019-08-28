@@ -6,14 +6,13 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 
 extension UIImage {
-    
+
     convenience init?(bundledName name: String) {
         let bundle = Bundle(for: ImagePickerTrayController.self)
-        self.init(named: name, in: bundle, compatibleWith:nil)
+        self.init(named: name, in: bundle, compatibleWith: nil)
     }
-    
+
 }

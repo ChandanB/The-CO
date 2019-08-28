@@ -15,58 +15,58 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     var window: UIWindow?
     let apikey = "7MEDJ1GO832B"
-    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         ThemeManager.applyTheme(theme: ThemeManager.currentTheme())
         FirebaseApp.configure()
         Database.database().isPersistenceEnabled = true
-                
+
         window = UIWindow()
         window?.makeKeyAndVisible()
         window?.backgroundColor = ThemeManager.currentTheme().generalBackgroundColor
         window?.rootViewController = MainSwipeController()
-        
+
         attemptToRegisterForNotifications(application: application)
-        
+
         return true
     }
-    
+
     func attemptToRegisterForNotifications(application: UIApplication) {
-        
+
         Messaging.messaging().delegate = self
-        
+
         UNUserNotificationCenter.current().delegate = self
-        
+
         let options: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: options) { (authorized, error) in
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { (authorized, _) in
             if authorized {
-                
+
             }
         }
-        
+
         application.registerForRemoteNotifications()
     }
-    
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("Device token \(deviceToken)")
     }
-    
+
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
         print("FCM token: \(fcmToken)")
     }
-    
+
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler(.alert)
     }
-    
+
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
-    
+
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         guard Auth.auth().currentUser != nil else { return .portrait }
         return self.orientationLock
     }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -89,6 +89,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
 }
-

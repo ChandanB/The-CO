@@ -10,7 +10,7 @@ import Foundation
 import FirebaseDatabase
 
 class CommentApi {
-    
+
     func observeComments(user: User, withPostId id: String, completion: @escaping (Comment) -> Void) {
         COMMENT_REF.child(id).observeSingleEvent(of: .value, with: {
             snapshot in

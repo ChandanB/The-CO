@@ -16,16 +16,16 @@ protocol ChatLogHistoryDelegate: class {
 
 class ChatLogHistoryFetcher: NSObject {
     weak var delegate: ChatLogHistoryDelegate?
-    
+
     fileprivate var loadingGroup = DispatchGroup()
     fileprivate let messagesFetcher = MessagesFetcher()
-    
+
     fileprivate var messages = [Message]()
     fileprivate var conversation: Conversation?
-    
+
     fileprivate var isGroupChat: Bool!
     fileprivate var messagesToLoad: Int!
-    
+
     public func loadPreviousMessages(_ messages: [Message], _ conversation: Conversation,
                                      _ messagesToLoad: Int, _ isGroupChat: Bool) {
         self.messages = messages
@@ -34,16 +34,16 @@ class ChatLogHistoryFetcher: NSObject {
         self.isGroupChat = isGroupChat
         loadChatHistory()
     }
-    
+
     fileprivate func loadChatHistory() {
         guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation?.chatID else { return }
         if messages.count <= 0 { delegate?.chatLogHistory(isEmpty: true) }
         getFirstID(currentUserID, conversationID)
     }
-    
+
     fileprivate func getFirstID(_ currentUserID: String, _ conversationID: String) {
         let firstIDReference = USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(userMessagesFirebaseFolder)
-        
+
         let numberOfMessagesToLoad = messagesToLoad + messages.count
         let firstIDQuery = firstIDReference.queryLimited(toLast: UInt(numberOfMessagesToLoad))
         firstIDQuery.observeSingleEvent(of: .childAdded, with: { (snapshot) in
@@ -51,37 +51,37 @@ class ChatLogHistoryFetcher: NSObject {
             self.getLastID(firstID, currentUserID, conversationID)
         })
     }
-    
+
     fileprivate func getLastID(_ firstID: String, _ currentUserID: String, _ conversationID: String) {
         let nextMessageIndex = messages.count + 1
         let lastIDReference = USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(userMessagesFirebaseFolder)
         let lastIDQuery = lastIDReference.queryLimited(toLast: UInt(nextMessageIndex))
-        
+
         lastIDQuery.observeSingleEvent(of: .childAdded, with: { (snapshot) in
             let lastID = snapshot.key
-            
+
             if (firstID == lastID) && self.messages.contains(where: { (message) -> Bool in
                 return message.messageUID == lastID
             }) {
                 self.delegate?.chatLogHistory(isEmpty: false)
                 return
             }
-            
+
             self.getRange(firstID, lastID, currentUserID, conversationID)
         })
     }
-    
+
     fileprivate func getRange(_ firstID: String, _ lastID: String, _ currentUserID: String, _ conversationID: String) {
         let rangeReference = USER_MESSAGES_REF.child(currentUserID).child(conversationID).child(userMessagesFirebaseFolder)
         let rangeQuery = rangeReference.queryOrderedByKey().queryStarting(atValue: firstID).queryEnding(atValue: lastID)
-        
+
         rangeQuery.observeSingleEvent(of: .value, with: { (snapshot) in
             for _ in 0 ..< snapshot.childrenCount { self.loadingGroup.enter() }
             self.notifyWhenGroupFinished(query: rangeQuery)
             self.getMessages(from: rangeQuery)
         })
     }
-    
+
     fileprivate var userMessageHande: DatabaseHandle!
     var previousMessages = [Message]()
     fileprivate func getMessages(from query: DatabaseQuery) {
@@ -91,10 +91,10 @@ class ChatLogHistoryFetcher: NSObject {
             self.getMetadata(fromMessageWith: messageUID)
         })
     }
-    
+
     fileprivate func getMetadata(fromMessageWith messageUID: String) {
         let reference = MESSAGES_REF.child(messageUID)
-        
+
         reference.observeSingleEvent(of: .value, with: { (snapshot) in
             guard var dictionary = snapshot.value as? [String: AnyObject] else { return }
             dictionary.updateValue(messageUID as AnyObject, forKey: "messageUID")
@@ -106,7 +106,7 @@ class ChatLogHistoryFetcher: NSObject {
             })
         })
     }
-    
+
     fileprivate func notifyWhenGroupFinished(query: DatabaseQuery) {
         loadingGroup.notify(queue: DispatchQueue.main, execute: {
             let updatedMessages = self.previousMessages + self.messages
@@ -121,4 +121,3 @@ class ChatLogHistoryFetcher: NSObject {
         })
     }
 }
-

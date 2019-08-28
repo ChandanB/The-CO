@@ -9,9 +9,9 @@
 import UIKit
 
 extension UsersController: UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
-    
+
     func updateSearchResults(for searchController: UISearchController) {}
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         filteredUsers = users
@@ -22,7 +22,7 @@ extension UsersController: UISearchBarDelegate, UISearchControllerDelegate, UISe
             return
         }
     }
-    
+
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.keyboardAppearance = ThemeManager.currentTheme().keyboardAppearance
         guard #available(iOS 11.0, *) else {
@@ -31,12 +31,12 @@ extension UsersController: UISearchBarDelegate, UISearchControllerDelegate, UISe
         }
         return true
     }
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filteredUsers = searchText.isEmpty ? users : users.filter({ (User) -> Bool in
             return User.name.lowercased().contains(searchText.lowercased())
         })
-        
+
         filteredUsers = searchText.isEmpty ? users : users.filter({ (User) -> Bool in
             let userFullName = User.name.lowercased() + " " + User.username.lowercased()
             return userFullName.lowercased().contains(searchText.lowercased())
@@ -46,7 +46,7 @@ extension UsersController: UISearchBarDelegate, UISearchControllerDelegate, UISe
 }
 
 extension UsersController { /* hiding keyboard */
-    
+
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         if #available(iOS 11.0, *) {
             searchUsersController?.resignFirstResponder()
@@ -55,7 +55,7 @@ extension UsersController { /* hiding keyboard */
             searchBar?.resignFirstResponder()
         }
     }
-    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if #available(iOS 11.0, *) {
             searchUsersController?.searchBar.endEditing(true)

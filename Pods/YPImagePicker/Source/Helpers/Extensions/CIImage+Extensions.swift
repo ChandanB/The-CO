@@ -18,7 +18,7 @@ internal extension CIImage {
         let image: UIImage = UIImage(cgImage: cgImage)
         return image
     }
-    
+
     func toCGImage() -> CGImage? {
         let context = CIContext(options: nil)
         if let cgImage = context.createCGImage(self, from: self.extent) {

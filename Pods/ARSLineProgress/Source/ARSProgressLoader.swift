@@ -11,7 +11,7 @@
 import UIKit
 
 final class ARSProgressLoader: ARSLoader {
-	
+
 	@objc var emptyView = UIView()
 	@objc var backgroundBlurView: UIView
 	@objc var backgroundSimpleView: UIView
@@ -36,7 +36,7 @@ final class ARSProgressLoader: ARSLoader {
 	var failed = false
 	static weak var weakSelf: ARSProgressLoader?
 	@objc weak var targetView: UIView?
-	
+
 	init() {
 		backgroundBlurView = ARSBlurredBackgroundRect().view
 		backgroundSimpleView = ARSSimpleBackgroundRect().view
@@ -47,13 +47,13 @@ final class ARSProgressLoader: ARSLoader {
 		                                       name: UIDevice.orientationDidChangeNotification,
 		                                       object: nil)
 	}
-	
+
 	deinit {
 		NotificationCenter.default.removeObserver(self,
 		                                          name: UIDevice.orientationDidChangeNotification,
 		                                          object: nil)
 	}
-	
+
 	@objc func orientationChanged(_ notification: Notification) {
 		ars_dispatchOnMainQueue {
 			if let loader = ars_currentLoader {
@@ -65,20 +65,20 @@ final class ARSProgressLoader: ARSLoader {
 			}
 		}
 	}
-	
+
 }
 
 extension ARSProgressLoader {
-	
+
 	// MARK: Show/Cancel
-	
+
 	func ars_showWithValue(_ value: CGFloat, onView view: UIView?, progress: Progress?, completionBlock: (() -> Void)?) {
 		if ars_createdFrameForBackgroundView(backgroundView, onView: view) == false { return }
 		if let progress = progress { self.progress = progress }
-		
+
 		ars_currentCompletionBlock = completionBlock
 		targetView = view
-		
+
 		ars_createCircles(outerCircle,
 		                  middleCircle: middleCircle,
 		                  innerCircle: innerCircle,
@@ -88,7 +88,7 @@ extension ARSProgressLoader {
 		ars_presentLoader(self, onView: view, completionBlock: nil)
 		ars_launchTimer()
 	}
-	
+
 	func ars_cancelWithFailAnimation(_ failAnim: Bool, completionBlock: (() -> Void)?) {
 		if failAnim {
 			ars_currentCompletionBlock = completionBlock
@@ -97,23 +97,23 @@ extension ARSProgressLoader {
 			ars_hideLoader(ars_currentLoader, withCompletionBlock: completionBlock)
 		}
 	}
-	
+
 	// MARK: Configs & Animations
-	
+
 	func ars_launchTimer() {
 		ars_dispatchAfter(0.01) {
 			guard let strongSelf = ARSProgressLoader.weakSelf else { return }
-			
+
 			strongSelf.ars_incrementCircleRadius()
 			strongSelf.ars_launchTimer()
 		}
 	}
-	
+
 	func ars_incrementCircleRadius() {
 		if ars_didIncrementMultiplier() == false { return }
-		
+
 		ars_drawCirclePath()
-		
+
 		if failed && multiplier <= 0.0 {
 			ARSProgressLoader.weakSelf = nil
 			multiplier = 0.01
@@ -124,7 +124,7 @@ extension ARSProgressLoader {
 			ars_completed()
 		}
 	}
-	
+
 	func ars_drawCirclePath() {
 		let viewBounds = backgroundView.bounds
 		let center = CGPoint(x: viewBounds.midX, y: viewBounds.midY)
@@ -132,21 +132,21 @@ extension ARSProgressLoader {
 		let outerPath = UIBezierPath(arcCenter: center, radius: ARS_CIRCLE_RADIUS_OUTER, startAngle: 0, endAngle: endAngle, clockwise: true)
 		let middlePath = UIBezierPath(arcCenter: center, radius: ARS_CIRCLE_RADIUS_MIDDLE, startAngle: 0, endAngle: endAngle, clockwise: true)
 		let innerPath = UIBezierPath(arcCenter: center, radius: ARS_CIRCLE_RADIUS_INNER, startAngle: 0, endAngle: endAngle, clockwise: true)
-		
+
 		self.outerCircle.path = outerPath.cgPath
 		self.middleCircle.path = middlePath.cgPath
 		self.innerCircle.path = innerPath.cgPath
 	}
-	
+
 	func ars_didIncrementMultiplier() -> Bool {
 		if failed {
 			multiplier -= 1.5
 			return true
 		}
-		
+
 		let progress: CGFloat = ars_progressSource()
 		if lastMultiplierValue == progress { return false }
-		
+
 		if progress / multiplier > 2 {
 			if multiplier < progress {
 				multiplier += 0.75
@@ -157,10 +157,10 @@ extension ARSProgressLoader {
 			}
 		}
 		lastMultiplierValue = multiplier
-		
+
 		return true
 	}
-	
+
 	func ars_progressSource() -> CGFloat {
 		if let progress = self.progress {
 			return CGFloat(progress.fractionCompleted * 100.0)
@@ -168,10 +168,10 @@ extension ARSProgressLoader {
 			return progressValue
 		}
 	}
-	
+
 	func ars_completed() {
 		let transform = CATransform3DMakeScale(0.01, 0.01, 1)
-		
+
 		CATransaction.begin()
 		CATransaction.setAnimationDuration(0.5)
 		CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(controlPoints: 0.70, -0.80, 0.68, 0.95))
@@ -185,13 +185,13 @@ extension ARSProgressLoader {
 		CATransaction.commit()
 		CATransaction.commit()
 		CATransaction.commit()
-		
+
 		ars_dispatchAfter(0.9) {
 			if ARSLineProgressConfiguration.showSuccessCheckmark {
 				ARSStatus.show(.success)
-				
+
 				let dismissDelay = 0.5 + max(ARSLineProgressConfiguration.successCircleAnimationDrawDuration, ARSLineProgressConfiguration.checkmarkAnimationDrawDuration)
-				
+
 				ars_dispatchAfter(dismissDelay) {
 					ars_hideLoader(ars_currentLoader, withCompletionBlock: ars_currentCompletionBlock)
 				}
@@ -200,14 +200,14 @@ extension ARSProgressLoader {
 			}
 		}
 	}
-	
+
 	func ars_failedLoading() {
 		ARSStatus.show(.fail)
 		let dismissDelay = 0.5 + max(ARSLineProgressConfiguration.failCircleAnimationDrawDuration, ARSLineProgressConfiguration.failCrossAnimationDrawDuration)
-		
+
 		ars_dispatchAfter(dismissDelay) {
 			ars_hideLoader(ars_currentLoader, withCompletionBlock: ars_currentCompletionBlock)
 		}
 	}
-	
+
 }

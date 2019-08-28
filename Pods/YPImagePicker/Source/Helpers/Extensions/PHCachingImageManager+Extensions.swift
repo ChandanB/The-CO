@@ -10,7 +10,7 @@ import Foundation
 import Photos
 
 extension PHCachingImageManager {
-    
+
     private func photoImageRequestOptions() -> PHImageRequestOptions {
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
@@ -19,14 +19,14 @@ extension PHCachingImageManager {
         options.isSynchronous = true // Ok since we're already in a background thread
         return options
     }
-    
+
     func fetchImage(for asset: PHAsset, cropRect: CGRect, targetSize: CGSize, callback: @escaping (UIImage, [String: Any]) -> Void) {
         let options = photoImageRequestOptions()
-    
+
         // Fetch Highiest quality image possible.
-        requestImageData(for: asset, options: options) { data, dataUTI, CTFontOrientation, info in
+        requestImageData(for: asset, options: options) { data, _, _, _ in
             if let data = data, let image = UIImage(data: data)?.resetOrientation() {
-            
+
                 // Crop the high quality image manually.
                 let xCrop: CGFloat = cropRect.origin.x * CGFloat(asset.pixelWidth)
                 let yCrop: CGFloat = cropRect.origin.y * CGFloat(asset.pixelHeight)
@@ -42,16 +42,16 @@ extension PHCachingImageManager {
             }
         }
     }
-    
+
     private func metadataForImageData(data: Data) -> [String: Any] {
         if let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
         let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil),
-        let metaData = imageProperties as? [String : Any] {
+        let metaData = imageProperties as? [String: Any] {
             return metaData
         }
         return [:]
     }
-    
+
     func fetchPreviewFor(video asset: PHAsset, callback: @escaping (UIImage) -> Void) {
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
@@ -66,7 +66,7 @@ extension PHCachingImageManager {
             }
         }
     }
-    
+
     func fetchPlayerItem(for video: PHAsset, callback: @escaping (AVPlayerItem) -> Void) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.deliveryMode = PHVideoRequestOptionsDeliveryMode.automatic
@@ -79,7 +79,7 @@ extension PHCachingImageManager {
             }
         })
     }
-    
+
     /// This method return two images in the callback. First is with low resolution, second with high.
     /// So the callback fires twice. But with isSynchronous = true there is only one high resolution image.
     /// Bool = isFromCloud

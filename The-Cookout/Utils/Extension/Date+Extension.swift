@@ -11,20 +11,20 @@ import UIKit
 extension Date {
     func timeAgoDisplay() -> String {
         let secondsAgo = Int(Date().timeIntervalSince(self))
-        
+
         let minute = 60
         let hour = 60 * minute
         let day = 24 * hour
         let week = 7 * day
         let month = 4 * week
-        
+
         let quotient: Int
         let unit: String
-        
+
         if secondsAgo == 0 {
             return "Just now"
         }
-        
+
         if secondsAgo < minute {
             quotient = secondsAgo
             unit = "second"
@@ -44,18 +44,18 @@ extension Date {
             quotient = secondsAgo / month
             unit = "month"
         }
-        
+
         return "\(quotient) \(unit)\(quotient == 1 ? "" : "s") ago"
     }
-    
+
     func timeAgoDisplayShort() -> String {
         let secondsAgo = Int(Date().timeIntervalSince(self))
-        
+
         let minute = 60
         let hour = 60 * minute
         let day = 24 * hour
         let week = 7 * day
-        
+
         if secondsAgo == 0 {
             return "Just now"
         }
@@ -68,17 +68,17 @@ extension Date {
         } else if secondsAgo < week {
             return "\(secondsAgo / day)d"
         }
-        
+
         return "\(secondsAgo / week)wk"
     }
-    
+
     func getShortDateStringFromUTC() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         dateFormatter.dateFormat = "dd/MM/yy"
         return dateFormatter.string(from: self)
     }
-    
+
     func getTimeStringFromUTC() -> String {
         let dateFormatter = DateFormatter()
         let locale = Locale(identifier: "en_US_POSIX")
@@ -89,7 +89,7 @@ extension Date {
         dateFormatter.pmSymbol = "PM"
         return dateFormatter.string(from: self)
     }
-    
+
     func dayOfWeek() -> String {
         let dateFormatter = DateFormatter()
         let locale = Locale(identifier: "en_US_POSIX")
@@ -97,7 +97,7 @@ extension Date {
         dateFormatter.dateFormat = "E"
         return dateFormatter.string(from: self).capitalized
     }
-    
+
     func dayNumberOfWeek() -> Int {
         return Calendar.current.dateComponents([.weekday], from: self).weekday!
     }

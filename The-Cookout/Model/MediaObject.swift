@@ -18,10 +18,10 @@ class MediaObject: NSObject {
     var phAsset: PHAsset?
     var filename: String?
     var fileURL: String?
-    
+
     init(dictionary: [String: AnyObject]) {
         super.init()
-        
+
         object = dictionary["object"] as? Data
         videoObject = dictionary["videoObject"] as? Data
         audioObject = dictionary["audioObject"] as? Data

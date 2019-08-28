@@ -16,9 +16,9 @@ protocol UsersUpdatesDelegate: class {
 }
 
 class UsersFetcher: NSObject {
-  
+
   weak var delegate: UsersUpdatesDelegate?
-  
+
   func fetchUsers () {
     guard let uid = CURRENT_USER?.uid else {return}
     var users = [User]()
@@ -29,5 +29,5 @@ class UsersFetcher: NSObject {
         self.delegate?.users(updateDatasource: users)
     }
   }
-    
+
 }

@@ -6,12 +6,10 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 
-
 class IncomingTextMessageCell: BaseMessageCell {
-  
+
   let textView: SocialPointTextView = {
     let textView = SocialPointTextView()
     textView.font = UIFont.systemFont(ofSize: 13)
@@ -23,19 +21,18 @@ class IncomingTextMessageCell: BaseMessageCell {
     return textView
   }()
 
-  
   func setupData(message: Message, isGroupChat: Bool) {
-    
+
     self.message = message
     guard let messageText = message.text else { return }
     textView.text = messageText
-    
+
     if isGroupChat {
       nameLabel.text = message.senderName ?? ""
       nameLabel.frame.size.height = 10
       nameLabel.sizeToFit()
       nameLabel.frame.origin = CGPoint(x: textView.textContainerInset.left+5, y: textView.textContainerInset.top)
-      
+
       if message.estimatedFrameForText!.width < nameLabel.frame.size.width {
         if nameLabel.frame.size.width >= 170 {
           nameLabel.frame.size.width = 170

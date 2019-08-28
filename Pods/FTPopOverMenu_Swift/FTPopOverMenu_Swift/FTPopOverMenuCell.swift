@@ -10,11 +10,11 @@ import UIKit
 
 class FTPopOverMenuCell: UITableViewCell {
 
-    fileprivate lazy var configuration : FTConfiguration = {
+    fileprivate lazy var configuration: FTConfiguration = {
         return FTConfiguration.shared
     }()
 
-    fileprivate lazy var iconImageView : UIImageView = {
+    fileprivate lazy var iconImageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect.zero)
         imageView.backgroundColor = UIColor.clear
         imageView.contentMode = UIView.ContentMode.scaleAspectFit
@@ -22,7 +22,7 @@ class FTPopOverMenuCell: UITableViewCell {
         return imageView
     }()
 
-    fileprivate lazy var nameLabel : UILabel = {
+    fileprivate lazy var nameLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
         label.backgroundColor = UIColor.clear
         self.contentView.addSubview(label)
@@ -31,14 +31,14 @@ class FTPopOverMenuCell: UITableViewCell {
 
     func setupCellWith(menuName: String, menuImage: Imageable?, cellConfiguration: FTCellConfiguration) {
         self.backgroundColor = UIColor.clear
-        
+
         // Configure cell text
         nameLabel.font = cellConfiguration.textFont
         nameLabel.textColor = cellConfiguration.textColor
         nameLabel.textAlignment = cellConfiguration.textAlignment
         nameLabel.text = menuName
         nameLabel.frame = CGRect(x: FT.DefaultCellMargin, y: 0, width: configuration.menuWidth - FT.DefaultCellMargin*2, height: configuration.menuRowHeight)
-        
+
         // Configure cell icon if available
         if var iconImage = menuImage?.getImage() {
             if  cellConfiguration.ignoreImageOriginalColor {

@@ -12,7 +12,7 @@ extension GroupProfileTableViewController: AvatarOpenerDelegate {
   func avatarOpener(avatarPickerDidPick image: UIImage) {
     groupProfileTableHeaderContainer.profileImageView.image = image
   }
-  
+
   func avatarOpener(didPerformDeletionAction: Bool) {
     groupProfileTableHeaderContainer.profileImageView.image = nil
   }

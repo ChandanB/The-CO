@@ -9,28 +9,26 @@
 import UIKit
 import Firebase
 
-
 class InformationMessageSender: NSObject {
-    
+
   func sendInformatoinMessage(chatID: String?, membersIDs: [String], text: String) {
-    
+
     let childRef = MESSAGES_REF.childByAutoId()
     let defaultMessageStatus = messageStatusDelivered
     guard let toId = chatID, let fromId = CURRENT_USER?.uid else { return }
 		guard let childRefKey = childRef.key else { return }
-    
+
     let timestamp = NSNumber(value: Int(Date().timeIntervalSince1970))
     let values: [String: AnyObject] = ["messageUID": childRefKey as AnyObject, "toId": toId as AnyObject, "status": defaultMessageStatus as AnyObject, "seen": false as AnyObject, "fromId": fromId as AnyObject, "timestamp": timestamp, "text": text as AnyObject, "isInformationMessage": true as AnyObject]
-    
+
     childRef.updateChildValues(values) { (error, _) in
       guard error == nil, let messageId = childRef.key else { return }
-     
-      
+
       for memberID in membersIDs {
         let currentUserMessages = USER_MESSAGES_REF.child(memberID).child(toId).child(userMessagesFirebaseFolder)
         currentUserMessages.updateChildValues([messageId: 1])
       }
-      
+
       self.incrementBadgeForReciever(conversationID: chatID, participantsIDs: membersIDs)
       self.setupMetadataForSender(chatID: chatID)
       self.updateLastMessageForMembers(chatID: chatID, participantsIDs: membersIDs, messageID: messageId)
@@ -67,7 +65,7 @@ class InformationMessageSender: NSObject {
 public func runTransaction(firstChild: String, secondChild: String) {
   var ref = USER_MESSAGES_REF.child(firstChild).child(secondChild)
   ref.observeSingleEvent(of: .value, with: { (snapshot) in
-    
+
     guard snapshot.hasChild(messageMetaDataFirebaseFolder) else {
       ref = ref.child(messageMetaDataFirebaseFolder)
       ref.updateChildValues(["badge": 1])
@@ -82,4 +80,3 @@ public func runTransaction(firstChild: String, secondChild: String) {
     })
   })
 }
-

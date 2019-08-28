@@ -11,7 +11,7 @@
 import UIKit
 
 final class ARSInfiniteLoader: ARSLoader {
-	
+
 	@objc var emptyView = UIView()
 	@objc var backgroundBlurView: UIVisualEffectView
 	@objc var backgroundSimpleView: UIView
@@ -30,7 +30,7 @@ final class ARSInfiniteLoader: ARSLoader {
 	@objc var middleCircle = CAShapeLayer()
 	@objc var innerCircle = CAShapeLayer()
 	@objc weak var targetView: UIView?
-	
+
 	init() {
 		backgroundBlurView = ARSBlurredBackgroundRect().view
 		backgroundSimpleView = ARSSimpleBackgroundRect().view
@@ -40,13 +40,13 @@ final class ARSInfiniteLoader: ARSLoader {
 		                                       name: UIDevice.orientationDidChangeNotification,
 		                                       object: nil)
 	}
-	
+
 	deinit {
 		NotificationCenter.default.removeObserver(self,
 		                                          name: UIDevice.orientationDidChangeNotification,
 		                                          object: nil)
 	}
-	
+
 	@objc func orientationChanged(_ notification: Notification) {
 		ars_dispatchOnMainQueue {
 			if let loader = ars_currentLoader {
@@ -58,16 +58,16 @@ final class ARSInfiniteLoader: ARSLoader {
 			}
 		}
 	}
-	
+
 }
 
 extension ARSInfiniteLoader {
-	
+
 	func ars_showOnView(_ view: UIView?, completionBlock: (() -> Void)?) {
 		if ars_createdFrameForBackgroundView(backgroundView, onView: view) == false { return }
-		
+
 		targetView = view
-		
+
 		ars_createCircles(outerCircle,
 		                  middleCircle: middleCircle,
 		                  innerCircle: innerCircle,
@@ -76,6 +76,5 @@ extension ARSInfiniteLoader {
 		ars_animateCircles(outerCircle, middleCircle: middleCircle, innerCircle: innerCircle)
 		ars_presentLoader(self, onView: view, completionBlock: completionBlock)
 	}
-	
-}
 
+}

@@ -9,7 +9,7 @@
 import UIKit
 
 class CameraCell: UICollectionViewCell {
-    
+
     var cameraView: UIView? {
         willSet {
             cameraView?.removeFromSuperview()
@@ -21,20 +21,20 @@ class CameraCell: UICollectionViewCell {
             }
         }
     }
-    
+
     var cameraOverlayView: UIView? {
         didSet {
             setNeedsLayout()
         }
     }
-    
+
     // MARK: - Layout
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         cameraView?.frame = bounds
         cameraOverlayView?.frame = bounds
     }
-    
+
 }

@@ -21,7 +21,7 @@ class YPVideoProcessor {
     ///   - suffix: the file name wothout extension
     static func makeVideoPathURL(temporaryFolder: Bool, fileName: String) -> URL {
         var outputURL: URL
-        
+
         if temporaryFolder {
             let outputPath = "\(NSTemporaryDirectory())\(fileName).\(YPConfig.video.fileType.fileExtension)"
             outputURL = URL(fileURLWithPath: outputPath)
@@ -35,7 +35,7 @@ class YPVideoProcessor {
             }
             outputURL = documentsURL.appendingPathComponent("\(fileName).\(YPConfig.video.fileType.fileExtension)")
         }
-        
+
         let fileManager = FileManager.default
         if fileManager.fileExists(atPath: outputURL.path) {
             do {
@@ -44,38 +44,38 @@ class YPVideoProcessor {
                 print("YPVideoProcessor -> Can't remove the file for some reason.")
             }
         }
-        
+
         return outputURL
     }
-    
+
     /*
      Crops the video to square by video height from the top of the video.
      */
-    static func cropToSquare(filePath: URL, completion: @escaping (_ outputURL : URL?) -> ()) {
-        
+    static func cropToSquare(filePath: URL, completion: @escaping (_ outputURL: URL?) -> Void) {
+
         // output file
         let outputPath = makeVideoPathURL(temporaryFolder: true, fileName: "squaredVideoFromCamera")
-        
+
         // input file
         let asset = AVAsset.init(url: filePath)
         let composition = AVMutableComposition.init()
         composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
-        
+
         // Prevent crash if tracks is empty
         if asset.tracks.isEmpty {
             return
         }
-        
+
         // input clip
         let clipVideoTrack = asset.tracks(withMediaType: .video)[0]
-        
+
         // make it square
         let videoComposition = AVMutableVideoComposition()
         videoComposition.renderSize = CGSize(width: CGFloat(clipVideoTrack.naturalSize.height), height: CGFloat(clipVideoTrack.naturalSize.height))
         videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
         let instruction = AVMutableVideoCompositionInstruction()
         instruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: CMTimeMakeWithSeconds(60, preferredTimescale: 30))
-        
+
         // rotate to potrait
         let transformer = AVMutableVideoCompositionLayerInstruction(assetTrack: clipVideoTrack)
         let t1 = CGAffineTransform(translationX: clipVideoTrack.naturalSize.height, y: -(clipVideoTrack.naturalSize.width - clipVideoTrack.naturalSize.height) / 2)
@@ -84,7 +84,7 @@ class YPVideoProcessor {
         transformer.setTransform(finalTransform, at: CMTime.zero)
         instruction.layerInstructions = [transformer]
         videoComposition.instructions = [instruction]
-        
+
         // exporter
         let exporter = AVAssetExportSession.init(asset: asset, presetName: YPConfig.video.compression)
         exporter?.videoComposition = videoComposition
@@ -105,5 +105,5 @@ class YPVideoProcessor {
             return
         }
     }
-    
+
 }

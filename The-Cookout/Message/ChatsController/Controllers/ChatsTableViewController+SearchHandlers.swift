@@ -9,9 +9,9 @@
 import UIKit
 
 extension ChatsTableViewController: UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
-    
+
     func updateSearchResults(for searchController: UISearchController) {}
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         filtededConversations = conversations
@@ -23,9 +23,9 @@ extension ChatsTableViewController: UISearchBarDelegate, UISearchControllerDeleg
             return
         }
     }
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
+
         filtededConversations = searchText.isEmpty ? conversations :
             conversations.filter({ (conversation) -> Bool in
                 if let chatName = conversation.chatName {
@@ -33,7 +33,7 @@ extension ChatsTableViewController: UISearchBarDelegate, UISearchControllerDeleg
                 }
                 return ("").lowercased().contains(searchText.lowercased())
             })
-        
+
         filteredPinnedConversations = searchText.isEmpty ? pinnedConversations :
             pinnedConversations.filter({ (conversation) -> Bool in
                 if let chatName = conversation.chatName {
@@ -41,10 +41,10 @@ extension ChatsTableViewController: UISearchBarDelegate, UISearchControllerDeleg
                 }
                 return ("").lowercased().contains(searchText.lowercased())
             })
-        
+
         handleReloadTableAfterSearch()
     }
-    
+
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.keyboardAppearance = ThemeManager.currentTheme().keyboardAppearance
         guard #available(iOS 11.0, *) else {
@@ -56,16 +56,16 @@ extension ChatsTableViewController: UISearchBarDelegate, UISearchControllerDeleg
 }
 
 extension ChatsTableViewController { /* hiding keyboard */
-    
+
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        
+
         if #available(iOS 11.0, *) {
             searchChatsController?.searchBar.endEditing(true)
         } else {
             self.searchBar?.endEditing(true)
         }
     }
-    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         setNeedsStatusBarAppearanceUpdate()
         if #available(iOS 11.0, *) {

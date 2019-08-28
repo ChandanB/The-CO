@@ -11,7 +11,7 @@ import AVFoundation
 import UIKit
 
 protocol YPPhotoCapture: class {
-    
+
     // Public api
     func start(with previewView: UIView, completion: @escaping () -> Void)
     func stopCamera()
@@ -23,7 +23,7 @@ protocol YPPhotoCapture: class {
     func shoot(completion: @escaping (Data) -> Void)
     var videoLayer: AVCaptureVideoPreviewLayer! { get set }
     var device: AVCaptureDevice? { get }
-    
+
     // Used by Default extension
     var previewView: UIView! { get set }
     var isCaptureSessionSetup: Bool { get set }

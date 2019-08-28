@@ -6,14 +6,13 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 
 class BaseMessageCell: RevealableCollectionViewCell {
-  
+
   weak var message: Message?
   weak var chatLogController: ChatLogController?
-  
+
   let grayBubbleImage = ThemeManager.currentTheme().incomingBubble
   let blueBubbleImage = ThemeManager.currentTheme().outgoingBubble
 	static let selectedOutgoingBubble = UIImage(named: "OutgoingSelected")!.resizableImage(withCapInsets: UIEdgeInsets(top: 14,
@@ -24,20 +23,20 @@ class BaseMessageCell: RevealableCollectionViewCell {
 																																																										 left: 22,
 																																																										 bottom: 17,
 																																																										 right: 20))
-  
+
   static let incomingTextViewTopInset: CGFloat = 10
   static let incomingTextViewBottomInset: CGFloat = 10
   static let incomingTextViewLeftInset: CGFloat = 12
   static let incomingTextViewRightInset: CGFloat = 7
-  
+
   let bubbleView: UIImageView = {
     let bubbleView = UIImageView()
     bubbleView.backgroundColor = ThemeManager.currentTheme().generalBackgroundColor
     bubbleView.isUserInteractionEnabled = true
-    
+
     return bubbleView
   }()
-  
+
   var deliveryStatus: UILabel = {
     var deliveryStatus = UILabel()
     deliveryStatus.text = "status"
@@ -45,31 +44,30 @@ class BaseMessageCell: RevealableCollectionViewCell {
     deliveryStatus.textColor =  ThemeManager.currentTheme().generalSubtitleColor
     deliveryStatus.isHidden = true
     deliveryStatus.textAlignment = .right
-    
+
     return deliveryStatus
   }()
-  
+
   let nameLabel: UILabel = {
     let nameLabel = UILabel()
     nameLabel.font = UIFont.systemFont(ofSize: 13)
     nameLabel.numberOfLines = 1
     nameLabel.backgroundColor = .clear
     nameLabel.textColor = SocialPointPalette.defaultBlue
-    
+
     return nameLabel
   }()
-  
-  
+
   override init(frame: CGRect) {
     super.init(frame: frame.integral)
-    
+
     setupViews()
   }
-  
+
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
+
   func configureDeliveryStatus(at indexPath: IndexPath, lastMessageIndex: Int, message: Message) {
     switch indexPath.row == lastMessageIndex {
     case true:
@@ -80,7 +78,7 @@ class BaseMessageCell: RevealableCollectionViewCell {
         self.deliveryStatus.layoutIfNeeded()
       }
       break
-      
+
     default:
       DispatchQueue.main.async {
         self.deliveryStatus.isHidden = true
@@ -89,7 +87,7 @@ class BaseMessageCell: RevealableCollectionViewCell {
       break
     }
   }
-  
+
   func setupTimestampView(message: Message, isOutgoing: Bool) {
     DispatchQueue.main.async {
       let view = self.chatLogController?.collectionView?.dequeueReusableRevealableView(withIdentifier: "timestamp") as? TimestampView ?? TimestampView()

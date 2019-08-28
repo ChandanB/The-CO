@@ -9,7 +9,7 @@
 import UIKit
 
 class DefaultHeader: DefaultCell {
-    
+
     override var datasourceItem: Any? {
         didSet {
             if datasourceItem == nil {
@@ -17,7 +17,7 @@ class DefaultHeader: DefaultCell {
             }
         }
     }
-    
+
     override func setupViews() {
         super.setupViews()
         label.text = "Header Cell"
@@ -26,7 +26,7 @@ class DefaultHeader: DefaultCell {
 }
 
 class DefaultFooter: DefaultCell {
-    
+
     override var datasourceItem: Any? {
         didSet {
             if datasourceItem == nil {
@@ -34,7 +34,7 @@ class DefaultFooter: DefaultCell {
             }
         }
     }
-    
+
     override func setupViews() {
         super.setupViews()
         label.text = "Footer Cell"
@@ -43,7 +43,7 @@ class DefaultFooter: DefaultCell {
 }
 
 class DefaultCell: DatasourceCell {
-    
+
     override var datasourceItem: Any? {
         didSet {
             if let text = datasourceItem as? String {
@@ -53,13 +53,13 @@ class DefaultCell: DatasourceCell {
             }
         }
     }
-    
+
     let label = UILabel()
-    
+
     override func setupViews() {
         super.setupViews()
         addSubview(label)
         label.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
     }
-    
+
 }

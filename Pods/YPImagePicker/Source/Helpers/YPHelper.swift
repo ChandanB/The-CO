@@ -30,7 +30,7 @@ struct YPHelper {
             controller.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backButtonIcon
         }
     }
-    
+
     static func changeBackButtonTitle(_ controller: UIViewController) {
         if YPConfig.icons.hideBackButtonTitle {
             controller.navigationItem.backBarButtonItem = UIBarButtonItem(title: "",
@@ -39,7 +39,7 @@ struct YPHelper {
                                                                           action: nil)
         }
     }
-    
+
     static func configureFocusView(_ v: UIView) {
         v.alpha = 0.0
         v.backgroundColor = UIColor.clear
@@ -47,7 +47,7 @@ struct YPHelper {
         v.layer.borderWidth = 1.0
         v.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
     }
-    
+
     static func animateFocusView(_ v: UIView) {
         UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 0.8,
                        initialSpringVelocity: 3.0, options: UIView.AnimationOptions.curveEaseIn,
@@ -59,7 +59,7 @@ struct YPHelper {
             v.removeFromSuperview()
         })
     }
-    
+
     static func formattedStrigFrom(_ timeInterval: TimeInterval) -> String {
         let interval = Int(timeInterval)
         let seconds = interval % 60

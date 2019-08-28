@@ -37,7 +37,7 @@ public class LoadingView: UIView {
     }
 
     class func designCodeLoadingView() -> UIView {
-        
+
         return Bundle(for: self).loadNibNamed("LoadingView", owner: self, options: nil)![0] as! UIView
     }
 }
@@ -74,7 +74,7 @@ public extension UIView {
             SpringAnimation.springWithCompletion(duration: 0.7, animations: {
                 loadingXibView.alpha = 0
                 loadingXibView.transform = CGAffineTransform(scaleX: 3, y: 3)
-            }, completion: { (completed) -> Void in
+            }, completion: { (_) -> Void in
                 loadingXibView.removeFromSuperview()
             })
         }

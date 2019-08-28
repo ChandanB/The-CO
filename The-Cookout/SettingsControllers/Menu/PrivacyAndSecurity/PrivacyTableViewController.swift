@@ -8,13 +8,11 @@
 
 import UIKit
 
-
 private let privacyTableViewCellID = "PrivacyTableViewCellID"
 
 class PrivacyTableViewController: SwitchTableViewController {
-  
-  var privacyElements = [SwitchObject]()
 
+  var privacyElements = [SwitchObject]()
 
   override func viewDidLoad() {
       super.viewDidLoad()
@@ -22,7 +20,7 @@ class PrivacyTableViewController: SwitchTableViewController {
     setTitle("Privacy")
     registerCell(for: privacyTableViewCellID)
   }
-  
+
   fileprivate func createDataSource() {
     let biometricsState = userDefaults.currentBoolObjectState(for: userDefaults.biometricalAuth)
     let biometricsObject = SwitchObject(Biometrics().title, subtitle: nil, state: biometricsState, defaultsKey: userDefaults.biometricalAuth)
@@ -34,11 +32,11 @@ class PrivacyTableViewController: SwitchTableViewController {
   }
 
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    
+
     let cell = tableView.dequeueReusableCell(withIdentifier: privacyTableViewCellID, for: indexPath) as? SwitchTableViewCell ?? SwitchTableViewCell()
     cell.currentViewController = self
     cell.setupCell(object: privacyElements[indexPath.row], index: indexPath.row)
-   
+
     return cell
   }
 }

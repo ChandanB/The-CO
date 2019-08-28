@@ -13,7 +13,6 @@ import AudioToolbox
 import FTPopOverMenu_Swift
 import CropViewController
 
-
 protocol DeleteAndExitDelegate: class {
   func deleteAndExit(from conversationID: String)
 }
@@ -24,25 +23,25 @@ class ChatLogController: UICollectionViewController {
   var messagesFetcher: MessagesFetcher!
   let chatLogHistoryFetcher = ChatLogHistoryFetcher()
   let groupMembersManager = GroupMembersManager()
-  
+
   let reference = Database.database().reference()
   var membersReference: DatabaseReference!
   var typingIndicatorReference: DatabaseReference!
   var userStatusReference: DatabaseReference!
-  
+
   var messages = [Message]()
   var sections = ["Messages"]
-  
+
   let messagesToLoad = 50
-  
+
   var mediaPickerController: MediaPickerControllerNew! = nil
   var voiceRecordingViewController: VoiceRecordingViewController! = nil
   weak var deleteAndExitDelegate: DeleteAndExitDelegate?
-  
+
   var chatLogAudioPlayer: AVAudioPlayer!
   var inputTextViewTapGestureRecognizer = UITapGestureRecognizer()
   var uploadProgressBar = UIProgressView(progressViewStyle: .bar)
-  
+
   let incomingTextMessageCellID = "incomingTextMessageCellID"
   let outgoingTextMessageCellID = "outgoingTextMessageCellID"
   let typingIndicatorCellID = "typingIndicatorCellID"
@@ -58,33 +57,33 @@ class ChatLogController: UICollectionViewController {
     var chatInputContainerView = ChatInputContainerView()
     chatInputContainerView.chatLogController = self
     chatInputContainerView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 50)
-    
+
     return chatInputContainerView
   }()
-  
+
   lazy var inputBlockerContainerView: InputBlockerContainerView = {
     var inputBlockerContainerView = InputBlockerContainerView()
     inputBlockerContainerView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 50)
     inputBlockerContainerView.backButton.addTarget(self, action: #selector(inputBlockerAction), for: .touchUpInside)
-    
+
     return inputBlockerContainerView
   }()
-  
+
   var refreshControl: UIRefreshControl = {
     var refreshControl = UIRefreshControl()
     refreshControl.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
     refreshControl.tintColor = ThemeManager.currentTheme().generalTitleColor
     refreshControl.addTarget(self, action: #selector(performRefresh), for: .valueChanged)
-    
+
     return refreshControl
   }()
-  
+
   @objc func inputBlockerAction() {
     guard let chatID = conversation?.chatID else { return }
     navigationController?.popViewController(animated: true)
     deleteAndExitDelegate?.deleteAndExit(from: chatID)
   }
-  
+
 	func scrollToBottom(at position: UICollectionView.ScrollPosition) {
     if self.messages.count - 1 <= 0 {
       return
@@ -94,7 +93,7 @@ class ChatLogController: UICollectionViewController {
       self.collectionView?.scrollToItem(at: indexPath, at: position, animated: true)
     }
   }
-  
+
   func scrollToBottomOfTypingIndicator() {
     if collectionView?.numberOfSections != 2 {
       return
@@ -136,7 +135,7 @@ class ChatLogController: UICollectionViewController {
 
   func sendTypingStatus(data: NSDictionary) {
     guard let currentUserID = CURRENT_USER?.uid, let conversationID = conversation?.chatID, currentUserID != conversationID else { return }
- 
+
     if let isGroupChat = conversation?.isGroupChat, isGroupChat {
       let userIsTypingRef = reference.child("groupChatsTemp").child(conversationID).child(typingIndicatorDatabaseID)
       guard let data = data as? [AnyHashable: Any] else {
@@ -152,7 +151,7 @@ class ChatLogController: UICollectionViewController {
   func observeTypingIndicator () {
     guard let currentUserID = CURRENT_USER?.uid else { return }
     guard let conversationID = conversation?.chatID, currentUserID != conversationID else { return }
-    
+
     if let isGroupChat = conversation?.isGroupChat, isGroupChat {
       let indicatorRemovingReference = reference.child("groupChatsTemp").child(conversationID).child(typingIndicatorDatabaseID).child(currentUserID)
       indicatorRemovingReference.onDisconnectRemoveValue()
@@ -198,7 +197,7 @@ class ChatLogController: UICollectionViewController {
         self.collectionView?.insertSections(sectionsIndexSet)
       }, completion: { (_) in
         if self.collectionView!.contentOffset.y >= (self.collectionView!.contentSize.height - self.collectionView!.frame.size.height - 200) {
-          if self.collectionView!.contentSize.height < self.collectionView!.bounds.height  {
+          if self.collectionView!.contentSize.height < self.collectionView!.bounds.height {
             return
           }
 
@@ -261,7 +260,7 @@ class ChatLogController: UICollectionViewController {
       })
     })
   }
-  
+
   fileprivate func resetBadgeForSelf() {
     guard let toId = conversation?.chatID, let fromId = CURRENT_USER?.uid else { return }
     let badgeRef = USER_MESSAGES_REF.child(fromId).child(toId).child(messageMetaDataFirebaseFolder).child("badge")
@@ -281,13 +280,13 @@ class ChatLogController: UICollectionViewController {
 
       guard index >= 0 else { return }
       self.messages[index].status = sentMessage.status
-      
+
       DispatchQueue.main.async {
         self.collectionView?.performBatchUpdates({
           self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
         }, completion: nil)
       }
-      
+
       guard sentMessage.status == messageStatusDelivered, self.messages[index].messageUID == self.messages.last?.messageUID,
         userDefaults.currentBoolObjectState(for: userDefaults.inAppSounds) else { return }
       SystemSoundID.playFileNamed(fileName: "sent", withExtenstion: "caf")
@@ -438,7 +437,7 @@ class ChatLogController: UICollectionViewController {
     chatLogHistoryFetcher.delegate = self
     groupMembersManager.delegate = self
     groupMembersManager.observeMembersChanges(conversation)
-    
+
     view.backgroundColor = ThemeManager.currentTheme().generalBackgroundColor
     collectionView?.indicatorStyle = ThemeManager.currentTheme().scrollBarStyle
     collectionView?.backgroundColor = view.backgroundColor
@@ -590,7 +589,7 @@ class ChatLogController: UICollectionViewController {
       self.navigationController?.pushViewController(destination, animated: true)
     }
   }
-  
+
   var canRefresh = true
   var isScrollViewAtTheBottom = true
 
@@ -621,7 +620,7 @@ class ChatLogController: UICollectionViewController {
 
   @objc func performRefresh() {
     guard let conversation = self.conversation else { return }
-    
+
     if let isGroupChat = conversation.isGroupChat, isGroupChat {
       chatLogHistoryFetcher.loadPreviousMessages(messages, conversation, messagesToLoad, true)
     } else {
@@ -648,7 +647,7 @@ class ChatLogController: UICollectionViewController {
       basicErrorAlertWith(title: basicErrorTitleForAlert, message: noInternetError, controller: self)
       return
     }
-    
+
     isTyping = false
     let text = inputContainerView.inputTextView.text
     let media = inputContainerView.selectedMedia

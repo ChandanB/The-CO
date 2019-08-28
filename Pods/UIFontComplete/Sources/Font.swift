@@ -22,7 +22,7 @@
 public enum Font: String, FontRepresentable {
 
     #if os(iOS)
-    
+
     // MARK: Academy Engraved LET
     case academyEngravedLetPlain = "AcademyEngravedLetPlain"
 
@@ -31,7 +31,7 @@ public enum Font: String, FontRepresentable {
     case alNileBold = "AlNile-Bold"
 
     #endif
-    
+
     // MARK: American Typewriter
     case americanTypewriter = "AmericanTypewriter"
     case americanTypewriterBold = "AmericanTypewriter-Bold"
@@ -54,15 +54,15 @@ public enum Font: String, FontRepresentable {
     case appleSDGothicNeoUltraLight = "AppleSDGothicNeo-UltraLight"
 
     #if os(iOS)
-    
+
     // MARK: Arial
     case arialMT = "ArialMT"
     case arialBoldItalicMT = "Arial-BoldItalicMT"
     case arialBoldMT = "Arial-BoldMT"
     case arialItalicMT = "Arial-ItalicMT"
-    
+
     #endif
-    
+
     // MARK: Arial Hebrew
     case arialHebrew = "ArialHebrew"
     case arialHebrewBold = "ArialHebrew-Bold"
@@ -100,7 +100,7 @@ public enum Font: String, FontRepresentable {
     case avenirNextUltraLightItalic = "AvenirNext-UltraLightItalic"
 
     #if os(iOS)
-    
+
     // MARK: Avenir Next Condensed
     case avenirNextCondensedBold = "AvenirNextCondensed-Bold"
     case avenirNextCondensedBoldItalic = "AvenirNextCondensed-BoldItalic"
@@ -114,9 +114,9 @@ public enum Font: String, FontRepresentable {
     case avenirNextCondensedRegular = "AvenirNextCondensed-Regular"
     case avenirNextCondensedUltraLight = "AvenirNextCondensed-UltraLight"
     case avenirNextCondensedUltraLightItalic = "AvenirNextCondensed-UltraLightItalic"
-    
+
     #endif
-    
+
     // MARK: Baskerville
     case baskerville = "Baskerville"
     case baskervilleBold = "Baskerville-Bold"
@@ -126,7 +126,7 @@ public enum Font: String, FontRepresentable {
     case baskervilleSemiBoldItalic = "Baskerville-SemiBoldItalic"
 
     #if os(iOS)
-    
+
     // MARK: Bodoni 72
     case bodoniSvtyTwoITCTTBold = "BodoniSvtyTwoITCTT-Bold"
     case bodoniSvtyTwoITCTTBook = "BodoniSvtyTwoITCTT-Book"
@@ -159,9 +159,9 @@ public enum Font: String, FontRepresentable {
     case cochinBold = "Cochin-Bold"
     case cochinBoldItalic = "Cochin-BoldItalic"
     case cochinItalic = "Cochin-Italic"
-    
+
     #endif
-    
+
     // MARK: Copperplate
     case copperplate = "Copperplate"
     case copperplateBold = "Copperplate-Bold"
@@ -180,7 +180,7 @@ public enum Font: String, FontRepresentable {
     case courierNewPSItalicMT = "CourierNewPS-ItalicMT"
 
     #if os(iOS)
-    
+
     // MARK: Damascus
     case damascus = "Damascus"
     case damascusBold = "DamascusBold"
@@ -196,10 +196,10 @@ public enum Font: String, FontRepresentable {
     case didot = "Didot"
     case didotBold = "Didot-Bold"
     case didotItalic = "Didot-Italic"
-    
+
     // MARK: Diwan Mishafi
     case diwanMishafi = "DiwanMishafi"
-    
+
     #endif
 
     // MARK: Euphemia UCAS
@@ -208,10 +208,10 @@ public enum Font: String, FontRepresentable {
     case euphemiaUCASItalic = "EuphemiaUCAS-Italic"
 
     #if os(iOS)
-    
+
     // MARK: Farah
     case farah = "Farah"
-    
+
     #endif
 
     // MARK: Futura
@@ -242,13 +242,13 @@ public enum Font: String, FontRepresentable {
     case gillSansSemiBold = "GillSans-SemiBold"
     case gillSansSemiBoldItalic = "GillSans-SemiBoldItalic"
     case gillSansUltraBold = "GillSans-UltraBold"
-    
+
     #endif
 
     // MARK: Gujarati Sangam MN
     case gujaratiSangamMN = "GujaratiSangamMN"
     case gujaratiSangamMNBold = "GujaratiSangamMN-Bold"
-    
+
     // MARK: Gurmukhi MN
     case gurmukhiMN = "GurmukhiMN"
     case gurmukhiMNBold = "GurmukhiMN-Bold"
@@ -278,32 +278,32 @@ public enum Font: String, FontRepresentable {
     case helveticaNeueUltraLightItalic = "HelveticaNeue-UltraLightItalic"
 
     #if os(iOS)
-    
+
     // MARK: Hiragino Mincho ProN
     case hiraMinProNW3 = "HiraMinProN-W3"
     case hiraMinProNW6 = "HiraMinProN-W6"
 
     #elseif os(tvOS)
-    
+
     case hiraMaruProNW4 = "HiraMaruProN-W4"
-    
+
     #endif
-    
-    //  MARK:Hiragino Sans
-    
+
+    // MARK: Hiragino Sans
+
     case hiraginoSansW3 = "HiraginoSans-W3"
-    
+
     #if os(tvOS)
-    
+
     case hiraginoSansW5 = "HiraginoSans-W5"
-    
+
     #endif
-    
+
     case hiraginoSansW6 = "HiraginoSans-W6"
 
     #if os(iOS)
-    
-    //  MARK:Hoefler Text
+
+    // MARK: Hoefler Text
     case hoeflerTextBlack = "HoeflerText-Black"
     case hoeflerTextBlackItalic = "HoeflerText-BlackItalic"
     case hoeflerTextItalic = "HoeflerText-Italic"
@@ -315,17 +315,17 @@ public enum Font: String, FontRepresentable {
     case kailasa = "Kailasa"
     case kailasaBold = "Kailasa-Bold"
 
-    //  MARK:Kannada Sangam MN
+    // MARK: Kannada Sangam MN
     case kannadaSangamMN = "KannadaSangamMN"
     case kannadaSangamMNBold = "KannadaSangamMN-Bold"
 
     #if os(tvOS)
-    
+
     // MARK: Kefa
     case kefaRegular = "Kefa-Regular"
-    
+
     #endif
-    
+
     // MARK: Khmer Sangam MN
     case khmerSangamMN = "KhmerSangamMN"
 
@@ -352,11 +352,11 @@ public enum Font: String, FontRepresentable {
     case malayalamSangamMNBold = "MalayalamSangamMN-Bold"
 
     #if os(iOS)
-    
+
     // MARK: Marker Felt
     case markerFeltThin = "MarkerFelt-Thin"
     case markerFeltWide = "MarkerFelt-Wide"
-    
+
     #endif
 
     // MARK: Menlo
@@ -374,12 +374,12 @@ public enum Font: String, FontRepresentable {
     case noteworthyLight = "Noteworthy-Light"
 
     #if os(tvOS)
-    
+
     // MARK: Noto Nastaliq Urdu
     case notoNastaliqUrdu = "NotoNastaliqUrdu"
-    
+
     #endif
-    
+
     // MARK: Optima
     case optimaBold = "Optima-Bold"
     case optimaBoldItalic = "Optima-BoldItalic"

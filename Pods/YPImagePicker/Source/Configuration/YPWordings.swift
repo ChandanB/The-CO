@@ -9,7 +9,7 @@
 import Foundation
 
 public struct YPWordings {
-    
+
     public var permissionPopup = PermissionPopup()
     public var videoDurationPopup = VideoDurationPopup()
 
@@ -19,13 +19,13 @@ public struct YPWordings {
         public var cancel = ypLocalized("YPImagePickerPermissionDeniedPopupCancel")
         public var grantPermission = ypLocalized("YPImagePickerPermissionDeniedPopupGrantPermission")
     }
-    
+
     public struct VideoDurationPopup {
         public var title = ypLocalized("YPImagePickerVideoDurationTitle")
         public var tooShortMessage = ypLocalized("YPImagePickerVideoTooShort")
         public var tooLongMessage = ypLocalized("YPImagePickerVideoTooLong")
     }
-    
+
     public var ok = ypLocalized("YPImagePickerOk")
     public var done = ypLocalized("YPImagePickerDone")
     public var cancel = ypLocalized("YPImagePickerCancel")

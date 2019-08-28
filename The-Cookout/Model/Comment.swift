@@ -9,12 +9,12 @@
 import Foundation
 
 struct Comment {
-    
+
     let user: User
     let uid: String
     let text: String
     let creationDate: Date
-    
+
     init(user: User, dictionary: [String: Any]) {
         self.user = user
         self.text = dictionary["text"] as? String ?? ""

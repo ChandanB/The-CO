@@ -9,7 +9,7 @@
 import UIKit
 
 class CommentInputTextView: UITextView {
-    
+
     fileprivate let placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "Enter Comment"
@@ -17,17 +17,17 @@ class CommentInputTextView: UITextView {
         label.backgroundColor = .white
         return label
     }()
-    
+
     func showPlaceholderLabel() {
         placeholderLabel.isHidden = false
     }
-    
+
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         self.backgroundColor = .white
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(handleTextChange), name: UITextView.textDidChangeNotification, object: nil)
-        
+
         addSubview(placeholderLabel)
         placeholderLabel.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 8, leftConstant: 8, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
@@ -35,14 +35,9 @@ class CommentInputTextView: UITextView {
     @objc func handleTextChange() {
         placeholderLabel.isHidden = !self.text.isEmpty
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
 }
-
-
-
-
-

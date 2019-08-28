@@ -13,7 +13,7 @@ enum ActiveElement {
     case hashtag(String)
     case url(original: String, trimmed: String)
     case custom(String)
-    
+
     static func create(with activeType: ActiveType, text: String) -> ActiveElement {
         switch activeType {
         case .mention: return mention(text)
@@ -29,7 +29,7 @@ public enum ActiveType {
     case hashtag
     case url
     case custom(pattern: String)
-    
+
     var pattern: String {
         switch self {
         case .mention: return RegexParser.mentionPattern

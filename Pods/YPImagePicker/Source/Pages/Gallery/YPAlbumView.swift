@@ -10,22 +10,22 @@ import UIKit
 import Stevia
 
 class YPAlbumView: UIView {
-    
+
     let tableView = UITableView()
     let spinner = UIActivityIndicatorView(style: .gray)
-    
+
     convenience init() {
         self.init(frame: .zero)
-        
+
         sv(
             tableView,
             spinner
         )
         // TableView needs to be the first subview for it to automatically adjust its content inset with the NavBar
-        
+
         spinner.centerInContainer()
         tableView.fillContainer()
-        
+
         backgroundColor = .white
     }
 }

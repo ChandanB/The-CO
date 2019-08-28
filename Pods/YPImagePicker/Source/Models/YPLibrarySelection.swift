@@ -14,7 +14,7 @@ struct YPLibrarySelection {
     var scrollViewContentOffset: CGPoint?
     var scrollViewZoomScale: CGFloat?
     let assetIdentifier: String
-    
+
     init(index: Int,
          cropRect: CGRect? = nil,
          scrollViewContentOffset: CGPoint? = nil,

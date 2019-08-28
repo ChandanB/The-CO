@@ -140,7 +140,7 @@ public func - (left: PartialConstraint, right: UIView) -> [UIView] {
                                constant: -left.constant)
             spv.addConstraint(c)
         }
-        
+
         return  views + [right]
     } else {
         // were at the end?? nooope?/?

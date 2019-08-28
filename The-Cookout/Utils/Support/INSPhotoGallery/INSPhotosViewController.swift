@@ -20,44 +20,43 @@
 import UIKit
 
 public typealias INSPhotosViewControllerReferenceViewHandler = (_ photo: INSPhotoViewable) -> (UIView?)
-public typealias INSPhotosViewControllerNavigateToPhotoHandler = (_ photo: INSPhotoViewable) -> ()
-public typealias INSPhotosViewControllerDismissHandler = (_ viewController: INSPhotosViewController) -> ()
+public typealias INSPhotosViewControllerNavigateToPhotoHandler = (_ photo: INSPhotoViewable) -> Void
+public typealias INSPhotosViewControllerDismissHandler = (_ viewController: INSPhotosViewController) -> Void
 public typealias INSPhotosViewControllerLongPressHandler = (_ photo: INSPhotoViewable, _ gestureRecognizer: UILongPressGestureRecognizer) -> (Bool)
-public typealias INSPhotosViewControllerDeletePhotoHandler = (_ photo: INSPhotoViewable) -> ()
-
+public typealias INSPhotosViewControllerDeletePhotoHandler = (_ photo: INSPhotoViewable) -> Void
 
 open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIViewControllerTransitioningDelegate {
-    
+
     /* 
      * Returns the view from which to animate for object conforming to INSPhotoViewable 
      */
     open var referenceViewForPhotoWhenDismissingHandler: INSPhotosViewControllerReferenceViewHandler?
-    
+
     /*
      * Called when a new photo is displayed through a swipe gesture.
      */
     open var navigateToPhotoHandler: INSPhotosViewControllerNavigateToPhotoHandler?
-    
+
     /*
      * Called before INSPhotosViewController will start a user-initiated dismissal.
      */
     open var willDismissHandler: INSPhotosViewControllerDismissHandler?
-    
+
     /*
      * Called after the INSPhotosViewController has been dismissed by the user.
      */
     open var didDismissHandler: INSPhotosViewControllerDismissHandler?
-    
+
     /*
      * Called when a photo is long pressed.
      */
     open var longPressGestureHandler: INSPhotosViewControllerLongPressHandler?
-    
+
     /*
      * Called when delete is tapped on a photo
      */
     open var deletePhotoHandler: INSPhotosViewControllerDeletePhotoHandler?
-    
+
     /*
      * The overlay view displayed over photos, can be changed but must implement INSPhotosOverlayViewable
      */
@@ -79,61 +78,61 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     open var currentPhotoViewController: INSPhotoViewController? {
         return pageViewController.viewControllers?.first as? INSPhotoViewController
     }
-    
+
     /*
      * Photo object that is currently displayed by INSPhotoViewController
      */
     open var currentPhoto: INSPhotoViewable? {
         return currentPhotoViewController?.photo
     }
-    
+
     // MARK: - Private
     private(set) var pageViewController: UIPageViewController!
     private(set) var dataSource: INSPhotosDataSource
-    
+
     let interactiveAnimator: INSPhotosInteractionAnimator = INSPhotosInteractionAnimator()
     let transitionAnimator: INSPhotosTransitionAnimator = INSPhotosTransitionAnimator()
-    
+
     private(set) lazy var singleTapGestureRecognizer: UITapGestureRecognizer = {
         return UITapGestureRecognizer(target: self, action: #selector(INSPhotosViewController.handleSingleTapGestureRecognizer(_:)))
     }()
     private(set) lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         return UIPanGestureRecognizer(target: self, action: #selector(INSPhotosViewController.handlePanGestureRecognizer(_:)))
     }()
-    
+
     private var interactiveDismissal: Bool = false
     private var statusBarHidden = false
     private var shouldHandleLongPressGesture = false
-    
+
     private func newCurrentPhotoAfterDeletion(currentPhotoIndex: Int) -> INSPhotoViewable? {
         let previousPhotoIndex = currentPhotoIndex - 1
         if let newCurrentPhoto = self.dataSource.photoAtIndex(currentPhotoIndex) {
             return newCurrentPhoto
-        }else if let previousPhoto = self.dataSource.photoAtIndex(previousPhotoIndex) {
+        } else if let previousPhoto = self.dataSource.photoAtIndex(previousPhotoIndex) {
             return previousPhoto
         }
         return nil
     }
-    
+
     // MARK: - Initialization
-    
+
     deinit {
         pageViewController.delegate = nil
         pageViewController.dataSource = nil
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         dataSource = INSPhotosDataSource(photos: [])
         super.init(nibName: nil, bundle: nil)
         initialSetupWithInitialPhoto(nil)
     }
-    
+
     public override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: Bundle!) {
         dataSource = INSPhotosDataSource(photos: [])
         super.init(nibName: nil, bundle: nil)
         initialSetupWithInitialPhoto(nil)
     }
-    
+
     /**
      The designated initializer that stores the array of objects implementing INSPhotoViewable
      
@@ -150,24 +149,23 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         transitionAnimator.startingView = referenceView
         transitionAnimator.endingView = currentPhotoViewController?.scalingImageView.imageView
     }
-    
+
     private func initialSetupWithInitialPhoto(_ initialPhoto: INSPhotoViewable? = nil) {
         overlayView.photosViewController = self
         setupPageViewControllerWithInitialPhoto(initialPhoto)
 
         modalPresentationStyle = .custom
         transitioningDelegate = self
-      
+
        if #available(iOS 11.0, *) {
          modalPresentationCapturesStatusBarAppearance = false
        } else {
          modalPresentationCapturesStatusBarAppearance = true
       }
-    
+
         setupOverlayViewInitialItems()
     }
- 
-    
+
     private func setupOverlayViewInitialItems() {
         let textColor = view.tintColor ?? UIColor.white
         if let overlayView = overlayView as? INSPhotosOverlayView {
@@ -179,7 +177,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
             #endif
         }
     }
-    
+
     // MARK: - View Life Cycle
 
     override open func viewDidLoad() {
@@ -189,18 +187,18 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         pageViewController.view.backgroundColor = UIColor.clear
         pageViewController.view.addGestureRecognizer(panGestureRecognizer)
         pageViewController.view.addGestureRecognizer(singleTapGestureRecognizer)
-        
+
 			addChild(pageViewController)
         view.addSubview(pageViewController.view)
         pageViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 			pageViewController.didMove(toParent: self)
-        
+
         setupOverlayView()
     }
-    
+
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         // This fix issue that navigationBar animate to up
         // when presentingViewController is UINavigationViewController
         statusBarHidden = true
@@ -209,36 +207,36 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         }
         updateCurrentPhotosInformation()
     }
-    
+
     private func setupOverlayView() {
-        
+
         overlayView.view().autoresizingMask = [.flexibleWidth, .flexibleHeight]
         overlayView.view().frame = view.bounds
         view.addSubview(overlayView.view())
         overlayView.setHidden(true, animated: false)
     }
-    
+
     private func setupPageViewControllerWithInitialPhoto(_ initialPhoto: INSPhotoViewable? = nil) {
 			pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [UIPageViewController.OptionsKey.interPageSpacing: 16.0])
         pageViewController.view.backgroundColor = UIColor.clear
         pageViewController.delegate = self
         pageViewController.dataSource = self
-        
-        if let photo = initialPhoto , dataSource.containsPhoto(photo) {
+
+        if let photo = initialPhoto, dataSource.containsPhoto(photo) {
             changeToPhoto(photo, animated: false)
         } else if let photo = dataSource.photos.first {
             changeToPhoto(photo, animated: false)
         }
     }
-    
+
     private func updateCurrentPhotosInformation() {
         if let currentPhoto = currentPhoto {
             overlayView.populateWithPhoto(currentPhoto)
         }
     }
-    
+
     // MARK: - Public
-    
+
     /**
      Displays the specified photo. Can be called before the view controller is displayed. Calling with a photo not contained within the data source has no effect.
      
@@ -253,9 +251,9 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         pageViewController.setViewControllers([photoViewController], direction: direction, animated: animated, completion: nil)
         updateCurrentPhotosInformation()
     }
-    
+
     // MARK: - Gesture Recognizers
-    
+
     @objc private func handlePanGestureRecognizer(_ gestureRecognizer: UIPanGestureRecognizer) {
         if gestureRecognizer.state == .began {
             interactiveDismissal = true
@@ -265,14 +263,14 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
             interactiveAnimator.handlePanWithPanGestureRecognizer(gestureRecognizer, viewToPan: pageViewController.view, anchorPoint: CGPoint(x: view.bounds.midX, y: view.bounds.midY))
         }
     }
-    
+
     @objc private func handleSingleTapGestureRecognizer(_ gestureRecognizer: UITapGestureRecognizer) {
         overlayView.setHidden(!overlayView.view().isHidden, animated: true)
     }
-    
+
     // MARK: - Target Actions
-    
-    open func handleDeleteButtonTapped(){
+
+    open func handleDeleteButtonTapped() {
         if let currentPhoto = self.currentPhoto {
             if let currentPhotoIndex = self.dataSource.indexOfPhoto(currentPhoto) {
                 self.dataSource.deletePhoto(currentPhoto)
@@ -280,18 +278,18 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
                 if let photo = newCurrentPhotoAfterDeletion(currentPhotoIndex: currentPhotoIndex) {
                     if currentPhotoIndex == self.dataSource.numberOfPhotos {
                         self.changeToPhoto(photo, animated: true, direction: .reverse)
-                    }else{
+                    } else {
                         self.changeToPhoto(photo, animated: true)
                     }
-                }else{
+                } else {
                     self.dismiss(animated: true, completion: nil)
                 }
             }
         }
     }
-    
+
     // MARK: - View Controller Dismissal
-    
+
     open override func dismiss(animated flag: Bool, completion: (() -> Void)?) {
         if presentedViewController != nil {
             super.dismiss(animated: flag, completion: completion)
@@ -302,7 +300,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
             startingView = currentPhotoViewController?.scalingImageView.imageView
         }
         transitionAnimator.startingView = startingView
-        
+
         if let currentPhoto = currentPhoto {
             transitionAnimator.endingView = referenceViewForPhotoWhenDismissingHandler?(currentPhoto)
         } else {
@@ -310,22 +308,22 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         }
         let overlayWasHiddenBeforeTransition = overlayView.view().isHidden
         overlayView.setHidden(true, animated: true)
-        
+
         willDismissHandler?(self)
-        
+
         super.dismiss(animated: flag) { () -> Void in
             let isStillOnscreen = self.view.window != nil
             if isStillOnscreen && !overlayWasHiddenBeforeTransition {
                 self.overlayView.setHidden(false, animated: true)
             }
-            
+
             if !isStillOnscreen {
                 self.didDismissHandler?(self)
             }
             completion?()
         }
     }
-    
+
     // MARK: - UIPageViewControllerDataSource / UIPageViewControllerDelegate
 
     private func initializePhotoViewControllerForPhoto(_ photo: INSPhotoViewable) -> INSPhotoViewController {
@@ -336,12 +334,12 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
                 return
             }
             weakSelf.shouldHandleLongPressGesture = false
-            
+
             if let gestureHandler = weakSelf.longPressGestureHandler {
                 weakSelf.shouldHandleLongPressGesture = gestureHandler(photo, gesture)
             }
             weakSelf.shouldHandleLongPressGesture = !weakSelf.shouldHandleLongPressGesture
-            
+
             if weakSelf.shouldHandleLongPressGesture {
                 guard let view = gesture.view else {
                     return
@@ -355,7 +353,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         }
         return photoViewController
     }
-    
+
     @objc open func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let photoViewController = viewController as? INSPhotoViewController,
            let photoIndex = dataSource.indexOfPhoto(photoViewController.photo),
@@ -364,7 +362,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         }
         return initializePhotoViewControllerForPhoto(newPhoto)
     }
-    
+
     @objc open func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let photoViewController = viewController as? INSPhotoViewController,
             let photoIndex = dataSource.indexOfPhoto(photoViewController.photo),
@@ -373,7 +371,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         }
         return initializePhotoViewControllerForPhoto(newPhoto)
     }
-    
+
     @objc open func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
             updateCurrentPhotosInformation()
@@ -382,14 +380,14 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
             }
         }
     }
-    
+
     // MARK: - UIViewControllerTransitioningDelegate
-    
+
     open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         transitionAnimator.dismissing = false
         return transitionAnimator
     }
-    
+
     open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         transitionAnimator.dismissing = true
         return transitionAnimator
@@ -401,38 +399,38 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
             interactiveAnimator.animator = transitionAnimator
             interactiveAnimator.shouldAnimateUsingAnimator = transitionAnimator.endingView != nil
             interactiveAnimator.viewToHideWhenBeginningTransition = transitionAnimator.startingView != nil ? transitionAnimator.endingView : nil
-            
+
             return interactiveAnimator
         }
         return nil
     }
-    
+
     // MARK: - UIResponder
-    
+
     open override func copy(_ sender: Any?) {
         UIPasteboard.general.image = currentPhoto?.image ?? currentPhotoViewController?.scalingImageView.image
     }
-    
+
     open override var canBecomeFirstResponder: Bool {
         return true
     }
-    
+
     open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if let _ = currentPhoto?.image ?? currentPhotoViewController?.scalingImageView.image , shouldHandleLongPressGesture && action == #selector(NSObject.copy) {
+        if let _ = currentPhoto?.image ?? currentPhotoViewController?.scalingImageView.image, shouldHandleLongPressGesture && action == #selector(NSObject.copy) {
             return true
         }
         return false
     }
-    
+
     // MARK: - Status Bar
-    
+
     open override var prefersStatusBarHidden: Bool {
-        if let parentStatusBarHidden = presentingViewController?.prefersStatusBarHidden , parentStatusBarHidden == true {
+        if let parentStatusBarHidden = presentingViewController?.prefersStatusBarHidden, parentStatusBarHidden == true {
             return parentStatusBarHidden
         }
         return statusBarHidden
     }
-    
+
 //    open override var preferredStatusBarStyle: UIStatusBarStyle {
 //        return .lightContent
 //    }
@@ -441,4 +439,3 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
 //        return .fade
 //    }
 }
-

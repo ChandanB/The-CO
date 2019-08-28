@@ -8,12 +8,12 @@
 
 import UIKit
 
-public class FTCellConfiguration : NSObject {
-    
-    public var textColor : UIColor = UIColor.white
-    public var textFont : UIFont = UIFont.systemFont(ofSize: 14)
-    public var textAlignment : NSTextAlignment = NSTextAlignment.left
+public class FTCellConfiguration: NSObject {
+
+    public var textColor: UIColor = UIColor.white
+    public var textFont: UIFont = UIFont.systemFont(ofSize: 14)
+    public var textAlignment: NSTextAlignment = NSTextAlignment.left
     public var ignoreImageOriginalColor = false
-    public var menuIconSize : CGFloat = FT.DefaultMenuIconSize
-    
+    public var menuIconSize: CGFloat = FT.DefaultMenuIconSize
+
 }

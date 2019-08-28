@@ -41,7 +41,7 @@ open class SpringImageView: UIImageView, Springable {
     public var opacity: CGFloat = 1
     public var animateFrom: Bool = false
 
-    lazy private var spring : Spring = Spring(self)
+    lazy private var spring: Spring = Spring(self)
 
     override open func awakeFromNib() {
         super.awakeFromNib()
@@ -57,7 +57,7 @@ open class SpringImageView: UIImageView, Springable {
         self.spring.animate()
     }
 
-    public func animateNext(completion: @escaping () -> ()) {
+    public func animateNext(completion: @escaping () -> Void) {
         self.spring.animateNext(completion: completion)
     }
 
@@ -65,7 +65,7 @@ open class SpringImageView: UIImageView, Springable {
         self.spring.animateTo()
     }
 
-    public func animateToNext(completion: @escaping () -> ()) {
+    public func animateToNext(completion: @escaping () -> Void) {
         self.spring.animateToNext(completion: completion)
     }
 

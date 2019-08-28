@@ -9,12 +9,12 @@
 import UIKit
 
 class ChangeGroupAdminController: SelectNewAdminTableViewController {
-    
+
   override func viewDidLoad() {
     super.viewDidLoad()
     setupRightBarButton(with: "Change administrator")
   }
-  
+
   override func rightBarButtonTapped() {
     super.rightBarButtonTapped()
     setNewAdmin(membersIDs: getMembersIDs())

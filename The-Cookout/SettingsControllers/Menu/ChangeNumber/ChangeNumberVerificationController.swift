@@ -6,17 +6,15 @@
 //  Copyright © 2018 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 
-
 class ChangeNumberVerificationController: EnterVerificationCodeController {
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     setRightBarButton(with: "Confirm")
   }
-  
+
   override func rightBarButtonDidTap() {
     super.rightBarButtonDidTap()
     changeNumber()

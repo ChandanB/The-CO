@@ -27,13 +27,13 @@ class PreiOS10PhotoCapture: YPPhotoCapture {
         guard let device = device else { return false }
         return device.hasFlash
     }
-    
+
     // MARK: - Configuration
-    
+
     func configure() { }
-    
+
     // MARK: - Flash
-    
+
     func tryToggleFlash() {
         guard let device = device else { return }
         guard device.hasFlash else { return }
@@ -53,9 +53,9 @@ class PreiOS10PhotoCapture: YPPhotoCapture {
             device.unlockForConfiguration()
         } catch _ { }
     }
-    
+
     // MARK: - Shoot
-    
+
     func shoot(completion: @escaping (Data) -> Void) {
         DispatchQueue.global(qos: .default).async {
             self.setCurrentOrienation()

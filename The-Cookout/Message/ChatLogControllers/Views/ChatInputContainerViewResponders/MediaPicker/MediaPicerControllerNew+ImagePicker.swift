@@ -6,7 +6,6 @@
 //  Copyright © 2019 Chandan B. All rights reserved.
 //
 
-
 import UIKit
 import Photos
 import AssetsLibrary
@@ -14,29 +13,28 @@ import MobileCoreServices
 import AVFoundation
 
 extension MediaPickerControllerNew {
-  
+
  @objc func openPhotoLibrary() {
     imagePicker.sourceType = .photoLibrary
     presentImagePicker()
   }
-  
-  
+
  @objc func openCamera() {
-    
+
     if UIImagePickerController.isSourceTypeAvailable(.camera) {
       imagePicker.sourceType = .camera
-      
+
       presentImagePicker()
-      
+
     } else {
-      
+
       let alert = UIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
       alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
       alert.modalPresentationStyle = .overCurrentContext
       present(alert, animated: true, completion: nil)
     }
   }
-  
+
 //  func indexPathIsValid(indexPath: IndexPath) -> Bool {
 //    if indexPath.section >= self.numberOfSections(in: self.collectionView) {
 //      return false
@@ -46,10 +44,8 @@ extension MediaPickerControllerNew {
 //    }
 //    return true
 //  }
-  
-  
 
-	override func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+	override func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 
 		if picker.sourceType == UIImagePickerController.SourceType.camera {
 
@@ -154,16 +150,16 @@ extension MediaPickerControllerNew {
 			}
 		}
 	}
-  
+
   func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
     dismissImagePicker()
   }
-  
+
   func presentImagePicker() {
     imagePicker.modalPresentationStyle = .overCurrentContext
     present(imagePicker, animated: true, completion: nil)
   }
-  
+
   func dismissImagePicker () {
     dismiss(animated: true, completion: nil)
   }

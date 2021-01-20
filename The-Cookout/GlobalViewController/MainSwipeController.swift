@@ -25,7 +25,7 @@ class MainSwipeController: UIViewController, UIScrollViewDelegate {
     var horizontalViews = [UIViewController]()
     var veritcalViews = [UIViewController]()
 
-    var initialContentOffset = CGPoint() // scrollView initial offset
+    var initialContentOffset = CGPoint() 
     var middleVertScrollVc: VerticalScrollViewController!
     var scrollView: UIScrollView!
     var delegate: MainSwipeControllerDelegate?
@@ -142,7 +142,7 @@ class MainSwipeController: UIViewController, UIScrollViewDelegate {
     }
 
     private func presentLoginController() {
-        DispatchQueue.main.async { // Wait until MainTabBarController is inside UI
+        DispatchQueue.main.async {
             let loginController = LoginController(alignment: .center)
             let navController = UINavigationController(rootViewController: loginController)
             self.present(navController, animated: true, completion: nil)
@@ -164,50 +164,28 @@ extension MainSwipeController {
 
         if percentageHorizontalOffset >= 0.45 && percentageHorizontalOffset < 6.0 {
             UIView.animate(withDuration: 0.2, animations: {
-
             })
-        }
-
-        if percentageHorizontalOffset < 0.45 {
-
         }
 
         if percentageHorizontalOffset == 0.5 {
             UIView.animate(withDuration: 0.2, animations: {
-
             })
         }
 
         if percentageHorizontalOffset < 0.5 {
             UIView.animate(withDuration: 0.2, animations: {
-
             })
-        }
-
-        if percentageHorizontalOffset >= 0.5 {
-
-        }
-
-        if percentageHorizontalOffset < 0.7 && percentageHorizontalOffset >= 0.5 {
-
         }
 
         if percentageHorizontalOffset > 0.666667 {
             UIView.animate(withDuration: 0.05, animations: {
-
             })
         }
 
         if delegate != nil && !delegate!.outerScrollViewShouldScroll() && !directionLockDisabled {
             let newOffset = CGPoint(x: self.initialContentOffset.x, y: self.initialContentOffset.y)
-            // Setting the new offset to the scrollView makes it behave like a proper
-            // directional lock, that allows you to scroll in only one direction at any given time
             self.scrollView!.setContentOffset(newOffset, animated: false)
         }
     }
-
-}
-
-extension MainSwipeController {
 
 }

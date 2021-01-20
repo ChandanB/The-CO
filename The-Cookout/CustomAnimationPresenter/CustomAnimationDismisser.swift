@@ -9,7 +9,7 @@
 import LBTAComponents
 
 class CustomAnimationDismisser: NSObject, UIViewControllerAnimatedTransitioning {
-
+    
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.5
     }

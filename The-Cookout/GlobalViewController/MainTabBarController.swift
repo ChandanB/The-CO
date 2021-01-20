@@ -88,38 +88,12 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
             postController.user = self.user
             let navController = UINavigationController(rootViewController: postController)
             present(navController, animated: true, completion: nil)
-//            let photoSelectorController = PhotoSelectorController(collectionViewLayout: layout)
-//            let nacController = UINavigationController(rootViewController: photoSelectorController)
-//            present(nacController, animated: true, completion: nil)
             return false
         }
         return true
     }
 
     var shadow: CAShapeLayer?
-
-    override func viewWillLayoutSubviews() {
-//        self.shadow = tabBar.dropShadow(shadowColor: .black, fillColor: .clear, opacity: 0.075, offset: CGSize(width: 0, height: 1), radius: 15)
-//        guard let shadow = self.shadow else {return}
-//        
-//        let path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: self.tabBar.frame.width / 1.025, height: self.tabBar.frame.height), cornerRadius: self.tabBar.frame.width / 1.025)
-//        let mask = CAShapeLayer()
-//        var tabFrame = self.tabBar.frame
-//        
-//        tabFrame.origin.x = 4.5
-//        tabFrame.origin.y = 608
-//        self.tabBar.frame = tabFrame
-//        self.tabBar.isTranslucent = true
-//        self.tabBar.barStyle = .default
-//        
-//        mask.path = path.cgPath
-//        tabBar.layer.mask = mask
-//        
-//        shadow.path = path.cgPath
-//        shadow.frame = self.tabBar.frame
-//        self.shadow = shadow
-//        tabBar.superview?.layer.insertSublayer(self.shadow!, below: tabBar.layer)
-    }
 
     private func addShape(_ tabBar: UITabBar) -> CAShapeLayer {
         let shapeLayer = CAShapeLayer()

@@ -9,6 +9,7 @@
 import UIKit
 
 class UserNewPostViewCell: UICollectionReusableView, ContentViewCell {
+    
     // MARK: - UI Elements
     fileprivate let profileImage: UIImageView = {
         let image = UIImageView()

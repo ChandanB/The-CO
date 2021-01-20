@@ -9,6 +9,7 @@
 import LBTAComponents
 
 class CustomAnimationPresenter: NSObject, UIViewControllerAnimatedTransitioning {
+    
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.5
     }

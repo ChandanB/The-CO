@@ -16,7 +16,6 @@ struct MenuItem {
 extension MenuController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        // how do we access BaseSlidingController.closeMenu()
         let slidingController = UIApplication.shared.keyWindow?.rootViewController as? BaseSlidingController
         slidingController?.didSelectMenuItem(indexPath: indexPath)
     }
@@ -40,10 +39,6 @@ class MenuController: UITableViewController {
         let customHeaderView = CustomMenuHeaderView()
         return customHeaderView
     }
-
-//    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        return 300
-//    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return menuItems.count

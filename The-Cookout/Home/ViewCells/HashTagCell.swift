@@ -13,7 +13,6 @@ class HashtagCell: UICollectionViewCell {
     // MARK: - Properties
 
     var post: Post? {
-
         didSet {
             guard let imageUrl = post?.imageUrl else { return }
             let url = URL(string: imageUrl)

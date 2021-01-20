@@ -45,9 +45,6 @@ class HomePostCell<PostType>: DatasourceCell, ContentViewCell where PostType: Po
             guard let photoImageViewUrl = URL(string: post.imageUrl) else {return}
             photoImageView.sd_setImage(with: photoImageViewUrl, completed: nil)
         }
-
-      //  votesCounter.text = String(describing: (post.upvotes - post.downvotes)) + " " + "votes"
-
         repostButton.setImage(post.repostedByCurrentUser == true ? #imageLiteral(resourceName: "repost").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
 
         setupAttributedCaption(post)
@@ -269,7 +266,6 @@ class HomePostCell<PostType>: DatasourceCell, ContentViewCell where PostType: Po
 
         stackView.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, bottomConstant: 24, heightConstant: 26)
 
-        // Buttons
         addSubview(commentButton)
         commentButton.anchor(commentButtonContainer.topAnchor, bottomConstant: padding, widthConstant: iconSize, heightConstant: iconSize)
         commentButton.centerXAnchor.constraint(equalTo: commentButtonContainer.centerXAnchor).isActive = true
@@ -286,10 +282,6 @@ class HomePostCell<PostType>: DatasourceCell, ContentViewCell where PostType: Po
         repostButton.anchor(repostButtonContainer.topAnchor, bottomConstant: padding, widthConstant: iconSize, heightConstant: iconSize)
         repostButton.centerXAnchor.constraint(equalTo: repostButtonContainer.centerXAnchor).isActive = true
 
-        //        addSubview(bookmarkButton)
-        //        bookmarkButton.anchor(top: stackView.topAnchor, right: rightAnchor, paddingTop: padding, paddingRight: padding)
-
-        // Counter
         addSubview(votesCounter)
         votesCounter.anchor(top: seperatorView.bottomAnchor, paddingTop: padding)
         votesCounter.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
@@ -343,8 +335,6 @@ class HomePostCell<PostType>: DatasourceCell, ContentViewCell where PostType: Po
         }
 
         setReposts(to: post.repostCount)
-//      setUpvotes(to: post.upvoteCount)
-//      setDownvotes(to: post.downvoteCount)
 
         let votes = post.upvotes + post.downvotes
         setVotes(to: votes)

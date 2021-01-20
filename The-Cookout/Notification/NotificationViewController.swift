@@ -72,7 +72,7 @@ class NotificationViewController: UITableViewController, NotificationCellDelegat
 
     }
 
-    // MARK: - notofocation cell delegate protocol
+    // MARK: - notification cell delegate protocol
 
     func followTapped(for cell: NotificationCell) {
         guard let getUser = cell.notification?.user else {return}

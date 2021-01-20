@@ -7,7 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "SDmetamacros.h"
+#import <SDmetamacros.h>
 
 #ifndef SD_LOCK
 #define SD_LOCK(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);

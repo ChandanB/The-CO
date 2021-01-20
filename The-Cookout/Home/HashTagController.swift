@@ -83,10 +83,17 @@ class HashtagController: UICollectionViewController, UICollectionViewDelegateFlo
 
             let postId = snapshot.key
 
-            Database.database().fetchPost(with: postId, completion: { (post) in
-                self.posts.append(post)
-                self.collectionView?.reloadData()
-            })
+            POSTS_REF.child(postId).observeSingleEvent(of: .value) { (snapshot) in
+                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
+                if let userId = dictionary["uid"] {
+                    DB_REF.database.fetchUser(withUID: userId as! String, completion: { (user) in
+                        let post = Post(id: postId, user: user, dictionary: dictionary)
+                        self.posts.append(post)
+                        self.collectionView?.reloadData()
+                    })
+                }
+            }
         }
     }
+
 }

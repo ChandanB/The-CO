@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CommunityPostContentViewCell: HomePostTextCell<CommunityPost> {
+class CommunityPostContentViewCell: HomePostCell<CommunityPost> {
     // MARK: - UI Elements
     fileprivate let arrowImage: UIImageView = {
         let image = UIImageView(image: #imageLiteral(resourceName: "IconArrow").withRenderingMode(.alwaysTemplate))

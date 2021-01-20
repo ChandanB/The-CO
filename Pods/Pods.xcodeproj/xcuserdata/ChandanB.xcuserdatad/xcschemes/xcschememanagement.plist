@@ -14,11 +14,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Bolts-Swift.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>CropViewController-TOCropViewControllerBundle.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -185,11 +180,6 @@
 			<false/>
 		</dict>
 		<key>SteviaLayout.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>SwiftLint.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

@@ -9,10 +9,6 @@
 import LBTAComponents
 import SDWebImage
 
-protocol CommentCellDelegate {
-    func didTapUser(user: User)
-}
-
 class CommentCell: DatasourceCell {
 
     static var cellId = "commentCellId"

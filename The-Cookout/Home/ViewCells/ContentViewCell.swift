@@ -8,6 +8,3 @@
 
 import UIKit
 
-protocol ContentViewCell {
-    static func identifier() -> String
-}

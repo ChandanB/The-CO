@@ -14,19 +14,7 @@ extension NSNotification.Name {
     static let scrollToMessages = NSNotification.Name(Bundle.main.bundleIdentifier! + ".scrollToMessages")
 }
 
-protocol MainSwipeControllerDelegate {
-    func outerScrollViewShouldScroll() -> Bool
-}
-
 class MainSwipeController: UIViewController, UIScrollViewDelegate {
-
-    func outerScrollViewShouldScroll() -> Bool {
-        if scrollView.contentOffset.x < middleVc.view.frame.origin.x || scrollView.contentOffset.x > 2*middleVc.view.frame.origin.x {
-            return false
-        } else {
-            return true
-        }
-    }
 
     var currentVC: UIViewController?
 
@@ -59,6 +47,14 @@ class MainSwipeController: UIViewController, UIScrollViewDelegate {
 
         NotificationCenter.default.addObserver(self, selector: #selector(didTapMessages), name: .scrollToMessages, object: nil)
         self.screenSize = UIScreen.main.bounds
+    }
+
+    func outerScrollViewShouldScroll() -> Bool {
+        if scrollView.contentOffset.x < middleVc.view.frame.origin.x || scrollView.contentOffset.x > 2*middleVc.view.frame.origin.x {
+            return false
+        } else {
+            return true
+        }
     }
 
     @objc func refreshView() {
@@ -146,7 +142,7 @@ class MainSwipeController: UIViewController, UIScrollViewDelegate {
     }
 
     private func presentLoginController() {
-        DispatchQueue.main.async { // wait until MainTabBarController is inside UI
+        DispatchQueue.main.async { // Wait until MainTabBarController is inside UI
             let loginController = LoginController(alignment: .center)
             let navController = UINavigationController(rootViewController: loginController)
             self.present(navController, animated: true, completion: nil)

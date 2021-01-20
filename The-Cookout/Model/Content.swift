@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol Content {
-    var contentType: ContentType { get }
-}
-
 enum ContentType: Int {
     case post
     case community

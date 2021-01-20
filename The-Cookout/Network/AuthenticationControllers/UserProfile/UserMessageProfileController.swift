@@ -91,21 +91,21 @@ extension UserMessageProfileController {
 
     func checkIfUserDataExists(completionHandler: @escaping CompletionHandler) {
 
-        let nameReference = USER_REF.child(CURRENT_USER!.uid).child("name")
+        let nameReference = USERS_REF.child(CURRENT_USER!.uid).child("name")
         nameReference.observe(.value, with: { (snapshot) in
             if snapshot.exists() {
                 self.userProfileContainerView.name.text = snapshot.value as? String
             }
         })
 
-        let bioReference = USER_REF.child(CURRENT_USER!.uid).child("bio")
+        let bioReference = USERS_REF.child(CURRENT_USER!.uid).child("bio")
         bioReference.observe(.value, with: { (snapshot) in
             if snapshot.exists() {
                 self.userProfileContainerView.bio.text = snapshot.value as? String
             }
         })
 
-        let photoReference = USER_REF.child(CURRENT_USER!.uid).child("profileImageUrl")
+        let photoReference = USERS_REF.child(CURRENT_USER!.uid).child("profileImageUrl")
         photoReference.observe(.value, with: { (snapshot) in
 
             if snapshot.exists() {
@@ -122,7 +122,7 @@ extension UserMessageProfileController {
     func updateUserData() {
         ARSLineProgress.ars_showOnView(self.view)
 
-        let userReference = USER_REF.child(CURRENT_USER!.uid)
+        let userReference = USERS_REF.child(CURRENT_USER!.uid)
         userReference.updateChildValues(["name": userProfileContainerView.name.text!,
                                          "username": userProfileContainerView.username.text!,
                                          "bio": userProfileContainerView.bio.text!]) { (_, _) in

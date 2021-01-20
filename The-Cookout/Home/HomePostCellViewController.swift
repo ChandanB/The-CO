@@ -150,7 +150,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
                 }
 
                 post.upvotedByCurrentUser = false
-                post.upvoteCount = post.upvoteCount - 1
+                post.upvotes = post.upvotes - 1
                 post.overallVoteCount = post.overallVoteCount - 1
                 self.posts[indexPath.item] = post
                 UIView.performWithoutAnimation {
@@ -167,11 +167,11 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
 
                 if post.downvotedByCurrentUser {
                     post.downvotedByCurrentUser = false
-                    post.downvoteCount = post.downvoteCount + 1
+                    post.downvotes = post.downvotes + 1
                 }
 
                 post.upvotedByCurrentUser = true
-                post.upvoteCount = post.upvoteCount + 1
+                post.upvotes = post.upvotes + 1
                 post.overallVoteCount = post.overallVoteCount + 1
                 self.posts[indexPath.item] = post
                 UIView.performWithoutAnimation {
@@ -194,7 +194,7 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
                     return
                 }
                 post.downvotedByCurrentUser = false
-                post.downvoteCount = post.downvoteCount + 1
+                post.downvotes = post.downvotes + 1
                 self.posts[indexPath.item] = post
                 UIView.performWithoutAnimation {
                     self.collectionView?.reloadItems(at: [indexPath])
@@ -210,11 +210,11 @@ class HomePostCellViewController: UICollectionViewController, HomePostCellDelega
 
                 if post.upvotedByCurrentUser {
                     post.upvotedByCurrentUser = false
-                    post.upvoteCount = post.upvoteCount - 1
+                    post.upvotes = post.upvotes - 1
                 }
 
                 post.downvotedByCurrentUser = true
-                post.downvoteCount = post.downvoteCount - 1
+                post.downvotes = post.downvotes - 1
                 self.posts[indexPath.item] = post
                 UIView.performWithoutAnimation {
                     self.collectionView?.reloadItems(at: [indexPath])

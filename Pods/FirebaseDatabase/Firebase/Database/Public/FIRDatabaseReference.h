@@ -15,12 +15,12 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "FIRDatabaseQuery.h"
-#import "FIRDatabase.h"
-#import "FIRDataSnapshot.h"
-#import "FIRMutableData.h"
-#import "FIRTransactionResult.h"
-#import "FIRServerValue.h"
+#import <FIRDatabaseQuery.h>
+#import <FIRDatabase.h>
+#import <FIRDataSnapshot.h>
+#import <FIRMutableData.h>
+#import <FIRTransactionResult.h>
+#import <FIRServerValue.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

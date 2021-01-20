@@ -10,9 +10,6 @@ import Firebase
 import LBTAComponents
 import SDWebImage
 
-protocol ReturnPostTextDelegate {
-    func returnPostText(text: PlaceholderTextView)
-}
 
 class PostHeader: UICollectionViewCell, UITextViewDelegate {
 

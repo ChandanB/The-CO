@@ -8,9 +8,6 @@
 
 import LBTAComponents
 
-protocol CommentInputAccessoryViewDelegate {
-    func didSubmit(comment: String)
-}
 
 class CommentInputAccessoryView: UIView, UITextViewDelegate {
 

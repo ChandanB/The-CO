@@ -8,10 +8,6 @@
 
 import Foundation
 
-protocol Printable {
-    var description: String { get }
-}
-
 class NotificationModel {
 
     enum NotificationType: Int, Printable {

@@ -9,10 +9,6 @@
 import UIKit
 import SDWebImage
 
-protocol NotificationCellDelegate {
-    func followTapped (for cell: NotificationCell)
-    func handlePostTapped (for cell: NotificationCell)
-}
 
 class NotificationCell: UITableViewCell {
 

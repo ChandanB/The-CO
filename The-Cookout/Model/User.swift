@@ -96,6 +96,23 @@ extension User { // local only
         }
     }
 
+    mutating func addPosts(followedUser: String, loggedInUser: String) {
+        USER_POSTS_REF.child(followedUser).observeSingleEvent(of: .value) { (snapshot) in
+            guard let dict = snapshot.value as? [String:Any] else {return}
+            USER_FEED_REF.child(loggedInUser).updateChildValues(dict)
+        }
+    }
+
+    mutating func removePosts(followedUser: String, loggedInUser: String) {
+        USER_POSTS_REF.child(followedUser).observeSingleEvent(of: .value) { (snapshot) in
+            guard let dict = snapshot.value as? [String:Any] else {return}
+            for key in dict.keys {
+                USER_FEED_REF.child(loggedInUser).child(key).removeValue()
+            }
+        }
+    }
+
+
     func uploadFollowNotificationToServer() {
 
         guard let currentUid = CURRENT_USER?.uid else { return }

@@ -7,8 +7,6 @@ target 'The-Cookout' do
 
   # Pods for The-Cookout
   
-  pod 'SwiftLint'
-
   pod 'LBTAComponents'
   pod 'LBTATools'
   
@@ -22,9 +20,11 @@ target 'The-Cookout' do
   pod 'Firebase/Messaging'
   
   pod 'Kingfisher'
-  pod 'Bolts-Swift'
+
   pod 'Spring'
+  
   pod 'UIFontComplete'
+  
   pod 'PKHUD'
   pod 'YPImagePicker', '~> 3.5.2'
   pod 'UIImageColors'

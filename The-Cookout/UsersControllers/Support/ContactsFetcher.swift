@@ -10,10 +10,6 @@ import UIKit
 import Contacts
 import Firebase
 
-protocol UsersUpdatesDelegate: class {
-  func users(updateDatasource users: [User])
-  func users(handleAccessStatus: Bool)
-}
 
 class UsersFetcher: NSObject {
 

@@ -16,10 +16,7 @@ import SDWebImage
 //    attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray,  NSAttributedString.Key.font: fontStyle]))
 //    postsLabel.attributedText = attributedText
 
-protocol UserProfileHeaderDelegate {
-    func didChangeToListView()
-    func didChangeToGridView()
-}
+
 
 class UserProfileHeader: DatasourceCell {
 

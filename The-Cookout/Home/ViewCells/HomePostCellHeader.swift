@@ -8,11 +8,6 @@
 
 import UIKit
 
-protocol HomePostCellHeaderDelegate {
-    func didTapUser()
-    func didTapOptions()
-}
-
 class HomePostCellHeader: UIView {
 
     var post: Post? {
@@ -100,8 +95,8 @@ class HomePostCellHeader: UIView {
 
     private func configureUser() {
         guard let post = post else { return }
-        let url = URL(string: post.user.profileImageUrl)
-        userProfileImageView.sd_setImage(with: url, completed: nil)
+        guard let user = post.user else {return}
+        self.userProfileImageView.loadImage(urlString: user.profileImageUrl)
         setupAttibutedUsername()
     }
 

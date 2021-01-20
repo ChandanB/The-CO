@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="searchUserCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="searchUserCell" rowHeight="93" id="znd-3P-1qB" customClass="SearchTableViewCell" customModule="The_Cookout" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="487" height="93"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="znd-3P-1qB" id="VBs-NP-HC1">
+                <rect key="frame" x="0.0" y="0.0" width="487" height="93"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="heJ-ea-EIm">
+                        <rect key="frame" x="60" y="24" width="33" height="45"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p9x-dc-ly3">
+                                <rect key="frame" x="0.0" y="0.0" width="33" height="14.5"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VPy-97-YBx">
+                                <rect key="frame" x="0.0" y="30.5" width="33" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                    </stackView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Y4i-RW-YQ7" customClass="CustomImageView" customModule="The_Cookout" customModuleProvider="target">
+                        <rect key="frame" x="8" y="22.5" width="48" height="48"/>
+                        <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="48" id="lVU-i6-vby"/>
+                            <constraint firstAttribute="width" constant="48" id="wSL-Nj-UhY"/>
+                        </constraints>
+                    </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cnd-Ud-KZP">
+                        <rect key="frame" x="385" y="31.5" width="90" height="30"/>
+                        <color key="backgroundColor" red="0.066666666669999999" green="0.60392156860000001" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="v3t-pf-JCX"/>
+                            <constraint firstAttribute="height" constant="30" id="yyg-py-gs3"/>
+                        </constraints>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <state key="normal" title="Loading"/>
+                        <connections>
+                            <action selector="followTapped:" destination="znd-3P-1qB" eventType="touchUpInside" id="N2C-jZ-uxB"/>
+                        </connections>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BgH-6R-lTD">
+                        <rect key="frame" x="385" y="31" width="90" height="30"/>
+                        <color key="backgroundColor" red="0.066666666669999999" green="0.60392156860000001" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="30" id="rHw-Yg-W9s"/>
+                            <constraint firstAttribute="width" constant="90" id="u0q-hP-06C"/>
+                        </constraints>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <state key="normal" title="Loading"/>
+                        <connections>
+                            <action selector="followTapped:" destination="znd-3P-1qB" eventType="touchUpInside" id="WpQ-QF-uXY"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="heJ-ea-EIm" firstAttribute="leading" secondItem="Y4i-RW-YQ7" secondAttribute="trailing" constant="4" id="BY1-fI-EkQ"/>
+                    <constraint firstItem="Cnd-Ud-KZP" firstAttribute="centerY" secondItem="VBs-NP-HC1" secondAttribute="centerY" id="bLc-6u-1oh"/>
+                    <constraint firstItem="heJ-ea-EIm" firstAttribute="centerY" secondItem="Y4i-RW-YQ7" secondAttribute="centerY" id="bmu-4F-oBA"/>
+                    <constraint firstItem="Y4i-RW-YQ7" firstAttribute="leading" secondItem="VBs-NP-HC1" secondAttribute="leading" constant="8" id="s8g-x3-VzJ"/>
+                    <constraint firstAttribute="trailing" secondItem="Cnd-Ud-KZP" secondAttribute="trailing" constant="12" id="syT-sO-jeV"/>
+                    <constraint firstItem="Y4i-RW-YQ7" firstAttribute="centerY" secondItem="VBs-NP-HC1" secondAttribute="centerY" id="upS-My-fA0"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="followBtn" destination="Cnd-Ud-KZP" id="cg5-VP-UHY"/>
+                <outlet property="nameLabel" destination="VPy-97-YBx" id="wWM-TQ-4va"/>
+                <outlet property="profileImageView" destination="Y4i-RW-YQ7" id="LdS-sO-RQu"/>
+                <outlet property="usernameLabel" destination="p9x-dc-ly3" id="X1C-bj-B2T"/>
+            </connections>
+            <point key="canvasLocation" x="61.600000000000001" y="221.73913043478262"/>
+        </tableViewCell>
+    </objects>
+</document>

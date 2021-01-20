@@ -1,7 +1,6 @@
 PODS:
   - ActiveLabel (1.1.0)
   - ARSLineProgress (3.1.0)
-  - Bolts-Swift (1.4.0)
   - CropViewController (2.5.0)
   - EZSwipeController (0.6.1)
   - Firebase/Analytics (6.1.0):
@@ -144,7 +143,6 @@ PODS:
   - SDWebImage/Core (5.0.4)
   - Spring (1.0.5)
   - SteviaLayout (4.4.4)
-  - SwiftLint (0.32.0)
   - UIFontComplete (4.0.0)
   - UIImageColors (2.1.0)
   - YPImagePicker (3.5.3):
@@ -154,7 +152,6 @@ PODS:
 DEPENDENCIES:
   - ActiveLabel
   - ARSLineProgress (~> 3.1)
-  - Bolts-Swift
   - CropViewController
   - EZSwipeController
   - Firebase/Analytics
@@ -173,16 +170,14 @@ DEPENDENCIES:
   - PKHUD
   - SDWebImage (~> 5.0)
   - Spring
-  - SwiftLint
   - UIFontComplete
   - UIImageColors
   - YPImagePicker (~> 3.5.2)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - ActiveLabel
     - ARSLineProgress
-    - Bolts-Swift
     - CropViewController
     - EZSwipeController
     - Firebase
@@ -216,7 +211,6 @@ SPEC REPOS:
     - SDWebImage
     - Spring
     - SteviaLayout
-    - SwiftLint
     - UIFontComplete
     - UIImageColors
     - YPImagePicker
@@ -224,7 +218,6 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   ActiveLabel: 5e3f4de79a1952d4604b845a0610d4776e4b82b3
   ARSLineProgress: 60778657c69491796c3faf5b834c72924c405833
-  Bolts-Swift: 650d72e8017721b1a6bbe43d542c4578f8e5ba6f
   CropViewController: 6c962d6fb264cc5cb325b622d5029d50c6c43e72
   EZSwipeController: 255b0f8aed31963b0236802c926e27dd006a2532
   Firebase: 8d77bb33624ae9b62d745d82ec023de5f70f7e4f
@@ -258,11 +251,10 @@ SPEC CHECKSUMS:
   SDWebImage: c739016e4bdf0a4a1f9a04b5e0385395ad63a282
   Spring: 17901566c8ecf3a1327902b940406c64512f9bb1
   SteviaLayout: 523469269059f2c6da02820bb2ff28a5fe0780aa
-  SwiftLint: 009a898ef2a1c851f45e1b59349bf6ff2ddc990d
   UIFontComplete: 9542d390ee6114412a585d979b09fe820896695d
   UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
   YPImagePicker: 5dd3814b47b1208e9c8cc8f6ef77fe90db3723b6
 
-PODFILE CHECKSUM: 955fbd8e4429de96f04226e14c9f10f71d03c03b
+PODFILE CHECKSUM: f6004e8ae403badfefb8aee46c2ba98ec767c86c
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.9.1

@@ -378,7 +378,7 @@ public let messageMetaDataFirebaseFolder = "metaData"
 func setOnlineStatus() {
 
     if CURRENT_USER != nil {
-        let onlineStatusReference = USER_REF.child(CURRENT_USER!.uid).child("OnlineStatus")
+        let onlineStatusReference = USERS_REF.child(CURRENT_USER!.uid).child("OnlineStatus")
         let connectedRef = Database.database().reference(withPath: ".info/connected")
 
         connectedRef.observe(.value, with: { (snapshot) in

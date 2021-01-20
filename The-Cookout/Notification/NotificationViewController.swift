@@ -19,6 +19,8 @@ class NotificationViewController: UITableViewController, NotificationCellDelegat
     var currentKey: String?
 
     var notifications = [NotificationModel]()
+    private let initialPostsCount: UInt = 20
+    private let furtherPostsCount: UInt = 10
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,10 +32,10 @@ class NotificationViewController: UITableViewController, NotificationCellDelegat
         tableView.register(NotificationCell.self, forCellReuseIdentifier: reuseIdentifier)
 
         //navigation title
-        navigationItem.title = "Notification"
+        navigationItem.title = "Notifications"
 
         //fetch notification
-        fetchNotification()
+        fetchNotifications()
 
     }
 
@@ -46,7 +48,7 @@ class NotificationViewController: UITableViewController, NotificationCellDelegat
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if notifications.count > 4 {
             if indexPath.item == notifications.count - 1 {
-                self.fetchNotification()
+                self.fetchNotifications()
             }
         }
     }
@@ -113,67 +115,53 @@ class NotificationViewController: UITableViewController, NotificationCellDelegat
 
     // MARK: - API
 
-    func fetchNotifications(withNotificationId notificationId: String, snapshot: DataSnapshot) {
-
-        guard let currentUid = CURRENT_USER?.uid else {return}
-        guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
-        guard let uid = dictionary["uid"] as? String else {return}
-
-        Database.database().fetchCurrentUser { (user) in
-            if let postId = dictionary["postId"] as? String {
-                Database.database().fetchPost(with: postId, completion: { (post) in
-                    let notification = NotificationModel(user: user, post: post, dictionary: dictionary)
-                    self.notifications.append(notification)
-                    self.handleReloadTable()
-                })
-
-            } else {
-
-                let notification = NotificationModel(user: user, dictionary: dictionary)
-                self.notifications.append(notification)
-                self.handleReloadTable()
-            }
-        }
-
-        NOTIFICATIONS_REF.child(currentUid).child(notificationId).child("checked").setValue(1)
-    }
-
-    func fetchNotification() {
+    func fetchNotifications() {
 
         guard let currentUid = CURRENT_USER?.uid else {return}
 
         if currentKey == nil {
-
-            NOTIFICATIONS_REF.child(currentUid).queryLimited(toLast: 5).observeSingleEvent(of: .value) { (snapshot) in
-
-                guard let first = snapshot.children.allObjects.first as? DataSnapshot else {return}
+            NOTIFICATIONS_REF.child(currentUid).queryLimited(toLast: initialPostsCount).observeSingleEvent(of: .value) { (snapshot) in
                 guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else {return}
+                let first = allObjects.first
 
-                allObjects.forEach({ (snapshot) in
-
-                    let notificationId = snapshot.key
-                    self.fetchNotifications(withNotificationId: notificationId, snapshot: snapshot)
-                })
-
-                self.currentKey = first.key
+                for object in allObjects {
+                    guard let dict = object.value as? [String:Any] else {return}
+                    guard let uid = dict["uid"] as? String else {return}
+                    self.fetchNotification(uid: uid, dict: dict)
+                    NOTIFICATIONS_REF.child(currentUid).child(object.key).child("checked").setValue(1)
+                }
+                self.currentKey = first?.key
             }
         } else {
-
-            NOTIFICATIONS_REF.child(currentUid).queryOrderedByKey().queryEnding(atValue: self.currentKey).queryLimited(toLast: 6).observeSingleEvent(of: .value) { (snapshot) in
-
-                guard let first = snapshot.children.allObjects.first as? DataSnapshot else {return}
+            NOTIFICATIONS_REF.child(currentUid).queryOrderedByKey().queryEnding(atValue: currentKey).queryLimited(toLast: furtherPostsCount).observeSingleEvent(of: .value) { (snapshot) in
                 guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else {return}
+                let first = allObjects.first
 
-                allObjects.forEach({ (snapshot) in
+                for object in allObjects {
+                    guard let dict = object.value as? [String:Any] else {return}
+                    guard let uid = dict["uid"] as? String else {return}
+                    if object.key == self.currentKey {continue}
+                    self.fetchNotification(uid: uid, dict: dict)
+                    NOTIFICATIONS_REF.child(currentUid).child(object.key).child("checked").setValue(1)
+                }
+                self.currentKey = first?.key
+            }
+        }
+    }
 
-                    let notificationId = snapshot.key
-
-                    if notificationId != self.currentKey {
-
-                        self.fetchNotifications(withNotificationId: notificationId, snapshot: snapshot)
-                    }
+    func fetchNotification(uid: String, dict: [String:Any]) {
+        DB_REF.database.fetchUser(withUID: uid) { (user) in
+            var notification : NotificationModel?
+            if let postId = dict["id"] as? String {
+                DB_REF.database.fetchPost(with: postId, user: user, completion: { (post) in
+                    notification = NotificationModel(user: user, post: post, dictionary: dict as Dictionary<String, AnyObject>)
+                    self.notifications.append(notification!)
+                    self.handleReloadTable()
                 })
-                self.currentKey = first.key
+            } else {
+                notification = NotificationModel(user: user, dictionary: dict as Dictionary<String, AnyObject>)
+                self.notifications.append(notification!)
+                self.handleReloadTable()
             }
         }
     }

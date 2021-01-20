@@ -15,7 +15,7 @@ class UserProfileDataDatabaseUpdater: NSObject {
   func updateUserProfile(with image: UIImage, completion: @escaping UpdateUserProfileCompletionHandler) {
 
     guard let currentUserID = CURRENT_USER?.uid else { return }
-    let userReference = USER_REF.child(currentUserID)
+    let userReference = USERS_REF.child(currentUserID)
 
     let thumbnailImage = createImageThumbnail(image)
     var images = [(image: UIImage, quality: CGFloat, key: String)]()
@@ -46,7 +46,7 @@ class UserProfileDataDatabaseUpdater: NSObject {
       return
     }
 
-    let userReference = USER_REF.child(currentUser)
+    let userReference = USERS_REF.child(currentUser)
     userReference.observeSingleEvent(of: .value, with: { (snapshot) in
 
       guard let userData = snapshot.value as? [String: AnyObject] else { completion(false); return }

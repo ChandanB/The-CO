@@ -10,10 +10,6 @@ import UIKit
 import Firebase
 import SDWebImage
 
-protocol SocialPointUsersUpdatesDelegate: class {
-    func socialPointUsers(shouldBeUpdatedTo users: [User])
-}
-
 public var shouldReFetchSocialPointUsers: Bool = false
 
 class SocialPointUsersFetcher: NSObject {
@@ -29,7 +25,7 @@ class SocialPointUsersFetcher: NSObject {
     fileprivate func clearObserversAndUsersIfNeeded() {
         self.users.removeAll()
         for handle in userHandle {
-            USER_REF.removeObserver(withHandle: handle)
+            USERS_REF.removeObserver(withHandle: handle)
         }
     }
 
@@ -70,7 +66,7 @@ class SocialPointUsersFetcher: NSObject {
 
     fileprivate func fetchAndObserveUser(for preparedID: String, asynchronously: Bool) {
 
-        userQuery = USER_REF.queryOrdered(byChild: "uid")
+        userQuery = USERS_REF.queryOrdered(byChild: "uid")
         let databaseHandle = DatabaseHandle()
         userHandle.insert(databaseHandle, at: 0 )
 

@@ -160,14 +160,14 @@ class AccountSettingsController: UITableViewController {
 
         if let currentUser = CURRENT_USER?.uid {
 
-            let photoURLReference = USER_REF.child(currentUser).child("profileImageUrl")
+            let photoURLReference = USERS_REF.child(currentUser).child("profileImageUrl")
             photoURLReference.observe(.value, with: { (snapshot) in
                 if let url = snapshot.value as? String {
                     self.userProfileContainerView.profileImageView.sd_setImage(with: URL(string: url), placeholderImage: nil, options: [.scaleDownLargeImages, .continueInBackground], completed: nil)
                 }
             })
 
-            let nameReference = USER_REF.child(currentUser).child("name")
+            let nameReference = USERS_REF.child(currentUser).child("name")
             nameReference.observe(.value, with: { (snapshot) in
                 if let name = snapshot.value as? String {
                     self.userProfileContainerView.name.text = name
@@ -175,7 +175,7 @@ class AccountSettingsController: UITableViewController {
                 }
             })
 
-            let bioReference = USER_REF.child(currentUser).child("bio")
+            let bioReference = USERS_REF.child(currentUser).child("bio")
             bioReference.observe(.value, with: { (snapshot) in
                 if let bio = snapshot.value as? String {
                     self.userProfileContainerView.bio.text = bio
@@ -184,7 +184,7 @@ class AccountSettingsController: UITableViewController {
                 }
             })
 
-            let usernameReference = USER_REF.child(currentUser).child("username")
+            let usernameReference = USERS_REF.child(currentUser).child("username")
             usernameReference.observe(.value, with: { (snapshot) in
                 if let username = snapshot.value as? String {
                     self.userProfileContainerView.username.text = username
@@ -202,7 +202,7 @@ class AccountSettingsController: UITableViewController {
         }
         ARSLineProgress.ars_showOnView(self.tableView)
 
-        let userReference = USER_REF.child(uid).child("notificationTokens")
+        let userReference = USERS_REF.child(uid).child("notificationTokens")
         userReference.removeValue { (error, reference) in
 
             Database.database().reference(withPath: ".info/connected").removeAllObservers()
@@ -213,7 +213,7 @@ class AccountSettingsController: UITableViewController {
                 return
             }
 
-            let onlineStatusReference = USER_REF.child(uid).child("OnlineStatus")
+            let onlineStatusReference = USERS_REF.child(uid).child("OnlineStatus")
             onlineStatusReference.setValue(ServerValue.timestamp())
 
             Auth.auth().logout(onSuccess: {

@@ -15,7 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "FIRDatabaseReference.h"
+#import <FIRDatabaseReference.h>
 
 @class FIRApp;
 

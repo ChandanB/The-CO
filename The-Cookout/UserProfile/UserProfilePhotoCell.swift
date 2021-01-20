@@ -8,10 +8,6 @@
 
 import LBTAComponents
 
-protocol PhotoCellDelegate {
-    func presentLightBox(for cell: UserProfilePhotoCell)
-    func didTapImage(_ post: Post)
-}
 
 class UserProfilePhotoCell: DatasourceCell {
 

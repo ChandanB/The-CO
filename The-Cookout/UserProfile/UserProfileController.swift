@@ -91,7 +91,7 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
         collectionView.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserProfileHeader.cellId)
         collectionView.register(UserBannerHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserBannerHeader.cellId)
         collectionView.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: UserProfilePhotoCell.cellId)
-        collectionView.register(HomePostTextCell.self, forCellWithReuseIdentifier: HomePostTextCell.identifier())
+        collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: HomePostCell.identifier())
         collectionView?.register(UserProfileEmptyStateCell.self, forCellWithReuseIdentifier: UserProfileEmptyStateCell.cellId)
 
         let refreshControl = UIRefreshControl()
@@ -178,7 +178,7 @@ class UserProfileController: HomePostCellViewController, UICollectionViewDelegat
             return cell
         }
 
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostTextCell.identifier(), for: indexPath) as! HomePostTextCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostCell.identifier(), for: indexPath) as! HomePostCell
         cell.delegate = self
         cell.data = self.listArray[indexPath.item]
         return cell

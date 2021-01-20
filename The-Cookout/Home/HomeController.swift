@@ -16,7 +16,6 @@ class HomeController: HomePostCellViewController {
         didSet {
             guard let user = self.user else {return}
             configureNavigationBar(user)
-            fetchAllPosts()
         }
     }
 
@@ -29,18 +28,21 @@ class HomeController: HomePostCellViewController {
     // Fields
     fileprivate let transition = CircularTransition()
 
-    var viewSinglePost = false
-    var post: Post?
+    var isFinishedPaging = false
 
     var currentKey: String?
+    private let initialPostsCount: UInt = 5
+    private let furtherPostsCount: UInt = 6
+
+    var viewSinglePost : Bool = false
+    var post: Post?
+
     var userProfileController: UserProfileController?
 
     var messageNotificationView: MessageNotificationView = {
         let view = MessageNotificationView()
         return view
     }()
-
-    var isFinishedPaging = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,16 +51,31 @@ class HomeController: HomePostCellViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: .updateHomeFeed, object: nil)
 
+        self.navigationItem.title = !viewSinglePost ? "Home" : "Post"
+
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         refreshControl.layer.zPosition = -1
         collectionView?.refreshControl = refreshControl
 
+        fetchPosts()
         setUserFCMToken()
+    }
 
-        if !viewSinglePost {
-            fetchAllPosts()
-        }
+    private func setupCollectionView() {
+        collectionView.backgroundColor = fbBg
+
+        // UICollectionViewCell
+        collectionView.register(HistoriesContentViewCell.self, forCellWithReuseIdentifier: HistoriesContentViewCell.identifier())
+        collectionView.register(CommunityPostContentViewCell.self, forCellWithReuseIdentifier: CommunityPostContentViewCell.identifier())
+        collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: HomePostCell.identifier())
+
+        // UICollectionReusableView
+        collectionView.register(UserNewPostViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserNewPostViewCell.identifier())
+
+        //    collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
+        collectionView?.backgroundView = HomeEmptyStateView()
+        collectionView?.backgroundView?.alpha = 0
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -104,84 +121,48 @@ class HomeController: HomePostCellViewController {
         }
     }
 
-    private func setupCollectionView() {
-        collectionView.backgroundColor = fbBg
-
-        // UICollectionViewCell
-        collectionView.register(HistoriesContentViewCell.self, forCellWithReuseIdentifier: HistoriesContentViewCell.identifier())
-        collectionView.register(CommunityPostContentViewCell.self, forCellWithReuseIdentifier: CommunityPostContentViewCell.identifier())
-        collectionView.register(HomePostTextCell.self, forCellWithReuseIdentifier: HomePostTextCell.identifier())
-
-        // UICollectionReusableView
-        collectionView.register(UserNewPostViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserNewPostViewCell.identifier())
-
-  //    collectionView?.backgroundColor = UIColor(r: 230, g: 230, b: 230)
-        collectionView?.backgroundView = HomeEmptyStateView()
-        collectionView?.backgroundView?.alpha = 0
-    }
-
     @objc func didTapMessages() {
         NotificationCenter.default.post(name: .scrollToMessages, object: nil)
     }
 
-    private func fetchAllPosts() {
-        showEmptyStateViewIfNeeded()
-        fetchUsers()
+    @objc private func handleRefresh() {
+        datasource.removeAll(keepingCapacity: true)
+        posts.removeAll(keepingCapacity: true)
+        self.currentKey = nil
+        fetchPosts()
+        collectionView.reloadData()
     }
 
-    private func fetchUsers() {
-        collectionView?.refreshControl?.beginRefreshing()
-
+    private func fetchPosts() {
+        guard let currentUserId =  CURRENT_USER?.uid else { return }
         guard let user = self.user else {return}
-        let semaphore = DispatchSemaphore(value: 0)
-        let dispatchQueue = DispatchQueue.global(qos: .background)
 
-        dispatchQueue.async {
-            self.queryPosts(forUser: user)
+        showEmptyStateViewIfNeeded()
 
-            Database.database().fetchFollowing(userId: user.uid) { (user) in
-                self.queryPosts(forUser: user)
-                semaphore.signal()
-            }
-            semaphore.wait()
+        if viewSinglePost {
+            guard let post = post else {return}
+            posts.append(post)
+            return
         }
 
-        self.collectionView?.refreshControl?.endRefreshing()
-    }
+        Database.database().fetchPostsForUser(databaseRef: USER_FEED_REF.child(currentUserId), currentKey: self.currentKey, user: user, initialCount: self.initialPostsCount, furtherCount: self.furtherPostsCount, lastPostId: { (first) in
+            self.collectionView.refreshControl?.endRefreshing()
+            self.currentKey = first.key
+        }) { (post) in
+            print (post)
+            self.posts.append(post)
+            self.posts.sort(by: { (post1, post2) -> Bool in
+                return post1.creationDate > post2.creationDate
+            })
+            self.collectionView.reloadData()
+        }
 
-    private func queryPosts(forUser user: User) {
-        Database.database().queryPosts(forUser: user, posts: self.posts, finishedPaging: isFinishedPaging, completion: { (newPosts, isPagingFinished) in
-
-            self.isFinishedPaging = isPagingFinished
-
-            if self.posts.isEmpty {
-                self.posts = newPosts
-                self.posts.sort(by: { (post1, post2) -> Bool in
-                    return post1.creationDate > post2.creationDate
-                })
-                self.collectionView.reloadSections(IndexSet(integer: 0))
-            } else {
-                if newPosts.count < 4 {
-                    self.isFinishedPaging = true
-                }
-                self.posts = newPosts
-                self.posts.sort(by: { (post1, post2) -> Bool in
-                    return post1.creationDate > post2.creationDate
-                })
-
-                self.collectionView?.reloadData()
-            }
-
-          //  self.datasource.append(contentsOf: self.posts)
-
-            self.collectionView?.refreshControl?.endRefreshing()
-        })
     }
 
     override func showEmptyStateViewIfNeeded() {
-        guard let currentLoggedInUserId = CURRENT_USER?.uid else { return }
-        Database.database().numberOfFollowingForUser(withUID: currentLoggedInUserId) { (followingCount) in
-            Database.database().numberOfPostsForUser(withUID: currentLoggedInUserId, completion: { (postCount) in
+        guard let currentUserId = CURRENT_USER?.uid else { return }
+        Database.database().numberOfFollowingForUser(withUID: currentUserId) { (followingCount) in
+            Database.database().numberOfPostsForUser(withUID: currentUserId, completion: { (postCount) in
                 if followingCount == 0 && postCount == 0 {
                     UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveEaseOut, animations: {
                         self.collectionView?.backgroundView?.alpha = 1
@@ -191,13 +172,6 @@ class HomeController: HomePostCellViewController {
                 }
             })
         }
-    }
-
-    @objc private func handleRefresh() {
-        datasource.removeAll(keepingCapacity: false)
-        posts.removeAll(keepingCapacity: false)
-        self.currentKey = nil
-        fetchAllPosts()
     }
 
     @objc private func handleCamera() {
@@ -251,11 +225,11 @@ class HomeController: HomePostCellViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if posts.count >= 3 {
-            if indexPath.item == posts.count - 1 {
-                fetchAllPosts()
-            }
+
+        if posts.count > initialPostsCount - 1 && indexPath.item == self.posts.count - 1{
+            fetchPosts()
         }
+
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -273,7 +247,7 @@ class HomeController: HomePostCellViewController {
             cell.data = item as? CommunityPost
             return cell
         case .post:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostTextCell.identifier(), for: indexPath) as! HomePostTextCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePostCell.identifier(), for: indexPath) as! HomePostCell
             cell.data = item as? Post
             cell.delegate = self
             cell.hasImage = post?.hasImage
@@ -336,7 +310,7 @@ class HomeController: HomePostCellViewController {
 
         let values = ["fcmToken": fcmToken]
 
-        USER_REF.child(currentUid).updateChildValues(values)
+        USERS_REF.child(currentUid).updateChildValues(values)
     }
 
 }
@@ -419,7 +393,7 @@ extension HomeController: UIViewControllerTransitioningDelegate {
         return transition
     }
 
-    func handleHashtagTapped(forCell cell: HomePostTextCell<Post>) {
+    func handleHashtagTapped(forCell cell: HomePostCell<Post>) {
         cell.captionLabel.handleHashtagTap { (hashtag) in
             let hashtagController = HashtagController(collectionViewLayout: UICollectionViewFlowLayout())
             hashtagController.hashtag = hashtag.lowercased()
@@ -427,7 +401,7 @@ extension HomeController: UIViewControllerTransitioningDelegate {
         }
     }
 
-    func handleMentionTapped(forCell cell: HomePostTextCell<Post>) {
+    func handleMentionTapped(forCell cell: HomePostCell<Post>) {
         cell.captionLabel.handleMentionTap { (username) in
             self.getMentionedUser(withUsername: username)
         }

@@ -113,11 +113,20 @@ extension Formatter {
 
 extension UIViewController {
 
+    func hideKeyboardWhenTappedAround() {
+      let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+      view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+      view.endEditing(true)
+    }
+
     func getMentionedUser(withUsername username: String) {
-        USER_REF.observe(.childAdded) { (snapshot) in
+        USERS_REF.observe(.childAdded) { (snapshot) in
             let uid = snapshot.key
 
-            USER_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            USERS_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
 
                 if username == dictionary["username"] as? String {
@@ -148,9 +157,9 @@ extension UIViewController {
                 word = word.trimmingCharacters(in: .symbols)
                 word = word.trimmingCharacters(in: .punctuationCharacters)
 
-                USER_REF.observe(.childAdded, with: { (snapshot) in
+                USERS_REF.observe(.childAdded, with: { (snapshot) in
                     let uid = snapshot.key
-                    USER_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    USERS_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                         guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
                         if word == dictionary["username"] as? String {
                             let notificationValues = ["postId": postId,

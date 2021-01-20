@@ -91,7 +91,7 @@ class EnterVerificationCodeController: UIViewController {
         return
       }
 
-      let userReference = USER_REF.child(CURRENT_USER!.uid)
+      let userReference = USERS_REF.child(CURRENT_USER!.uid)
       userReference.updateChildValues(["phoneNumber": self.enterVerificationContainerView.titleNumber.text! ]) { (error, _) in
         if error != nil {
           ARSLineProgress.hide()

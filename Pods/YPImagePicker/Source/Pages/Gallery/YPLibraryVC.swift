@@ -204,7 +204,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         switch status {
         case .authorized:
             block(true)
-        case .restricted, .denied:
+        case .restricted, .denied, .limited:
             let popup = YPPermissionDeniedPopup()
             let alert = popup.popup(cancelBlock: {
                 block(false)
@@ -217,6 +217,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     block(s == .authorized)
                 }
             }
+        @unknown default:
+            print()
         }
     }
 

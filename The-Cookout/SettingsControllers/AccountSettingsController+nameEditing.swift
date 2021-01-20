@@ -114,7 +114,7 @@ extension AccountSettingsController { /* user name editing */
     userProfileContainerView.name.resignFirstResponder()
     userProfileContainerView.bio.resignFirstResponder()
 
-    let userNameReference = USER_REF.child(CURRENT_USER!.uid)
+    let userNameReference = USERS_REF.child(CURRENT_USER!.uid)
     userNameReference.updateChildValues(["name": userProfileContainerView.name.text!,
                                          "bio": userProfileContainerView.bio.text!]) { (error, _) in
 

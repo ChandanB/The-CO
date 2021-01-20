@@ -9,10 +9,6 @@
 import UIKit
 import Photos
 
-protocol ReturnPostImageDelegate {
-    func returnPostImage(image: UIImage)
-}
-
 class PhotoSelectorController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     let cellId = "cellId"

@@ -55,7 +55,7 @@ extension Auth {
         }
 
         let values = [uid: dictionaryValues]
-        USER_REF.updateChildValues(values, withCompletionBlock: { (err, _) in
+        USERS_REF.updateChildValues(values, withCompletionBlock: { (err, _) in
             if let err = err {
                 print("Failed to upload user to database:", err)
                 return
@@ -68,7 +68,7 @@ extension Auth {
     static func setUserInfomation(bio: String, name: String, profileImageUrl: String, username: String, email: String, uid: String, onSuccess: @escaping () -> Void) {
         let dictionaryValues = ["name": name, "email": email, "username": username, "username_lowercase": username.lowercased(), "bio": bio, "profileImageUrl": profileImageUrl]
         let values = [uid: dictionaryValues]
-        USER_REF.setValue(values)
+        USERS_REF.setValue(values)
 
         onSuccess()
     }
@@ -183,7 +183,7 @@ extension Database {
 
     // MARK: Users
     func fetchUser(withUID uid: String, completion: @escaping (User) -> Void) {
-        USER_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        USERS_REF.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let userDictionary = snapshot.value as? [String: Any] else { return }
             let user = User(uid: uid, dictionary: userDictionary as [String: AnyObject])
             completion(user)
@@ -195,7 +195,7 @@ extension Database {
     func fetchCurrentUser(completion: @escaping (User) -> Void) {
         guard let uid = CURRENT_USER?.uid else {return}
 
-        USER_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in
+        USERS_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in
             guard let userDictionary = snapshot.value as? [String: Any] else { return }
             let user = User(uid: uid, dictionary: userDictionary as [String: AnyObject])
             completion(user)
@@ -203,7 +203,7 @@ extension Database {
     }
 
     func fetchAllUsers(includeCurrentUser: Bool = true, completion: @escaping ([User]) -> Void, withCancel cancel: ((Error) -> Void)?) {
-        USER_REF.observeSingleEvent(of: .value, with: { (snapshot) in
+        USERS_REF.observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionaries = snapshot.value as? [String: Any] else {
                 completion([])
                 return
@@ -233,7 +233,7 @@ extension Database {
     }
 
     func fetchUserByUsername(uid: String, username: String, completion: @escaping (User) -> Void) {
-        USER_REF.queryOrdered(byChild: "username").queryEqual(toValue: username).observeSingleEvent(of: .childAdded) { (snapshot) in
+        USERS_REF.queryOrdered(byChild: "username").queryEqual(toValue: username).observeSingleEvent(of: .childAdded) { (snapshot) in
             print(snapshot)
             guard let userDictionary = snapshot.value as? [String: Any] else { return }
             let user = User(uid: snapshot.key, dictionary: userDictionary as [String: AnyObject])
@@ -242,7 +242,7 @@ extension Database {
     }
 
     func queryUsers(withText text: String, completion: @escaping (User) -> Void) {
-        USER_REF.queryOrdered(byChild: "username").queryStarting(atValue: text).queryEnding(atValue: text+"\u{f8ff}").queryLimited(toFirst: 10).observeSingleEvent(of: .value) { (snapshot) in
+        USERS_REF.queryOrdered(byChild: "username").queryStarting(atValue: text).queryEnding(atValue: text+"\u{f8ff}").queryLimited(toFirst: 10).observeSingleEvent(of: .value) { (snapshot) in
 
             snapshot.children.forEach({ (s) in
                 let child = s as! DataSnapshot
@@ -348,9 +348,9 @@ extension Database {
 
     // MARK: Posts
     func createImagePost(withImage image: UIImage, caption: String, user: User, onSuccess: @escaping (String) -> Void, onError:  @escaping (_ errorMessage: String?) -> Void) {
-        let userPostRef = POSTS_REF.child(user.uid).childByAutoId()
+        let userPostRef = POSTS_REF.childByAutoId()
 
-        guard let postId = userPostRef.key else {return}
+        guard let postId = POSTS_REF.key else {return}
 
         Storage.storage().uploadPostImage(image: image, filename: postId) { (postImageUrl) in
 
@@ -361,7 +361,7 @@ extension Database {
                           "creationDate": Date().timeIntervalSince1970,
                           "id": postId,
                           "hasImage": true,
-                          "userId": user.uid,
+                          "uid": user.uid,
                           "hasText": true] as [String: Any]
 
             userPostRef.updateChildValues(values) { (err, _) in
@@ -378,14 +378,14 @@ extension Database {
 
     func createPost(withCaption caption: String, user: User, onSuccess: @escaping (String) -> Void, onError:  @escaping (_ errorMessage: String?) -> Void) {
 
-        let userPostRef = POSTS_REF.child(user.uid).childByAutoId()
+        let userPostRef = POSTS_REF.childByAutoId()
         guard let postId = userPostRef.key else { return }
 
         let values = ["caption": caption,
                       "creationDate": Date().timeIntervalSince1970,
                       "hasText": true,
                       "hasImage": false,
-                      "userId": user.uid,
+                      "uid": user.uid,
                       "postId": postId] as [String: Any]
 
         print(user.uid)
@@ -399,16 +399,18 @@ extension Database {
         }
     }
 
-    func fetchPost(with postId: String, completion: @escaping(Post) -> Void) {
-        POSTS_REF.child(postId).observeSingleEvent(of: .value) { (snapshot) in
-            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
-            if let userId = dictionary["userId"] {
-                self.fetchUser(withUID: userId as! String, completion: { (user) in
-                    let post = Post(user: user, dictionary: dictionary)
-                    completion(post)
-                })
+    func fetchPost(with postId: String, user: User, completion: @escaping ((Post?)->())) {
+        var dictionary : [String:Any] = [:]
+        var post : Post?
+        var count = 0
+        POSTS_REF.child(postId).observe(.childAdded, with: { (snapshot) in
+            dictionary[snapshot.key] = snapshot.value
+            post = Post(id: postId, user: user, dictionary: dictionary)
+            count += 1
+            if count == 5 {
+                completion(post)
             }
-        }
+        })
     }
 
     func fetchAllPosts(withUID uid: String, completion: @escaping ([Post]) -> Void, withCancel cancel: ((Error) -> Void)?) {
@@ -438,51 +440,37 @@ extension Database {
 //        }
     }
 
-    func queryPosts(forUser user: User, posts: [Post], finishedPaging: Bool, completion: @escaping ([Post], Bool) -> Void) {
+    func fetchPostsForUser(databaseRef ref: DatabaseReference, currentKey: String?, user: User, initialCount: UInt, furtherCount: UInt, lastPostId: @escaping ((DataSnapshot)->()), postFetched: @escaping ((Post)->())) {
 
-        var isFinished = finishedPaging
-        var posts = posts
-        var limit: UInt = 3
-        let uid = user.uid
-        let ref = POSTS_REF.child(uid)
-        var query = ref.queryOrdered(byChild: "creationDate")
+        if currentKey != nil {
+            ref.queryOrderedByKey().queryEnding(atValue: currentKey).queryLimited(toLast: furtherCount).observeSingleEvent(of: .value) { (snapshot) in
+                guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else {return}
+                guard let first = allObjects.first else {return}
 
-        if posts.last != nil {
-            let value = posts.last?.creationDate.timeIntervalSince1970
-            query = query.queryEnding(atValue: value)
-            limit = 4
-        }
-
-        query.queryLimited(toLast: limit).observeSingleEvent(of: .value) { (snapshot) in
-            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else {
-                completion([], isFinished)
-                return
-            }
-
-            allObjects.reverse()
-
-            if !isFinished {
-                if allObjects.count < limit {
-                    isFinished = true
+                for object in allObjects {
+                    let postId = object.key
+                    if postId == currentKey {continue}
+                    self.fetchPost(with: postId, user: user, completion: { (post) in
+                        guard let post = post else {return}
+                        postFetched(post)
+                    })
                 }
-            } else {
-                if allObjects.count > limit {
-                    isFinished = false
+                lastPostId(first)
+            }
+        } else {
+            ref.queryLimited(toLast: initialCount).observeSingleEvent(of: .value) { (snapshot) in
+                guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else {return}
+                guard let first = allObjects.first else {return}
+
+                for object in allObjects {
+                    let postId = object.key
+                    self.fetchPost(with: postId, user: user, completion: { (post) in
+                        guard let post = post else {return}
+                        postFetched(post)
+                    })
                 }
+                lastPostId(first)
             }
-
-            if posts.count > 0 && allObjects.count > 0 {
-                allObjects.removeFirst()
-            }
-
-            allObjects.forEach({ (snapshot) in
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                let post = Post(user: user, dictionary: dictionary as [String: AnyObject])
-
-                posts.append(post)
-
-                completion(posts, isFinished)
-            })
         }
     }
 
@@ -527,7 +515,7 @@ extension Database {
 
             allObjects.forEach({ (snapshot) in
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
-                let post = Post(user: user, dictionary: dictionary as [String: AnyObject])
+                let post = Post(id: user.uid, user: user, dictionary: dictionary as [String: AnyObject])
 
                 if post.hasImage {
                     posts.append(post)
@@ -581,7 +569,7 @@ extension Database {
 
             allObjects.forEach({ (snapshot) in
                 guard let dictionary = snapshot.value as? [String: Any] else { return }
-                let post = Post(user: user, dictionary: dictionary as [String: AnyObject])
+                let post = Post(id: user.uid,  user: user, dictionary: dictionary as [String: AnyObject])
 
                 if !post.hasImage {
                     posts.append(post)
@@ -601,7 +589,7 @@ extension Database {
             let arraySnapshot = (snapshot.children.allObjects as! [DataSnapshot]).reversed()
             arraySnapshot.forEach({ (child) in
                 if let dict = child.value as? [String: Any] {
-                    let post = Post(user: user, dictionary: dict as [String: AnyObject])
+                    let post = Post(id: user.uid, user: user, dictionary: dict as [String: AnyObject])
                     completion(post)
                 }
             })

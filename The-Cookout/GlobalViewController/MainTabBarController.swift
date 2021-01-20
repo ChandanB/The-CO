@@ -25,14 +25,6 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         delegate = self
     }
 
-    private func presentLoginController() {
-        DispatchQueue.main.async { // wait until MainTabBarController is inside UI
-            let loginController = LoginController(alignment: .center)
-            let navController = UINavigationController(rootViewController: loginController)
-            self.present(navController, animated: true, completion: nil)
-        }
-    }
-
     func setupViewControllers(_ user: User) {
 
         let flowLayout = UICollectionViewFlowLayout()

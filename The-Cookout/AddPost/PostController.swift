@@ -179,15 +179,19 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         guard let user = self.user else { return }
         dismissKeyboard()
 
-        if selectedImage == nil {
-            shareTextPost(user)
-            return
+        if postToEdit == nil {
+            if selectedImage == nil {
+                uploadTextPost(user)
+                return
+            }
+            uploadImagePost(user)
+        } else {
+            handleUpdatePost()
         }
 
-        shareImagePost(user)
     }
 
-    func shareImagePost(_ user: User) {
+    func uploadImagePost(_ user: User) {
 
         guard
             let caption = captionTextView.text,
@@ -230,7 +234,7 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
 
-    func shareTextPost(_ user: User) {
+    func uploadTextPost(_ user: User) {
         guard let caption = captionTextView.text else { return }
 
         let trimmedCaption = caption.trim()
@@ -286,13 +290,23 @@ class PostController: UICollectionViewController, UICollectionViewDelegateFlowLa
         guard let caption = captionTextView.text else { return }
         let words: [String] = caption.components(separatedBy: .whitespacesAndNewlines)
 
-        for var word in words {
+        words.forEach { (word) in
+            var mutableWord = word
             if word.hasPrefix("#") {
-                word = word.trimmingCharacters(in: .punctuationCharacters)
-                word = word.trimmingCharacters(in: .symbols)
-
+                mutableWord = mutableWord.trimmingCharacters(in: .punctuationCharacters).trimmingCharacters(in: .symbols)
                 let hashtagValues = [postId: 1]
-                HASHTAG_POST_REF.child(word.lowercased()).updateChildValues(hashtagValues)
+                HASHTAG_POST_REF.child(mutableWord.lowercased()).updateChildValues(hashtagValues)
+            }
+        }
+    }
+
+    private func handleUpdatePost() {
+        guard let text = captionTextView.text else { return }
+        guard let post = postToEdit else { return }
+        uploadHashtagToServer(withPostId: post.id)
+        POSTS_REF.child(post.id).child("caption").setValue(text) { (error, ref) in
+            if error == nil {
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }
